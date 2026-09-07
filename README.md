@@ -72,13 +72,7 @@ Para trabajo aislado de UI/presentación, `ng serve` funciona sin ningún backen
 
 ## Variables de entorno
 
-Ver `.env.example`. Variable clave:
-
-| Variable | Descripción |
-|---|---|
-| `BASE_URL` | URL base usada en build/despliegue (ver `.env.example`) |
-
-Las URLs por ambiente de cada backend (identity/social/search/predictive/websocket) se configuran en `src/environments/`, no en `.env`.
+Este servicio no usa `.env` — ni el build (`ng build`) ni el runtime (nginx sirviendo estáticos) leen variables de entorno. Las URLs por ambiente de cada backend (identity/social/search/predictive/websocket) se configuran en `src/environments/*.ts`, seleccionadas en build time vía `fileReplacements` (`angular.json`).
 
 ## Tests
 
