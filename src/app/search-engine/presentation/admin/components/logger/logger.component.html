@@ -4,9 +4,27 @@
 
   <form (ngSubmit)="fetchLogs()" class="mb-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <input type="text" placeholder="Keyword" [(ngModel)]="keyword" name="keyword" class="p-2 border border-gray-300 rounded">
-      <input type="date" placeholder="Start Date" [(ngModel)]="startDate" name="startDate" class="p-2 border border-gray-300 rounded">
-      <input type="date" placeholder="End Date" [(ngModel)]="endDate" name="endDate" class="p-2 border border-gray-300 rounded">
+      <input
+        type="text"
+        placeholder="Keyword"
+        [(ngModel)]="keyword"
+        name="keyword"
+        class="p-2 border border-gray-300 rounded"
+      />
+      <input
+        type="date"
+        placeholder="Start Date"
+        [(ngModel)]="startDate"
+        name="startDate"
+        class="p-2 border border-gray-300 rounded"
+      />
+      <input
+        type="date"
+        placeholder="End Date"
+        [(ngModel)]="endDate"
+        name="endDate"
+        class="p-2 border border-gray-300 rounded"
+      />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
       <select [(ngModel)]="logLevel" name="logLevel" class="p-2 border border-gray-300 rounded">
@@ -28,8 +46,16 @@
   </div>
 
   <div *ngIf="totalLogs > 0" class="mt-4 flex justify-between items-center">
-    <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 bg-gray-300 rounded">Previous</button>
+    <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 bg-gray-300 rounded">
+      Previous
+    </button>
     <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="p-2 bg-gray-300 rounded">Next</button>
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+      class="p-2 bg-gray-300 rounded"
+    >
+      Next
+    </button>
   </div>
 </div>

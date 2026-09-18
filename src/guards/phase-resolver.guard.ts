@@ -5,15 +5,15 @@ import { TopicService } from 'src/app/consensus/domain/services/TopicDataService
 import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PhaseResolverGuard implements CanActivate {
-  constructor(private topicService: TopicService, private router: Router) {}
+  constructor(
+    private topicService: TopicService,
+    private router: Router,
+  ) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const groupId = route.paramMap.get('groupId');
 
     if (!groupId) {
@@ -22,7 +22,7 @@ export class PhaseResolverGuard implements CanActivate {
     }
 
     return this.topicService.getUserCurrentPhase(groupId).pipe(
-      map(response => {
+      map((response) => {
         const userPhase = response.phase;
         let redirectPhase: string;
 
@@ -44,14 +44,16 @@ export class PhaseResolverGuard implements CanActivate {
         if (state.url.includes(redirectPhase)) {
           return true;
         } else {
-          this.router.navigate([`/profile/${route.parent?.parent?.params['id']}/my-groups/${groupId}/consensus/${redirectPhase}`]);
+          this.router.navigate([
+            `/profile/${route.parent?.parent?.params['id']}/my-groups/${groupId}/consensus/${redirectPhase}`,
+          ]);
           return false;
         }
       }),
       catchError(() => {
         this.router.navigate(['/error']);
         return new Observable<boolean>((observer) => observer.next(false));
-      })
+      }),
     );
   }
 }

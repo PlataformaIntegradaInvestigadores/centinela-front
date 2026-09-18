@@ -1,30 +1,26 @@
-import {Component, ElementRef, Inject, Input, ViewChild} from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
 
-import {faDownload, faVectorSquare} from '@fortawesome/free-solid-svg-icons';
-import {DOCUMENT} from '@angular/common';
-import {
-  Author,
-  AuthorNode,
-} from '../../../../../shared/interfaces/author.interface';
-import {Node, Link} from '../../../../../shared/d3';
-import {AuthorService} from '../../../../domain/services/author.service';
+import { faDownload, faVectorSquare } from '@fortawesome/free-solid-svg-icons';
+import { DOCUMENT } from '@angular/common';
+import { Author, AuthorNode } from '../../../../../shared/interfaces/author.interface';
+import { Node, Link } from '../../../../../shared/d3';
+import { AuthorService } from '../../../../domain/services/author.service';
 import * as htmlToImage from 'html-to-image';
 import * as d3 from 'd3';
-import {GraphComponent} from '../../../../../shared/components/visuals/graph/graph.component';
+import { GraphComponent } from '../../../../../shared/components/visuals/graph/graph.component';
 
 @Component({
   selector: 'app-coauthors-graph',
   templateUrl: './coauthors-graph.component.html',
   styleUrls: ['./coauthors-graph.component.css'],
 })
-export class CoauthorsGraphComponent {
+export class CoauthorsGraphComponent implements OnInit {
   @Input() author!: Author;
 
   d3Nodes: Node[] = [];
   d3Links: Link[] = [];
 
   apiNodes: AuthorNode[] = [];
-
 
   forces: { manyBody: number; collide: number } = {
     manyBody: 150,
@@ -47,18 +43,18 @@ export class CoauthorsGraphComponent {
 
   // Seleccion de zona para exportar solo una parte del grafo
   selectingRegion = false;
-  regionStart: { x: number, y: number } | null = null;
-  regionRect: { x: number, y: number, w: number, h: number } | null = null;
+  regionStart: { x: number; y: number } | null = null;
+  regionRect: { x: number; y: number; w: number; h: number } | null = null;
   selectedNode: {
     author: AuthorNode;
     degree: number;
-    collaborators: {id: string; name: string; strength: number}[];
+    collaborators: { id: string; name: string; strength: number }[];
   } | null = null;
   showAllCollaborators = false;
 
   constructor(
     private authorService: AuthorService,
-    @Inject(DOCUMENT) private coreDoc: Document
+    @Inject(DOCUMENT) private coreDoc: Document,
   ) {
     this.d3Links = [];
     this.d3Nodes = [];
@@ -66,37 +62,37 @@ export class CoauthorsGraphComponent {
 
   ngOnInit() {
     this.loading = true;
-    this.authorService
-      .getCoauthorsById(this.author.scopus_id)
-      .subscribe({
-        next: coauthors => {
-          this.apiNodes = [...(coauthors.data.nodes || [])];
-          // Si el autor no tiene coautores reales solo quedaria su propio nodo
-          // suelto; en ese caso mostramos un mensaje en vez de un grafo vacio.
-          const hasCoauthors = this.apiNodes.length > 0;
-          if (!this.apiNodes.some(node => String(node.scopus_id) === String(this.author.scopus_id))) {
-            this.apiNodes.push({
-              scopus_id: this.author.scopus_id,
-              initials: this.author.initials,
-              first_name: this.author.first_name,
-              last_name: this.author.last_name,
-              weight: 0,
-            });
-          }
-          this.setupNodes();
-          this.setupLinks(coauthors.data.links);
-          const rootId = String(this.author.scopus_id);
-          this.expandedNodeIds.add(rootId);
-          const rootNode = this.d3Nodes.find(node => String(node.id) === rootId);
-          if (rootNode) rootNode.isExpanded = true;
-          this.showGraph = hasCoauthors;
-          this.loading = false;
-        },
-        error: () => {
-          this.showGraph = false;
-          this.loading = false;
+    this.authorService.getCoauthorsById(this.author.scopus_id).subscribe({
+      next: (coauthors) => {
+        this.apiNodes = [...(coauthors.data.nodes || [])];
+        // Si el autor no tiene coautores reales solo quedaria su propio nodo
+        // suelto; en ese caso mostramos un mensaje en vez de un grafo vacio.
+        const hasCoauthors = this.apiNodes.length > 0;
+        if (
+          !this.apiNodes.some((node) => String(node.scopus_id) === String(this.author.scopus_id))
+        ) {
+          this.apiNodes.push({
+            scopus_id: this.author.scopus_id,
+            initials: this.author.initials,
+            first_name: this.author.first_name,
+            last_name: this.author.last_name,
+            weight: 0,
+          });
         }
-      });
+        this.setupNodes();
+        this.setupLinks(coauthors.data.links);
+        const rootId = String(this.author.scopus_id);
+        this.expandedNodeIds.add(rootId);
+        const rootNode = this.d3Nodes.find((node) => String(node.id) === rootId);
+        if (rootNode) rootNode.isExpanded = true;
+        this.showGraph = hasCoauthors;
+        this.loading = false;
+      },
+      error: () => {
+        this.showGraph = false;
+        this.loading = false;
+      },
+    });
   }
 
   toggleLegend() {
@@ -121,9 +117,7 @@ export class CoauthorsGraphComponent {
         new Node(
           nodeId,
           this.apiNodes.length,
-          this.truncarCadena(node.first_name) +
-          ' ' +
-          this.truncarCadena(node.last_name),
+          this.truncarCadena(node.first_name) + ' ' + this.truncarCadena(node.last_name),
           {
             enablePopover: false,
             title: 'Author',
@@ -138,11 +132,10 @@ export class CoauthorsGraphComponent {
           },
           undefined,
           undefined,
-          nodeLevel
-        )
+          nodeLevel,
+        ),
       );
     });
-
   }
 
   truncarCadena(texto: string): string {
@@ -160,16 +153,14 @@ export class CoauthorsGraphComponent {
   }
 
   setupLinks(
-    links: { source: string | number; target: string | number; collabStrength: number }[]
+    links: { source: string | number; target: string | number; collabStrength: number }[],
   ) {
     links.forEach((link) => {
       const sourceId = String(link.source);
       const targetId = String(link.target);
       this.d3Nodes[this.getIndexByScopusId(sourceId)].degree++;
       this.d3Nodes[this.getIndexByScopusId(targetId)].degree++;
-      this.d3Links.push(
-        new Link(sourceId, targetId, link.collabStrength * 5)
-      );
+      this.d3Links.push(new Link(sourceId, targetId, link.collabStrength * 5));
     });
   }
 
@@ -181,33 +172,35 @@ export class CoauthorsGraphComponent {
     if (this.selectingRegion) return;
 
     const idStr = String(id);
-    const targetNode = this.d3Nodes.find(node => String(node.id) === idStr);
-    const targetApiNode = this.apiNodes.find(node => String(node.scopus_id) === idStr);
+    const targetNode = this.d3Nodes.find((node) => String(node.id) === idStr);
+    const targetApiNode = this.apiNodes.find((node) => String(node.scopus_id) === idStr);
     if (!targetNode || !targetApiNode) return;
 
-    const collaborators: {id: string; name: string; strength: number}[] = [];
-    this.d3Links.forEach(link => {
-      const sourceId = typeof link.source === 'object' ? String(link.source.id) : String(link.source);
-      const targetId = typeof link.target === 'object' ? String(link.target.id) : String(link.target);
+    const collaborators: { id: string; name: string; strength: number }[] = [];
+    this.d3Links.forEach((link) => {
+      const sourceId =
+        typeof link.source === 'object' ? String(link.source.id) : String(link.source);
+      const targetId =
+        typeof link.target === 'object' ? String(link.target.id) : String(link.target);
       if (sourceId !== idStr && targetId !== idStr) return;
 
       const collaboratorId = sourceId === idStr ? targetId : sourceId;
-      const collaborator = this.d3Nodes.find(node => String(node.id) === collaboratorId);
+      const collaborator = this.d3Nodes.find((node) => String(node.id) === collaboratorId);
       if (collaborator) {
         collaborators.push({
           id: collaboratorId,
           name: collaborator.label,
-          strength: Number((link.strokeWidth / 5).toFixed(2))
+          strength: Number((link.strokeWidth / 5).toFixed(2)),
         });
       }
     });
 
     collaborators.sort((a, b) => b.strength - a.strength);
-    this.d3Nodes.forEach(node => node.isSelected = String(node.id) === idStr);
+    this.d3Nodes.forEach((node) => (node.isSelected = String(node.id) === idStr));
     this.selectedNode = {
       author: targetApiNode,
       degree: targetNode.degree,
-      collaborators
+      collaborators,
     };
     if (!preserveShowAll) this.showAllCollaborators = false;
     this.graphComponent?.refreshView();
@@ -215,7 +208,7 @@ export class CoauthorsGraphComponent {
 
   closePanel() {
     this.selectedNode = null;
-    this.d3Nodes.forEach(node => node.isSelected = false);
+    this.d3Nodes.forEach((node) => (node.isSelected = false));
     this.graphComponent?.refreshView();
   }
 
@@ -238,57 +231,64 @@ export class CoauthorsGraphComponent {
     this.expandedNodeIds.add(id);
     this.expanding = true;
     this.authorService.getCoauthorsById(scopusId).subscribe({
-      next: coauthors => {
+      next: (coauthors) => {
         const newApiNodes = [...(coauthors.data.nodes || [])];
         const newLinks = [...(coauthors.data.links || [])];
-        const parentNode = this.d3Nodes.find(node => String(node.id) === id);
+        const parentNode = this.d3Nodes.find((node) => String(node.id) === id);
         const newLevel = (parentNode?.level ?? 1) + 1;
         let addedNodes = 0;
 
-        newApiNodes.forEach(apiNode => {
+        newApiNodes.forEach((apiNode) => {
           const nodeId = String(apiNode.scopus_id);
           if (this.getIndexByScopusId(nodeId) !== -1) return;
 
           addedNodes++;
           this.apiNodes.push(apiNode);
-          this.d3Nodes.push(new Node(
-            nodeId,
-            this.apiNodes.length,
-            `${this.truncarCadena(apiNode.first_name)} ${this.truncarCadena(apiNode.last_name)}`,
-            {
-              enablePopover: false,
-              title: 'Author',
-              content: apiNode.first_name && apiNode.last_name
-                ? `${apiNode.first_name} ${apiNode.last_name}`
-                : apiNode.last_name || '',
-              link: 'profile/' + apiNode.scopus_id,
-              expandable: true,
-              onExpand: () => this.expandGraph(nodeId),
-              onSelect: () => this.selectNode(nodeId)
-            },
-            undefined,
-            undefined,
-            newLevel
-          ));
+          this.d3Nodes.push(
+            new Node(
+              nodeId,
+              this.apiNodes.length,
+              `${this.truncarCadena(apiNode.first_name)} ${this.truncarCadena(apiNode.last_name)}`,
+              {
+                enablePopover: false,
+                title: 'Author',
+                content:
+                  apiNode.first_name && apiNode.last_name
+                    ? `${apiNode.first_name} ${apiNode.last_name}`
+                    : apiNode.last_name || '',
+                link: 'profile/' + apiNode.scopus_id,
+                expandable: true,
+                onExpand: () => this.expandGraph(nodeId),
+                onSelect: () => this.selectNode(nodeId),
+              },
+              undefined,
+              undefined,
+              newLevel,
+            ),
+          );
         });
 
-        this.d3Nodes.forEach(node => node.totalNodes = this.apiNodes.length);
-        newLinks.forEach(link => {
+        this.d3Nodes.forEach((node) => (node.totalNodes = this.apiNodes.length));
+        newLinks.forEach((link) => {
           const sourceId = String(link.source);
           const targetId = String(link.target);
           const sourceIndex = this.getIndexByScopusId(sourceId);
           const targetIndex = this.getIndexByScopusId(targetId);
           if (sourceIndex === -1 || targetIndex === -1) return;
 
-          const exists = this.d3Links.some(existingLink => {
-            const existingSource = typeof existingLink.source === 'object'
-              ? String(existingLink.source.id)
-              : String(existingLink.source);
-            const existingTarget = typeof existingLink.target === 'object'
-              ? String(existingLink.target.id)
-              : String(existingLink.target);
-            return (existingSource === sourceId && existingTarget === targetId) ||
-              (existingSource === targetId && existingTarget === sourceId);
+          const exists = this.d3Links.some((existingLink) => {
+            const existingSource =
+              typeof existingLink.source === 'object'
+                ? String(existingLink.source.id)
+                : String(existingLink.source);
+            const existingTarget =
+              typeof existingLink.target === 'object'
+                ? String(existingLink.target.id)
+                : String(existingLink.target);
+            return (
+              (existingSource === sourceId && existingTarget === targetId) ||
+              (existingSource === targetId && existingTarget === sourceId)
+            );
           });
           if (exists) return;
 
@@ -306,7 +306,7 @@ export class CoauthorsGraphComponent {
         if (addedNodes > 0) {
           this.showNotification(
             `Network expanded. Discovered ${addedNodes} new coauthor${addedNodes === 1 ? '' : 's'}.`,
-            'success'
+            'success',
           );
         } else {
           this.showNotification('No new coauthors were found for this author.', 'warning');
@@ -317,20 +317,20 @@ export class CoauthorsGraphComponent {
           this.graphComponent.graph.initNodes();
           this.graphComponent.graph.initLinks();
           this.graphComponent.graph.simulation.alpha(0.3).restart();
-          this.graphComponent.onResize(null);
+          this.graphComponent.onResize();
         }
       },
-      error: error => {
+      error: (error) => {
         this.expanding = false;
         this.expandedNodeIds.delete(id);
         console.error('Error expanding coauthor network', error);
         this.showNotification('Could not expand the network. Please try again later.', 'error');
-      }
+      },
     });
   }
 
   downloadDataUrl(dataUrl: string, filename: string): void {
-    let a = this.coreDoc.createElement('a');
+    const a = this.coreDoc.createElement('a');
     a.href = dataUrl;
     a.download = filename;
     this.coreDoc.body.appendChild(a); //Firefox requires link to be in body
@@ -346,7 +346,7 @@ export class CoauthorsGraphComponent {
     setTimeout(() => {
       const svgEl = this.downloadEl.nativeElement.querySelector('graph svg') as HTMLElement | null;
       const target = svgEl ?? this.downloadEl.nativeElement;
-      htmlToImage.toPng(target, {pixelRatio: 3, backgroundColor: '#ffffff'}).then((dataUrl) => {
+      htmlToImage.toPng(target, { pixelRatio: 3, backgroundColor: '#ffffff' }).then((dataUrl) => {
         this.downloadDataUrl(dataUrl, `coauthor-graph-${this.author.scopus_id}`);
       });
     }, 450);
@@ -356,7 +356,7 @@ export class CoauthorsGraphComponent {
     if (!this.downloadEl) return null;
     const svgEl = this.downloadEl.nativeElement.querySelector('graph svg');
     if (!svgEl) return null;
-    return {svg: d3.select(svgEl), zoom: (svgEl as any).__zoomBehavior, svgEl};
+    return { svg: d3.select(svgEl), zoom: (svgEl as any).__zoomBehavior, svgEl };
   }
 
   /** Mide el bounding box real del grafo y ajusta zoom+pan para que entre completo y centrado. */
@@ -374,10 +374,10 @@ export class CoauthorsGraphComponent {
     const scale = Math.min(Math.min(effectiveWidth / bbox.width, vh / bbox.height) * 0.9, 1.5);
     const tx = effectiveWidth / 2 - scale * (bbox.x + bbox.width / 2);
     const ty = vh / 2 - scale * (bbox.y + bbox.height / 2);
-    data.svg.transition().duration(durationMs).call(
-      data.zoom.transform,
-      d3.zoomIdentity.translate(tx, ty).scale(scale)
-    );
+    data.svg
+      .transition()
+      .duration(durationMs)
+      .call(data.zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }
 
   // --- Seleccion de zona: arrastrar un rectangulo sobre el grafo y exportar solo ese recorte ---
@@ -387,7 +387,7 @@ export class CoauthorsGraphComponent {
     this.regionRect = null;
   }
 
-  private regionCoords(e: MouseEvent): { x: number, y: number } {
+  private regionCoords(e: MouseEvent): { x: number; y: number } {
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }
@@ -419,11 +419,11 @@ export class CoauthorsGraphComponent {
   }
 
   /** Exporta solo el rectangulo seleccionado (en coords del viewport del grafo) en alta resolucion. */
-  private exportRegion(rect: { x: number, y: number, w: number, h: number }): void {
+  private exportRegion(rect: { x: number; y: number; w: number; h: number }): void {
     const svgEl = this.downloadEl.nativeElement.querySelector('graph svg') as HTMLElement | null;
     if (!svgEl) return;
     const PR = 3; // pixelRatio: alta resolucion para que las etiquetas se lean
-    htmlToImage.toPng(svgEl, { pixelRatio: PR, backgroundColor: '#ffffff' }).then(dataUrl => {
+    htmlToImage.toPng(svgEl, { pixelRatio: PR, backgroundColor: '#ffffff' }).then((dataUrl) => {
       const img = new Image();
       img.onload = () => {
         const canvas = this.coreDoc.createElement('canvas');
@@ -433,7 +433,17 @@ export class CoauthorsGraphComponent {
         if (!ctx) return;
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, rect.x * PR, rect.y * PR, rect.w * PR, rect.h * PR, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(
+          img,
+          rect.x * PR,
+          rect.y * PR,
+          rect.w * PR,
+          rect.h * PR,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
         this.downloadDataUrl(canvas.toDataURL('image/png'), `grafo-zona-${this.author.scopus_id}`);
       };
       img.src = dataUrl;

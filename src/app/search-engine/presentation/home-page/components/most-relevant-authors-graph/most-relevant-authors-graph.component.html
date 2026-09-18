@@ -1,77 +1,162 @@
 <div class="flex flex-col md:flex-row justify-center gap-6 items-start mt-4 w-full px-4 xl:px-8">
-  <app-filters-sidebar class="w-full md:w-72 flex-shrink-0" [isFirstLoad]="isFirstLoad" [isLoading]="isFiltering" [isDisabled]="noResults">
+  <app-filters-sidebar
+    class="w-full md:w-72 flex-shrink-0"
+    [isFirstLoad]="isFirstLoad"
+    [isLoading]="isFiltering"
+    [isDisabled]="noResults"
+  >
     <!-- Authors number -->
-    <div class="py-2 px-4 font-semibold border-b border-gray-200 text-gray-700 bg-gray-50 text-sm tracking-wide">
+    <div
+      class="py-2 px-4 font-semibold border-b border-gray-200 text-gray-700 bg-gray-50 text-sm tracking-wide"
+    >
       Number of authors
     </div>
     <div class="py-3 px-4 border-b border-gray-200">
-      <input id="authorsRange" type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600" min="10" max="200" step="10"
-             [(ngModel)]="authorsNumber" (change)="onAuthorsNumberChange()">
-      <label for="authorsRange" class="form-label font-semibold mt-2 block text-sm text-gray-700">Authors: <span class="text-red-600">{{authorsNumber}}</span></label>
-      
+      <input
+        id="authorsRange"
+        type="range"
+        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600"
+        min="10"
+        max="200"
+        step="10"
+        [(ngModel)]="authorsNumber"
+        (change)="onAuthorsNumberChange()"
+      />
+      <label for="authorsRange" class="form-label font-semibold mt-2 block text-sm text-gray-700"
+        >Authors: <span class="text-red-600">{{ authorsNumber }}</span></label
+      >
+
       <!-- Quick Select Cards -->
       <div class="flex gap-2 mt-3">
-        <button class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600" [class.bg-red-100]="authorsNumber === 50" [class.border-red-400]="authorsNumber === 50" [class.text-red-800]="authorsNumber === 50" (click)="setAuthorsNumber(50)">50</button>
-        <button class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600" [class.bg-red-100]="authorsNumber === 100" [class.border-red-400]="authorsNumber === 100" [class.text-red-800]="authorsNumber === 100" (click)="setAuthorsNumber(100)">100</button>
-        <button class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600" [class.bg-red-100]="authorsNumber === 200" [class.border-red-400]="authorsNumber === 200" [class.text-red-800]="authorsNumber === 200" (click)="setAuthorsNumber(200)">200</button>
+        <button
+          class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600"
+          [class.bg-red-100]="authorsNumber === 50"
+          [class.border-red-400]="authorsNumber === 50"
+          [class.text-red-800]="authorsNumber === 50"
+          (click)="setAuthorsNumber(50)"
+        >
+          50
+        </button>
+        <button
+          class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600"
+          [class.bg-red-100]="authorsNumber === 100"
+          [class.border-red-400]="authorsNumber === 100"
+          [class.text-red-800]="authorsNumber === 100"
+          (click)="setAuthorsNumber(100)"
+        >
+          100
+        </button>
+        <button
+          class="flex-1 py-1.5 px-2 border border-gray-300 rounded-md hover:bg-red-50 text-xs font-medium transition-colors text-gray-600"
+          [class.bg-red-100]="authorsNumber === 200"
+          [class.border-red-400]="authorsNumber === 200"
+          [class.text-red-800]="authorsNumber === 200"
+          (click)="setAuthorsNumber(200)"
+        >
+          200
+        </button>
       </div>
     </div>
 
     <!-- Affiliations -->
-    <div class="py-2 px-4 font-semibold border-b border-gray-200 text-gray-700 bg-gray-50 text-sm tracking-wide" *ngIf="affiliations && affiliations.length > 0">
+    <div
+      class="py-2 px-4 font-semibold border-b border-gray-200 text-gray-700 bg-gray-50 text-sm tracking-wide"
+      *ngIf="affiliations && affiliations.length > 0"
+    >
       Affiliations
     </div>
     <!-- Buscador de afiliaciones (mejora de usabilidad: evita scroll en lista larga) -->
-    <div class="py-2 px-4 border-b border-gray-200 bg-white" *ngIf="affiliations && affiliations.length > 0">
-      <div class="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1.5 focus-within:border-red-500">
+    <div
+      class="py-2 px-4 border-b border-gray-200 bg-white"
+      *ngIf="affiliations && affiliations.length > 0"
+    >
+      <div
+        class="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1.5 focus-within:border-red-500"
+      >
         <fa-icon [icon]="faMagnifyingGlass" class="text-red-600 text-sm"></fa-icon>
         <input
           type="text"
           [(ngModel)]="affiliationSearch"
           placeholder="Search affiliations..."
           class="text-sm"
-          style="flex:1; background:transparent; border:none; outline:none;"
-        >
+          style="flex: 1; background: transparent; border: none; outline: none"
+        />
       </div>
     </div>
-    <div class="py-3 px-4 flex md:flex-col gap-3 max-h-96 overflow-y-auto bg-white" *ngIf="affiliations && affiliations.length > 0">
-      <div class="flex gap-3 items-center hover:bg-gray-50 p-1 rounded transition-colors" *ngFor="let aff of filteredAffiliations">
+    <div
+      class="py-3 px-4 flex md:flex-col gap-3 max-h-96 overflow-y-auto bg-white"
+      *ngIf="affiliations && affiliations.length > 0"
+    >
+      <div
+        class="flex gap-3 items-center hover:bg-gray-50 p-1 rounded transition-colors"
+        *ngFor="let aff of filteredAffiliations"
+      >
         <input
           [id]="aff.scopus_id"
           type="checkbox"
           [checked]="selectedAffiliations.includes(aff.scopus_id)"
           (change)="onClickCheckbox($any($event))"
           class="form-checkbox h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500 cursor-pointer"
+        />
+        <label
+          [for]="aff.scopus_id"
+          class="ml-2 text-sm text-gray-600 cursor-pointer flex-1 leading-tight"
+          >{{ aff.name }}</label
         >
-        <label [for]="aff.scopus_id" class="ml-2 text-sm text-gray-600 cursor-pointer flex-1 leading-tight">{{aff.name}}</label>
       </div>
-      <div *ngIf="filteredAffiliations.length === 0" class="text-sm text-gray-400 italic p-1">No matches</div>
+      <div *ngIf="filteredAffiliations.length === 0" class="text-sm text-gray-400 italic p-1">
+        No matches
+      </div>
     </div>
   </app-filters-sidebar>
 
-
   <div class="flex-1 w-full flex flex-col">
-    <div class="flex flex-col justify-between w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-      <div *ngIf="!showGraph" class="w-full h-[600px] md:h-[800px] flex flex-col items-center justify-center gap-4 bg-white">
-        <div class="w-12 h-12 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin"></div>
+    <div
+      class="flex flex-col justify-between w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
+    >
+      <div
+        *ngIf="!showGraph"
+        class="w-full h-[600px] md:h-[800px] flex flex-col items-center justify-center gap-4 bg-white"
+      >
+        <div
+          class="w-12 h-12 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin"
+        ></div>
         <span class="text-gray-500 text-sm">Loading author graph...</span>
       </div>
       <ng-container *ngIf="showGraph && !noResults">
-        <div class="flex flex-row justify-between items-center w-full p-4 bg-white border-b border-gray-200">
+        <div
+          class="flex flex-row justify-between items-center w-full p-4 bg-white border-b border-gray-200"
+        >
           <div class="flex items-center gap-6 text-gray-700">
-            <div class="flex items-center gap-2"><span class="font-bold text-gray-900">Nodes:</span> <span class="bg-gray-100 px-3 py-1 rounded-full text-sm font-semibold">{{d3Nodes.length}}</span></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-gray-900">Relations:</span> <span class="bg-gray-100 px-3 py-1 rounded-full text-sm font-semibold">{{d3Links.length}}</span></div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-gray-900">Nodes:</span>
+              <span class="bg-gray-100 px-3 py-1 rounded-full text-sm font-semibold">{{
+                d3Nodes.length
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-gray-900">Relations:</span>
+              <span class="bg-gray-100 px-3 py-1 rounded-full text-sm font-semibold">{{
+                d3Links.length
+              }}</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2" *ngIf="d3Nodes.length > 0;">
-            <button type="button" class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors font-medium text-sm"
-                    (click)="onDownloadGraph()" [disabled]="selectingRegion">
+          <div class="flex items-center gap-2" *ngIf="d3Nodes.length > 0">
+            <button
+              type="button"
+              class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors font-medium text-sm"
+              (click)="onDownloadGraph()"
+              [disabled]="selectingRegion"
+            >
               <fa-icon [icon]="faDownload"></fa-icon>
               Download all
             </button>
-            <button type="button"
-                    class="border border-red-700 py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors font-medium text-sm"
-                    [ngClass]="selectingRegion ? 'bg-red-700 text-white' : 'text-red-700 hover:bg-red-50'"
-                    (click)="toggleRegionSelect()">
+            <button
+              type="button"
+              class="border border-red-700 py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors font-medium text-sm"
+              [ngClass]="selectingRegion ? 'bg-red-700 text-white' : 'text-red-700 hover:bg-red-50'"
+              (click)="toggleRegionSelect()"
+            >
               <fa-icon [icon]="faVectorSquare"></fa-icon>
               {{ selectingRegion ? 'Cancel' : 'Select region' }}
             </button>
@@ -79,36 +164,79 @@
         </div>
       </ng-container>
     </div>
-    
+
     <ng-container *ngIf="showGraph && noResults">
       <app-no-results [isServerOnline]="true" title="No results found"></app-no-results>
     </ng-container>
 
-    <div class="w-full max-w-full overflow-hidden mt-4 mat-elevation-z8" *ngIf="showGraph && !noResults">
-      <div class="w-full h-[600px] md:h-[800px] overflow-hidden bg-white rounded relative" #downloadEl>
-        
+    <div
+      class="w-full max-w-full overflow-hidden mt-4 mat-elevation-z8 rounded-2xl"
+      *ngIf="showGraph && !noResults"
+    >
+      <div
+        class="w-full h-[600px] md:h-[800px] overflow-hidden bg-white rounded-2xl relative"
+        #downloadEl
+      >
         <!-- Zoom Controls Overlay (z-30 para quedar sobre el overlay de seleccion y seguir clickeables) -->
         <div class="absolute top-4 right-4 z-30 flex flex-col gap-2">
-          <button (click)="zoomIn()" class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-2xl font-bold text-gray-700 select-none" title="Zoom in">+</button>
-          <button (click)="zoomOut()" class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-2xl font-bold text-gray-700 select-none" title="Zoom out">-</button>
-          <button (click)="fitAll()" class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-gray-700 mt-2" title="Fit to view">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Zm40 360q-134 0-227-93T160-400q0-134 93-227t227-93q134 0 227 93t93 227q0 134-93 227t-227 93Zm0-80q100 0 170-70t70-170q0-100-70-170t-170-70q-100 0-170 70t-70 170q0 100 70 170t170 70Zm0-240Z"/></svg>
+          <button
+            (click)="zoomIn()"
+            class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-2xl font-bold text-gray-700 select-none"
+            title="Zoom in"
+          >
+            +
+          </button>
+          <button
+            (click)="zoomOut()"
+            class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-2xl font-bold text-gray-700 select-none"
+            title="Zoom out"
+          >
+            -
+          </button>
+          <button
+            (click)="fitAll()"
+            class="bg-white border shadow-md w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 text-gray-700 mt-2"
+            title="Fit to view"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+            >
+              <path
+                d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Zm40 360q-134 0-227-93T160-400q0-134 93-227t227-93q134 0 227 93t93 227q0 134-93 227t-227 93Zm0-80q100 0 170-70t70-170q0-100-70-170t-170-70q-100 0-170 70t-70 170q0 100 70 170t170 70Zm0-240Z"
+              />
+            </svg>
           </button>
         </div>
 
         <!-- Overlay de seleccion de zona: arrastrar para recortar y exportar solo esa parte -->
-        <div *ngIf="selectingRegion" class="absolute inset-0 z-20 cursor-crosshair select-none"
-             (mousedown)="onRegionMouseDown($event)"
-             (mousemove)="onRegionMouseMove($event)"
-             (mouseup)="onRegionMouseUp()"
-             (mouseleave)="onRegionMouseUp()">
-          <div *ngIf="!regionRect" class="absolute top-3 left-1/2 -translate-x-1/2 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap" style="background: rgba(0,0,0,0.7)">
+        <div
+          *ngIf="selectingRegion"
+          class="absolute inset-0 z-20 cursor-crosshair select-none"
+          (mousedown)="onRegionMouseDown($event)"
+          (mousemove)="onRegionMouseMove($event)"
+          (mouseup)="onRegionMouseUp()"
+          (mouseleave)="onRegionMouseUp()"
+        >
+          <div
+            *ngIf="!regionRect"
+            class="absolute top-3 left-1/2 -translate-x-1/2 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap"
+            style="background: rgba(0, 0, 0, 0.7)"
+          >
             Drag to select the region to download
           </div>
-          <div *ngIf="regionRect" class="absolute border-2 border-red-600 pointer-events-none"
-               [style.left.px]="regionRect.x" [style.top.px]="regionRect.y"
-               [style.width.px]="regionRect.w" [style.height.px]="regionRect.h"
-               [style.background]="'rgba(220,38,38,0.12)'"></div>
+          <div
+            *ngIf="regionRect"
+            class="absolute border-2 border-red-600 pointer-events-none"
+            [style.left.px]="regionRect.x"
+            [style.top.px]="regionRect.y"
+            [style.width.px]="regionRect.w"
+            [style.height.px]="regionRect.h"
+            [style.background]="'rgba(220,38,38,0.12)'"
+          ></div>
         </div>
 
         <graph [nodes]="d3Nodes" [links]="d3Links" [forces]="forces"></graph>

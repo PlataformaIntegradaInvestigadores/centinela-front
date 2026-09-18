@@ -9,16 +9,14 @@ import { RecommendationsRoutingModule } from './recommendations-routing.module';
 import { RecommendationsPageComponent } from './presentation/pages/recommendations-page/recommendations-page.component';
 
 @NgModule({
-  declarations: [
-    RecommendationsPageComponent
-  ],
+  declarations: [RecommendationsPageComponent],
   imports: [
     CommonModule,
     FormsModule,
     HttpClientModule,
     FontAwesomeModule,
     NgxPaginationModule,
-    RecommendationsRoutingModule
-  ]
+    RecommendationsRoutingModule,
+  ],
 })
 export class RecommendationsModule {}

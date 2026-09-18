@@ -1,4 +1,15 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { DebateChatService } from 'src/app/consensus/domain/services/debate-chat.service';
@@ -9,16 +20,14 @@ import { Filter as BadWordsFilter } from 'bad-words';
 @Component({
   selector: 'app-discussion',
   templateUrl: './discussion.component.html',
-  styleUrls: ['./discussion.component.css']
+  styleUrls: ['./discussion.component.css'],
 })
 export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
-
   @Input() isModalOpen: boolean = false;
   @Input() debateIdInput!: number;
   @Input() groupIdInput!: string;
   @Output() closeChat = new EventEmitter<void>();
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-
 
   debateIdString!: string;
   messages: any[] = [];
@@ -32,12 +41,11 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscription!: Subscription;
 
-
   constructor(
-    private chatService: DebateChatService, 
+    private chatService: DebateChatService,
     private reactionService: ReactionService,
     private userPostureService: UserPostureService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +53,7 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
       this.initializeCurrentUser(); // Inicializa el usuario actual
       this.initializeChat();
       this.fetchUserPosture();
-      this.loadMessageHistory()
+      this.loadMessageHistory();
     } else {
       console.error('debateId no está definido en ngOnInit');
     }
@@ -81,12 +89,12 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   // private initializeChat(): void {
   //   try {
   //     console.log('Intentando conectar a WebSocket con:', this.groupIdInput, this.debateIdInput.toString());
-      
+
   //     this.chatService.connect(this.groupIdInput, this.debateIdInput.toString());
-  
+
   //     this.subscription = this.chatService.getMessages().subscribe((message) => {
   //       console.log('Mensaje recibido del WebSocket:', message); // Verificar si llegan mensajes
-  
+
   //       if (message.parent) {
   //         this.addReplyToThread(message);
   //       } else {
@@ -95,15 +103,13 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   //           replies: [],
   //         });
   //       }
-  
+
   //       setTimeout(() => this.scrollToBottom(), 100);
   //     });
   //   } catch (error) {
   //     console.error('Error al inicializar el chat:', error);
   //   }
   // }
-  
-  
 
   private addReplyToThread(reply: any): void {
     const parentMessage = this.messages.find((msg) => msg.id === reply.parent);
@@ -111,9 +117,6 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
       parentMessage.replies.push(reply);
     }
   }
-
-  
-  
 
   private initializeCurrentUser(): void {
     const token = localStorage.getItem('accessToken');
@@ -143,7 +146,7 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
       console.error('El debateId no está definido.');
       return;
     }
-  
+
     this.chatService.getMessageHistory(this.debateIdInput).subscribe({
       next: (messages) => {
         this.messages = messages.map((message) => {
@@ -167,17 +170,17 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   //     console.error('El debateId no está definido.');
   //     return;
   //   }
-  
+
   //   this.chatService.getMessageHistory(this.debateIdInput).subscribe({
   //     next: (messages) => {
   //       console.log('Mensajes históricos cargados:', messages); // Verifica si llegan los mensajes históricos
-  
+
   //       this.messages = messages.map((message) => ({
   //         ...message,
   //         replies: message.replies || [],
   //         timestamp: new Date(message.created_at),
   //       }));
-  
+
   //       setTimeout(() => this.scrollToBottom(), 100); // Asegura que se muestren los mensajes más recientes
   //     },
   //     error: (err) => {
@@ -186,7 +189,6 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   //     },
   //   });
   // }
-  
 
   // Función para hacer scroll al último mensaje
   // private scrollToBottom(): void {
@@ -196,7 +198,6 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   //     }, 100);
   //   }
   // }
-  
 
   sendMessage(): void {
     const sanitizedMessage = this.filter.clean(this.newMessage); // Limpia el mensaje usando bad-words
@@ -218,12 +219,12 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   }
   // sendMessage(): void {
   //   const sanitizedMessage = this.filter.clean(this.newMessage);
-  
+
   //   if (this.containsBadWords) {
   //     alert('El mensaje contiene lenguaje inapropiado.');
   //     return;
   //   }
-  
+
   //   const messageData = {
   //     text: sanitizedMessage,
   //     posture: this.userPosture,
@@ -231,37 +232,32 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
   //     user: this.currentUser, // Agrega el usuario actual
   //     created_at: new Date().toISOString(), // Marca de tiempo
   //   };
-  
+
   //   this.chatService.sendMessage(messageData);
-  
+
   //   // Agregar el mensaje localmente para reflejarlo en el chat de inmediato
   //   this.messages.push({
   //     ...messageData,
   //     replies: [],
   //     timestamp: new Date(), // Asegurar que tenga un timestamp válido
   //   });
-  
+
   //   this.newMessage = '';
   //   this.currentParentId = null;
   //   this.containsBadWords = false;
-  
+
   //   setTimeout(() => this.scrollToBottom(), 100); // Asegurar el desplazamiento al último mensaje
   // }
-  
-
-
 
   onMessageChange(): void {
     // Verifica si el mensaje contiene lenguaje ofensivo
     this.containsBadWords = this.filter.isProfane(this.newMessage);
-  
+
     // Si el mensaje está vacío, también considera deshabilitar el botón
     if (!this.newMessage.trim()) {
       this.containsBadWords = false; // El botón se habilita si no hay palabras ofensivas
     }
   }
-  
-  
 
   private detectLinks(message: string): string {
     const urlRegex = /((https?:\/\/|www\.)[^\s]+)/g;
@@ -270,8 +266,6 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
       return `<a href="${href}" target="_blank" class="text-blue-500 underline">${url}</a>`;
     });
   }
-  
-  
 
   getParentMessageText(): string {
     if (this.currentParentId) {
@@ -280,7 +274,6 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
     }
     return '';
   }
-  
 
   replyToMessage(parentId: number): void {
     this.currentParentId = parentId; // Asigna el mensaje padre
@@ -341,5 +334,4 @@ export class DiscussionComponent implements OnInit, OnDestroy, OnChanges {
     const formattedMessage = this.detectLinks(message);
     return this.sanitizer.bypassSecurityTrustHtml(formattedMessage);
   }
-
 }

@@ -4,12 +4,13 @@
      ════════════════════════════════════════════════════════════════════ -->
 
 <div class="px-2 pb-8 space-y-8">
-
   <!-- ── Encabezado de sección ─────────────────────────────────────── -->
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-2xl font-bold text-gray-800">Analítica Estratégica</h1>
-      <p class="text-sm text-gray-500 mt-1">Producción científica nacional · MongoDB (ETL incremental desde Neo4j)</p>
+      <p class="text-sm text-gray-500 mt-1">
+        Producción científica nacional · MongoDB (ETL incremental desde Neo4j)
+      </p>
     </div>
   </div>
 
@@ -17,35 +18,89 @@
        A — SALUD DEL SISTEMA Y DATOS
        ══════════════════════════════════════════════════════════════════ -->
   <div class="bg-white rounded-xl shadow-md overflow-hidden">
-
     <!-- PARTE SUPERIOR: título a la izquierda, botón a la derecha -->
-    <div class="flex items-center justify-between gap-4 px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-600 text-white">
+    <div
+      class="flex items-center justify-between gap-4 px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-600 text-white"
+    >
       <div>
         <p class="text-base font-semibold">Salud del Sistema y Datos</p>
-        <p class="text-xs text-slate-300 mt-0.5">Estado del ETL · colección <code class="bg-white/20 rounded px-1">country_acumulated</code></p>
+        <p class="text-xs text-slate-300 mt-0.5">
+          Estado del ETL · colección
+          <code class="bg-white/20 rounded px-1">country_acumulated</code>
+        </p>
       </div>
       <button
         (click)="runEtl()"
         [disabled]="etlStatus === 'processing'"
         class="etl-btn flex-shrink-0"
-        [ngClass]="{'etl-btn-success': etlStatus === 'completed', 'etl-btn-error': etlStatus === 'error'}">
-
+        [ngClass]="{
+          'etl-btn-success': etlStatus === 'completed',
+          'etl-btn-error': etlStatus === 'error',
+        }"
+      >
         <!-- idle: icono refresh -->
-        <svg *ngIf="etlStatus === 'idle'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.919z" clip-rule="evenodd"/>
+        <svg
+          *ngIf="etlStatus === 'idle'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.919z"
+            clip-rule="evenodd"
+          />
         </svg>
         <!-- processing: spinner -->
-        <svg *ngIf="etlStatus === 'processing'" class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        <svg
+          *ngIf="etlStatus === 'processing'"
+          class="w-4 h-4 animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          ></path>
         </svg>
         <!-- completed: checkmark -->
-        <svg *ngIf="etlStatus === 'completed'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
+        <svg
+          *ngIf="etlStatus === 'completed'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+            clip-rule="evenodd"
+          />
         </svg>
         <!-- error: X -->
-        <svg *ngIf="etlStatus === 'error'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd"/>
+        <svg
+          *ngIf="etlStatus === 'error'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+            clip-rule="evenodd"
+          />
         </svg>
 
         <span *ngIf="etlStatus === 'idle'">Actualizar Base de Datos (ETL)</span>
@@ -56,66 +111,122 @@
     </div>
 
     <!-- Mensaje de estado (hermano del header, no hijo) -->
-    <div *ngIf="etlMessage" class="px-6 py-2 text-xs font-medium"
-         [ngClass]="{
-           'bg-blue-50 text-blue-700':   etlStatus === 'processing',
-           'bg-green-50 text-green-700': etlStatus === 'completed',
-           'bg-red-50 text-red-700':     etlStatus === 'error'
-         }">
+    <div
+      *ngIf="etlMessage"
+      class="px-6 py-2 text-xs font-medium"
+      [ngClass]="{
+        'bg-blue-50 text-blue-700': etlStatus === 'processing',
+        'bg-green-50 text-green-700': etlStatus === 'completed',
+        'bg-red-50 text-red-700': etlStatus === 'error',
+      }"
+    >
       {{ etlMessage }}
     </div>
 
     <!-- Barra de progreso indeterminada -->
     <div *ngIf="etlStatus === 'processing'" class="h-1 bg-slate-200 overflow-hidden">
-      <div class="etl-progress-indeterminate h-full bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+      <div
+        class="etl-progress-indeterminate h-full bg-gradient-to-r from-blue-400 to-indigo-500"
+      ></div>
     </div>
     <!-- Barra llena verde al completar -->
     <div *ngIf="etlStatus === 'completed'" class="h-1 bg-green-400"></div>
 
     <!-- PARTE INFERIOR: tarjetas de advertencia en grid responsivo -->
     <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div *ngFor="let w of systemWarnings"
-           class="warning-card"
-           [ngClass]="{
-             'warning-ok':    w.level === 'ok',
-             'warning-warn':  w.level === 'warn',
-             'warning-error': w.level === 'error'
-           }">
+      <div
+        *ngFor="let w of systemWarnings"
+        class="warning-card"
+        [ngClass]="{
+          'warning-ok': w.level === 'ok',
+          'warning-warn': w.level === 'warn',
+          'warning-error': w.level === 'error',
+        }"
+      >
         <!-- Icono de estado -->
-        <div class="warning-icon-wrap"
-             [ngClass]="{
-               'bg-green-100':  w.level === 'ok',
-               'bg-yellow-100': w.level === 'warn',
-               'bg-red-100':    w.level === 'error'
-             }">
-          <svg *ngIf="w.level === 'ok'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/>
+        <div
+          class="warning-icon-wrap"
+          [ngClass]="{
+            'bg-green-100': w.level === 'ok',
+            'bg-yellow-100': w.level === 'warn',
+            'bg-red-100': w.level === 'error',
+          }"
+        >
+          <svg
+            *ngIf="w.level === 'ok'"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 text-green-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+              clip-rule="evenodd"
+            />
           </svg>
-          <svg *ngIf="w.level === 'warn'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-600" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd"/>
+          <svg
+            *ngIf="w.level === 'warn'"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 text-yellow-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+              clip-rule="evenodd"
+            />
           </svg>
-          <svg *ngIf="w.level === 'error'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd"/>
+          <svg
+            *ngIf="w.level === 'error'"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 text-red-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+              clip-rule="evenodd"
+            />
           </svg>
         </div>
         <!-- Contenido -->
         <div class="flex-1 min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wide"
-             [ngClass]="{'text-green-700': w.level === 'ok', 'text-yellow-700': w.level === 'warn', 'text-red-700': w.level === 'error'}">
+          <p
+            class="text-xs font-semibold uppercase tracking-wide"
+            [ngClass]="{
+              'text-green-700': w.level === 'ok',
+              'text-yellow-700': w.level === 'warn',
+              'text-red-700': w.level === 'error',
+            }"
+          >
             {{ w.title }}
           </p>
-          <p class="text-2xl font-bold mt-0.5 leading-none"
-             [ngClass]="{'text-green-800': w.level === 'ok', 'text-yellow-800': w.level === 'warn', 'text-red-800': w.level === 'error'}">
+          <p
+            class="text-2xl font-bold mt-0.5 leading-none"
+            [ngClass]="{
+              'text-green-800': w.level === 'ok',
+              'text-yellow-800': w.level === 'warn',
+              'text-red-800': w.level === 'error',
+            }"
+          >
             {{ w.value }}
           </p>
-          <p class="text-xs mt-1"
-             [ngClass]="{'text-green-600': w.level === 'ok', 'text-yellow-600': w.level === 'warn', 'text-red-600': w.level === 'error'}">
+          <p
+            class="text-xs mt-1"
+            [ngClass]="{
+              'text-green-600': w.level === 'ok',
+              'text-yellow-600': w.level === 'warn',
+              'text-red-600': w.level === 'error',
+            }"
+          >
             {{ w.detail }}
           </p>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════
@@ -124,13 +235,19 @@
 
   <!-- KPI Cards -->
   <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-
     <div class="relative flex flex-col bg-white rounded-xl shadow-md overflow-hidden">
       <div class="h-1 bg-gradient-to-r from-blue-600 to-indigo-500"></div>
       <div class="p-5 flex items-center gap-4">
         <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-blue-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+            />
           </svg>
         </div>
         <div>
@@ -143,9 +260,18 @@
     <div class="relative flex flex-col bg-white rounded-xl shadow-md overflow-hidden">
       <div class="h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
       <div class="p-5 flex items-center gap-4">
-        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z"/>
+        <div
+          class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-indigo-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z"
+            />
           </svg>
         </div>
         <div>
@@ -159,8 +285,17 @@
       <div class="h-1 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
       <div class="p-5 flex items-center gap-4">
         <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-cyan-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-cyan-600" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 2.25a.75.75 0 000 1.5v16.5h-.75a.75.75 0 000 1.5H15v-18a.75.75 0 000-1.5H3zm14.25 6a.75.75 0 00-.75.75v11.25h3V9a.75.75 0 00-.75-.75h-1.5z" clip-rule="evenodd"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-cyan-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M3 2.25a.75.75 0 000 1.5v16.5h-.75a.75.75 0 000 1.5H15v-18a.75.75 0 000-1.5H3zm14.25 6a.75.75 0 00-.75.75v11.25h3V9a.75.75 0 00-.75-.75h-1.5z"
+              clip-rule="evenodd"
+            />
           </svg>
         </div>
         <div>
@@ -173,9 +308,20 @@
     <div class="relative flex flex-col bg-white rounded-xl shadow-md overflow-hidden">
       <div class="h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
       <div class="p-5 flex items-center gap-4">
-        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-purple-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.121-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z" clip-rule="evenodd"/>
+        <div
+          class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-purple-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-purple-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.121-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
+              clip-rule="evenodd"
+            />
           </svg>
         </div>
         <div>
@@ -184,15 +330,19 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- B: Gráfico Histórico Evolutivo (country_year) -->
   <div class="bg-white rounded-xl shadow-md overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
+    <div
+      class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white"
+    >
       <div>
         <p class="text-base font-semibold">Histórico de Artículos Publicados</p>
-        <p class="text-xs text-blue-100 mt-0.5">Evolución anual y acumulada · colección <code class="bg-white/20 rounded px-1">country_year</code></p>
+        <p class="text-xs text-blue-100 mt-0.5">
+          Evolución anual y acumulada · colección
+          <code class="bg-white/20 rounded px-1">country_year</code>
+        </p>
       </div>
     </div>
     <div class="p-4 overflow-x-auto">
@@ -207,7 +357,8 @@
         xAxisLabel="Año"
         yAxisLabel="Artículos"
         [timeline]="true"
-        [legend]="true">
+        [legend]="true"
+      >
       </ngx-charts-line-chart>
     </div>
   </div>
@@ -217,17 +368,23 @@
        ══════════════════════════════════════════════════════════════════ -->
 
   <div class="bg-white rounded-xl shadow-md overflow-hidden">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white"
+    >
       <div>
         <p class="text-base font-semibold">Top 10 Instituciones por Producción</p>
-        <p class="text-xs text-blue-100 mt-0.5">Colección <code class="bg-white/20 rounded px-1">affiliation</code> · campo <code class="bg-white/20 rounded px-1">total_articles</code></p>
+        <p class="text-xs text-blue-100 mt-0.5">
+          Colección <code class="bg-white/20 rounded px-1">affiliation</code> · campo
+          <code class="bg-white/20 rounded px-1">total_articles</code>
+        </p>
       </div>
       <div class="flex items-center gap-2 flex-shrink-0">
         <label class="text-xs text-blue-100 font-medium whitespace-nowrap">Filtrar por año:</label>
         <select
           class="text-sm text-gray-800 bg-white rounded-lg px-3 py-1.5 border-0 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none cursor-pointer"
           [ngModel]="selectedYear"
-          (ngModelChange)="onYearChange($event)">
+          (ngModelChange)="onYearChange($event)"
+        >
           <option *ngFor="let y of availableYears" [value]="y">{{ y }}</option>
         </select>
       </div>
@@ -236,24 +393,33 @@
     <div class="p-6 space-y-3">
       <ng-container *ngFor="let af of top10Affiliations; let i = index">
         <div class="flex items-center gap-3">
-          <span class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold"
-                [ngClass]="{
-                  'bg-yellow-400 text-white': i === 0,
-                  'bg-gray-300 text-gray-700': i === 1,
-                  'bg-amber-600 text-white':  i === 2,
-                  'bg-blue-100 text-blue-700': i > 2
-                }">
+          <span
+            class="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold"
+            [ngClass]="{
+              'bg-yellow-400 text-white': i === 0,
+              'bg-gray-300 text-gray-700': i === 1,
+              'bg-amber-600 text-white': i === 2,
+              'bg-blue-100 text-blue-700': i > 2,
+            }"
+          >
             {{ i + 1 }}
           </span>
-          <span class="w-36 text-sm font-medium text-gray-700 truncate flex-shrink-0" [title]="af.name">
+          <span
+            class="w-36 text-sm font-medium text-gray-700 truncate flex-shrink-0"
+            [title]="af.name"
+          >
             {{ af.name }}
           </span>
           <div class="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
             <div
               class="h-4 rounded-full transition-all duration-500"
               [style.width.%]="(af.total_articles / maxAffiliationArticles) * 100"
-              [style.background]="i < 3 ? 'linear-gradient(90deg,#1E3C8B,#3b82f6)' : 'linear-gradient(90deg,#3b82f6,#93c5fd)'">
-            </div>
+              [style.background]="
+                i < 3
+                  ? 'linear-gradient(90deg,#1E3C8B,#3b82f6)'
+                  : 'linear-gradient(90deg,#3b82f6,#93c5fd)'
+              "
+            ></div>
           </div>
           <span class="w-14 text-right text-sm font-bold text-gray-700 flex-shrink-0">
             {{ af.total_articles | number }}
@@ -268,7 +434,9 @@
        ══════════════════════════════════════════════════════════════════ -->
 
   <div class="bg-white rounded-xl shadow-md overflow-hidden">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white"
+    >
       <div>
         <p class="text-base font-semibold">Matriz de Concentración: Tópicos × Universidades</p>
         <p class="text-xs text-blue-100 mt-0.5">
@@ -282,7 +450,8 @@
         <select
           class="text-sm text-gray-800 bg-white rounded-lg px-3 py-1.5 border-0 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none cursor-pointer"
           [ngModel]="heatmapYear"
-          (ngModelChange)="onHeatmapYearChange($event)">
+          (ngModelChange)="onHeatmapYearChange($event)"
+        >
           <option *ngFor="let y of availableYears" [value]="y">{{ y }}</option>
         </select>
       </div>
@@ -292,22 +461,27 @@
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 px-6 pt-4 pb-1">
       <span class="text-xs text-gray-500 font-semibold">Producción:</span>
       <div class="flex items-center gap-1.5">
-        <div class="w-4 h-4 rounded" style="background:rgb(243,244,246);border:1px solid #e5e7eb"></div>
+        <div
+          class="w-4 h-4 rounded"
+          style="background: rgb(243, 244, 246); border: 1px solid #e5e7eb"
+        ></div>
         <span class="text-xs text-gray-400">0</span>
       </div>
       <div class="flex items-center gap-1.5">
-        <div class="w-4 h-4 rounded" style="background:rgb(219,234,254)"></div>
+        <div class="w-4 h-4 rounded" style="background: rgb(219, 234, 254)"></div>
         <span class="text-xs text-gray-400">Baja</span>
       </div>
       <div class="flex items-center gap-1.5">
-        <div class="w-4 h-4 rounded" style="background:rgb(96,150,197)"></div>
+        <div class="w-4 h-4 rounded" style="background: rgb(96, 150, 197)"></div>
         <span class="text-xs text-gray-400">Media</span>
       </div>
       <div class="flex items-center gap-1.5">
-        <div class="w-4 h-4 rounded" style="background:rgb(30,60,139)"></div>
+        <div class="w-4 h-4 rounded" style="background: rgb(30, 60, 139)"></div>
         <span class="text-xs text-gray-400">Alta</span>
       </div>
-      <span class="text-xs text-gray-400 italic">· Clic en encabezado de tópico para drill-down</span>
+      <span class="text-xs text-gray-400 italic"
+        >· Clic en encabezado de tópico para drill-down</span
+      >
     </div>
 
     <!-- Tabla heatmap con scroll horizontal -->
@@ -316,13 +490,24 @@
         <thead>
           <tr>
             <th class="heatmap-th-uni">Universidad</th>
-            <th *ngFor="let topic of sortedTopics"
-                class="heatmap-th-topic"
-                (click)="openTopicDrilldown(topic)"
-                [title]="'Ver detalle de ' + topic">
+            <th
+              *ngFor="let topic of sortedTopics"
+              class="heatmap-th-topic"
+              (click)="openTopicDrilldown(topic)"
+              [title]="'Ver detalle de ' + topic"
+            >
               <span class="topic-label">{{ topic }}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 inline-block ml-0.5 opacity-50" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M15.75 2.25H21a.75.75 0 01.75.75v5.25a.75.75 0 01-1.5 0V4.81L8.03 17.03a.75.75 0 01-1.06-1.06L19.19 3.75h-3.44a.75.75 0 010-1.5zm-10.5 4.5a1.5 1.5 0 00-1.5 1.5v10.5a1.5 1.5 0 001.5 1.5h10.5a1.5 1.5 0 001.5-1.5V10.5a.75.75 0 011.5 0v8.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V8.25a3 3 0 013-3h8.25a.75.75 0 010 1.5H5.25z" clip-rule="evenodd"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-2.5 h-2.5 inline-block ml-0.5 opacity-50"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M15.75 2.25H21a.75.75 0 01.75.75v5.25a.75.75 0 01-1.5 0V4.81L8.03 17.03a.75.75 0 01-1.06-1.06L19.19 3.75h-3.44a.75.75 0 010-1.5zm-10.5 4.5a1.5 1.5 0 00-1.5 1.5v10.5a1.5 1.5 0 001.5 1.5h10.5a1.5 1.5 0 001.5-1.5V10.5a.75.75 0 011.5 0v8.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V8.25a3 3 0 013-3h8.25a.75.75 0 010 1.5H5.25z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </th>
             <th class="heatmap-th-total">Total</th>
@@ -333,16 +518,21 @@
             <td class="heatmap-td-uni">
               <div class="flex items-center gap-2">
                 <span class="heatmap-rank">{{ i + 1 }}</span>
-                <span class="text-xs font-semibold text-gray-700 max-w-[90px] truncate" [title]="uni.name">
+                <span
+                  class="text-xs font-semibold text-gray-700 max-w-[90px] truncate"
+                  [title]="uni.name"
+                >
                   {{ uni.name }}
                 </span>
               </div>
             </td>
-            <td *ngFor="let topic of sortedTopics"
-                class="heatmap-td-data"
-                [style.background-color]="getCellColor(uni.cells[topic] ?? 0)"
-                [style.color]="getCellTextColor(uni.cells[topic] ?? 0)"
-                [title]="uni.name + ' · ' + topic + ': ' + (uni.cells[topic] ?? 0) + ' artículos'">
+            <td
+              *ngFor="let topic of sortedTopics"
+              class="heatmap-td-data"
+              [style.background-color]="getCellColor(uni.cells[topic] ?? 0)"
+              [style.color]="getCellTextColor(uni.cells[topic] ?? 0)"
+              [title]="uni.name + ' · ' + topic + ': ' + (uni.cells[topic] ?? 0) + ' artículos'"
+            >
               {{ uni.cells[topic] ?? 0 }}
             </td>
             <td class="heatmap-td-total">{{ uni.rowTotal | number }}</td>
@@ -359,7 +549,11 @@
   <div class="bg-white rounded-xl shadow-md overflow-hidden">
     <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
       <p class="text-base font-semibold">Mapa de Tópicos de Investigación</p>
-      <p class="text-xs text-blue-100 mt-0.5">Colección <code class="bg-white/20 rounded px-1">country_topics</code> · campos <code class="bg-white/20 rounded px-1">topic_name</code> · <code class="bg-white/20 rounded px-1">total_articles</code></p>
+      <p class="text-xs text-blue-100 mt-0.5">
+        Colección <code class="bg-white/20 rounded px-1">country_topics</code> · campos
+        <code class="bg-white/20 rounded px-1">topic_name</code> ·
+        <code class="bg-white/20 rounded px-1">total_articles</code>
+      </p>
     </div>
 
     <div class="p-4 overflow-x-auto">
@@ -368,23 +562,29 @@
         [view]="[chartWidth, 340]"
         [results]="topicsChartData"
         [scheme]="topicsColorScheme"
-        [animations]="true">
+        [animations]="true"
+      >
       </ngx-charts-tree-map>
     </div>
 
     <!-- Leyenda tabular -->
     <div class="px-6 pb-6">
-      <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">Detalle por tópico</p>
+      <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+        Detalle por tópico
+      </p>
       <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
-        <div *ngFor="let t of topicsChartData"
-             class="flex items-center justify-between gap-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-default">
-          <span class="text-xs text-gray-600 truncate font-medium" [title]="t.name">{{ t.name }}</span>
+        <div
+          *ngFor="let t of topicsChartData"
+          class="flex items-center justify-between gap-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-default"
+        >
+          <span class="text-xs text-gray-600 truncate font-medium" [title]="t.name">{{
+            t.name
+          }}</span>
           <span class="text-xs font-bold text-blue-700 flex-shrink-0">{{ t.value }}</span>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -392,43 +592,67 @@
      ══════════════════════════════════════════════════════════════════ -->
 <div *ngIf="showDrilldownModal" class="modal-overlay" (click)="closeDrilldown()">
   <div class="modal-card" (click)="$event.stopPropagation()">
-
     <!-- Header del modal -->
     <div class="flex items-start justify-between p-5 border-b border-gray-100">
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Detalle de Tópico · {{ heatmapYear }}</p>
+        <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">
+          Detalle de Tópico · {{ heatmapYear }}
+        </p>
         <h3 class="text-xl font-bold text-gray-800 mt-0.5">{{ selectedTopic }}</h3>
-        <p class="text-xs text-gray-400 mt-1">Producción de artículos por universidad · colección <code class="bg-gray-100 rounded px-1">affiliation_topics_year</code></p>
+        <p class="text-xs text-gray-400 mt-1">
+          Producción de artículos por universidad · colección
+          <code class="bg-gray-100 rounded px-1">affiliation_topics_year</code>
+        </p>
       </div>
-      <button (click)="closeDrilldown()"
-              class="flex-shrink-0 ml-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"/>
+      <button
+        (click)="closeDrilldown()"
+        class="flex-shrink-0 ml-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+            clip-rule="evenodd"
+          />
         </svg>
       </button>
     </div>
 
     <!-- Gráfico de barras (CSS) -->
-    <div class="p-5 space-y-3 overflow-y-auto" style="max-height:420px">
+    <div class="p-5 space-y-3 overflow-y-auto" style="max-height: 420px">
       <ng-container *ngFor="let item of drilldownUniversities; let i = index">
         <div class="flex items-center gap-3">
-          <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold"
-                [ngClass]="{
-                  'bg-yellow-400 text-white': i === 0,
-                  'bg-gray-300 text-gray-700': i === 1,
-                  'bg-amber-600 text-white':  i === 2,
-                  'bg-blue-100 text-blue-700': i > 2
-                }">{{ i + 1 }}</span>
-          <span class="w-28 text-sm font-semibold text-gray-700 truncate flex-shrink-0" [title]="item.name">
+          <span
+            class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold"
+            [ngClass]="{
+              'bg-yellow-400 text-white': i === 0,
+              'bg-gray-300 text-gray-700': i === 1,
+              'bg-amber-600 text-white': i === 2,
+              'bg-blue-100 text-blue-700': i > 2,
+            }"
+            >{{ i + 1 }}</span
+          >
+          <span
+            class="w-28 text-sm font-semibold text-gray-700 truncate flex-shrink-0"
+            [title]="item.name"
+          >
             {{ item.name }}
           </span>
           <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-            <div class="h-5 rounded-full transition-all duration-700"
-                 [style.width.%]="(item.total_articles / drilldownMax) * 100"
-                 [style.background]="i < 3
-                   ? 'linear-gradient(90deg,#1E3C8B,#3b82f6)'
-                   : 'linear-gradient(90deg,#3b82f6,#93c5fd)'">
-            </div>
+            <div
+              class="h-5 rounded-full transition-all duration-700"
+              [style.width.%]="(item.total_articles / drilldownMax) * 100"
+              [style.background]="
+                i < 3
+                  ? 'linear-gradient(90deg,#1E3C8B,#3b82f6)'
+                  : 'linear-gradient(90deg,#3b82f6,#93c5fd)'
+              "
+            ></div>
           </div>
           <span class="w-12 text-right text-sm font-bold text-gray-700 flex-shrink-0">
             {{ item.total_articles }}
@@ -439,11 +663,12 @@
 
     <!-- Footer del modal -->
     <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-end">
-      <button (click)="closeDrilldown()"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+      <button
+        (click)="closeDrilldown()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+      >
         Cerrar
       </button>
     </div>
-
   </div>
 </div>

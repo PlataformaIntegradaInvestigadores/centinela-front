@@ -82,8 +82,14 @@ export class FairnessDashboardComponent implements OnInit {
     this.fairnessService.getSummary().subscribe({
       next: (d) => {
         this.data = d;
-        this.alphaIdx = this.indexOfParam(d.model_mitigation.alpha_sweep.map((p) => p.alpha), d.model_mitigation.alpha_optimo);
-        this.lambdaIdx = this.indexOfParam(d.search_mitigation.lambda_sweep.map((p) => p.lambda), d.search_mitigation.lambda_optimo);
+        this.alphaIdx = this.indexOfParam(
+          d.model_mitigation.alpha_sweep.map((p) => p.alpha),
+          d.model_mitigation.alpha_optimo,
+        );
+        this.lambdaIdx = this.indexOfParam(
+          d.search_mitigation.lambda_sweep.map((p) => p.lambda),
+          d.search_mitigation.lambda_optimo,
+        );
         this.buildCharts(d);
         this.loading = false;
       },

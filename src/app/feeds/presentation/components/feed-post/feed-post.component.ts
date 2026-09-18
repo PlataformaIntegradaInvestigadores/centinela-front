@@ -1,15 +1,23 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, ElementRef, HostListener } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ElementRef,
+  HostListener,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { FeedPost } from '../../types/post.types';
-import { Comment } from '../../../domain/entities/feed.interface';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { FeedService } from '../../../domain/services/feed.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-feed-post',
   templateUrl: './feed-post.component.html',
-  styleUrls: ['./feed-post.component.css']
+  styleUrls: ['./feed-post.component.css'],
 })
 export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() post!: FeedPost;
@@ -23,8 +31,12 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() deletePost = new EventEmitter<string>();
   @Output() sharePost = new EventEmitter<FeedPost>();
   @Output() viewProfile = new EventEmitter<string>();
-  @Output() votePoll = new EventEmitter<{ pollId: string, optionId: string, isMultipleChoice: boolean }>();
-  @Output() editPost = new EventEmitter<{ postId: string, content: string, tags: string[] }>();
+  @Output() votePoll = new EventEmitter<{
+    pollId: string;
+    optionId: string;
+    isMultipleChoice: boolean;
+  }>();
+  @Output() editPost = new EventEmitter<{ postId: string; content: string; tags: string[] }>();
 
   showFullContent = false;
   showCommentsSection = false;
@@ -33,7 +45,7 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedMediaFile: any | null = null;
   selectedMediaIndex = 0;
   showFullMediaContent = false;
-  
+
   private observer: IntersectionObserver | null = null;
   private hasRecordedView = false;
 
@@ -41,8 +53,8 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     private authService: AuthService,
     private router: Router,
     private feedService: FeedService,
-    private el: ElementRef
-  ) { }
+    private el: ElementRef,
+  ) {}
 
   ngOnInit(): void {
     // Solo obtener el currentUserId si no se ha pasado como input
@@ -87,11 +99,11 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     const options = {
       root: null,
       rootMargin: '0px',
-      threshold: 0.5 // El 50% del post debe ser visible
+      threshold: 0.5, // El 50% del post debe ser visible
     };
 
     this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting && !this.hasRecordedView) {
           this.recordView();
         }
@@ -106,13 +118,13 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.observer) {
       this.observer.disconnect();
     }
-    
+
     this.feedService.recordUserInteraction(this.post.id, 'view').subscribe({
       next: () => {
         // Opcional: actualizar el contador localmente si se desea
         // this.post.views_count = (this.post.views_count || 0) + 1;
       },
-      error: (err) => console.error('Error recording view:', err)
+      error: (err) => console.error('Error recording view:', err),
     });
   }
 
@@ -142,7 +154,7 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     return postDate.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: 'short',
-      year: postDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      year: postDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
     });
   }
 
@@ -189,12 +201,18 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   getFileIcon(fileType: string): string {
     switch (fileType) {
-      case 'image': return 'fas fa-image';
-      case 'video': return 'fas fa-video';
-      case 'audio': return 'fas fa-music';
-      case 'document': return 'fas fa-file-alt';
-      case 'other': return 'fas fa-file';
-      default: return 'fas fa-file';
+      case 'image':
+        return 'fas fa-image';
+      case 'video':
+        return 'fas fa-video';
+      case 'audio':
+        return 'fas fa-music';
+      case 'document':
+        return 'fas fa-file-alt';
+      case 'other':
+        return 'fas fa-file';
+      default:
+        return 'fas fa-file';
     }
   }
 
@@ -245,12 +263,12 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Guarda los cambios de edición
    */
-  onSaveEdit(editData: { content: string, tags: string[] }): void {
+  onSaveEdit(editData: { content: string; tags: string[] }): void {
     console.log('feed-post: onSaveEdit called with data:', editData);
     this.editPost.emit({
       postId: this.post.id,
       content: editData.content,
-      tags: editData.tags
+      tags: editData.tags,
     });
     this.showEditModal = false;
     console.log('feed-post: edit event emitted and modal closed');
@@ -282,7 +300,6 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   navigateToProfile(): void {
     this.viewProfile.emit(this.post.author.id);
-
   }
 
   /**
@@ -300,12 +317,12 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   openMediaViewer(file: any): void {
     const images = this.imageFiles;
     const fileKey = file.id || file.file;
-    const index = images.findIndex(image => (image.id || image.file) === fileKey);
+    const index = images.findIndex((image) => (image.id || image.file) === fileKey);
 
     this.selectedMediaIndex = index >= 0 ? index : 0;
     this.selectedMediaFile = {
       ...images[this.selectedMediaIndex],
-      ...file
+      ...file,
     };
     this.showFullMediaContent = false;
     document.body.classList.add('modal-open');
@@ -334,7 +351,7 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get imageFiles(): any[] {
-    return (this.post.files || []).filter(file => this.isImageFile(file));
+    return (this.post.files || []).filter((file) => this.isImageFile(file));
   }
 
   get hasMultipleImages(): boolean {
@@ -425,7 +442,7 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     this.votePoll.emit({
       pollId: this.post.poll.id,
       optionId: option.id,
-      isMultipleChoice: this.post.poll.is_multiple_choice
+      isMultipleChoice: this.post.poll.is_multiple_choice,
     });
   }
 

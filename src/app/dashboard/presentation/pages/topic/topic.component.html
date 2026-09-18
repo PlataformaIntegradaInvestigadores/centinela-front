@@ -1,25 +1,42 @@
-<h1 class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900">Knowledge Area Search</h1>
-<app-search-bar (entity)="onSearchEntity($event)" code="topic" ph="Enter a knowledge area"></app-search-bar>
+<h1
+  class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900"
+>
+  Knowledge Area Search
+</h1>
+<app-search-bar
+  (entity)="onSearchEntity($event)"
+  code="topic"
+  ph="Enter a knowledge area"
+></app-search-bar>
 <app-dashboard-loader *ngIf="!isCharged()"></app-dashboard-loader>
 <div class="flex flex-col justify-center items-center p-3" *ngIf="tops">
   <div class="flex flex-col rounded-md border-2 border-blue-900 mb-3">
-    <h2 class="bg-blue-900 text-white flex justify-center items-center">Most investigated topics in Ecuador</h2>
-    <app-tree-map-chart [single]="tops" [width]="1400" [height]="500" [topic]="true" (selectedTopic)="onSearchEntity($event)"> </app-tree-map-chart>
+    <h2 class="bg-blue-900 text-white flex justify-center items-center">
+      Most investigated topics in Ecuador
+    </h2>
+    <app-tree-map-chart
+      [single]="tops"
+      [width]="1400"
+      [height]="500"
+      [topic]="true"
+      (selectedTopic)="onSearchEntity($event)"
+    >
+    </app-tree-map-chart>
   </div>
   <div class="flex flex-col justify-center border-2 border-blue-900 rounded-2">
     <h3 class="bg-blue-900 text-white flex justify-center items-center">More Statistics about:</h3>
     <div class="flex gap-x-5 px-5 pb-2">
       <div class="flex items-center justify-center gap-x-4">
         <div class="flex flex-col items-center justify-center" (click)="navigateGeneral()">
-          <div class="flex justify-center items-center" style="cursor: pointer;">
-            <mat-icon style="font-size: 40px; width: 50px; height: 50px;">public</mat-icon>
+          <div class="flex justify-center items-center" style="cursor: pointer">
+            <mat-icon style="font-size: 40px; width: 50px; height: 50px">public</mat-icon>
           </div>
           <dd class="font-light">General</dd>
         </div>
 
         <div class="flex flex-col items-center justify-center" (click)="navigateAffiliation()">
-          <div class="flex justify-center items-center" style="cursor: pointer;">
-            <mat-icon style="font-size: 40px; width: 50px; height: 50px;">apartment</mat-icon>
+          <div class="flex justify-center items-center" style="cursor: pointer">
+            <mat-icon style="font-size: 40px; width: 50px; height: 50px">apartment</mat-icon>
           </div>
           <dd class="font-light">Affiliations</dd>
         </div>

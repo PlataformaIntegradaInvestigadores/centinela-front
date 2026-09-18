@@ -1,10 +1,14 @@
-<div class="rounded-2xl w-full max-w-72 mat-elevation-z8 h-fit bg-white overflow-hidden flex flex-col relative">
+<div
+  class="rounded-2xl w-full max-w-64 mat-elevation-z8 h-fit bg-white overflow-hidden flex flex-col relative"
+>
   <!-- Top decorative line -->
   <div class="h-1 w-full bg-gradient-to-r from-red-600 to-blue-600"></div>
 
   <!-- Title -->
-  <div class="text-center py-7 font-bold border-b border-gray-200 flex justify-center items-center gap-2 bg-gray-50 text-gray-800">
-    <span class="tracking-[0.18em] text-lg">{{ title }}</span>
+  <div
+    class="text-center py-4 font-bold border-b border-gray-200 flex justify-center items-center gap-2 bg-gray-50 text-gray-800"
+  >
+    <span class="tracking-[0.15em] text-sm uppercase">{{ title }}</span>
     <app-mini-loader *ngIf="isLoading && !isFirstLoad"></app-mini-loader>
   </div>
 
@@ -32,8 +36,11 @@
   </div>
 
   <!-- Actual Content (Hidden on first load) -->
-  <div *ngIf="!isFirstLoad" class="flex flex-col w-full transition-opacity duration-300"
-       [ngClass]="{'opacity-40 pointer-events-none': isDisabled}">
+  <div
+    *ngIf="!isFirstLoad"
+    class="flex flex-col w-full transition-opacity duration-300"
+    [ngClass]="{ 'opacity-40 pointer-events-none': isDisabled }"
+  >
     <ng-content></ng-content>
   </div>
 </div>

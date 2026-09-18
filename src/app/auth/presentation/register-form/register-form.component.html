@@ -2,49 +2,74 @@
   <!-- First and Last Name -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="flex flex-col space-y-1">
-      <label for="modal-firstName" class="px-2 text-sm font-semibold text-gray-500">First Name *</label>
-      <input 
-        formControlName="first_name" 
-        type="text" 
+      <label for="modal-firstName" class="px-2 text-sm font-semibold text-gray-500"
+        >First Name *</label
+      >
+      <input
+        formControlName="first_name"
+        type="text"
         id="modal-firstName"
         class="p-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-        [class.border-red-500]="registerForm.get('first_name')?.errors && registerForm.get('first_name')?.touched"
-        (keypress)="preventNonAlphabetic($event)" 
-        (input)="capitalizeInput($event)" 
+        [class.border-red-500]="
+          registerForm.get('first_name')?.errors && registerForm.get('first_name')?.touched
+        "
+        (keypress)="preventNonAlphabetic($event)"
+        (input)="capitalizeInput($event)"
       />
-      <div *ngIf="registerForm.get('first_name')?.errors && registerForm.get('first_name')?.touched" class="text-red-500 text-xs">
-        <div *ngIf="registerForm.get('first_name')?.hasError('required')">First Name is required.</div>
+      <div
+        *ngIf="registerForm.get('first_name')?.errors && registerForm.get('first_name')?.touched"
+        class="text-red-500 text-xs"
+      >
+        <div *ngIf="registerForm.get('first_name')?.hasError('required')">
+          First Name is required.
+        </div>
       </div>
     </div>
 
     <div class="flex flex-col space-y-1">
-      <label for="modal-lastName" class="px-2 text-sm font-semibold text-gray-500">Last Name *</label>
-      <input 
-        formControlName="last_name" 
-        type="text" 
+      <label for="modal-lastName" class="px-2 text-sm font-semibold text-gray-500"
+        >Last Name *</label
+      >
+      <input
+        formControlName="last_name"
+        type="text"
         id="modal-lastName"
         class="p-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-        [class.border-red-500]="registerForm.get('last_name')?.errors && registerForm.get('last_name')?.touched"
-        (keypress)="preventNonAlphabetic($event)" 
-        (input)="capitalizeInput($event)" 
+        [class.border-red-500]="
+          registerForm.get('last_name')?.errors && registerForm.get('last_name')?.touched
+        "
+        (keypress)="preventNonAlphabetic($event)"
+        (input)="capitalizeInput($event)"
       />
-      <div *ngIf="registerForm.get('last_name')?.errors && registerForm.get('last_name')?.touched" class="text-red-500 text-xs">
-        <div *ngIf="registerForm.get('last_name')?.hasError('required')">Last Name is required.</div>
+      <div
+        *ngIf="registerForm.get('last_name')?.errors && registerForm.get('last_name')?.touched"
+        class="text-red-500 text-xs"
+      >
+        <div *ngIf="registerForm.get('last_name')?.hasError('required')">
+          Last Name is required.
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Email -->
   <div class="flex flex-col space-y-1">
-    <label for="modal-register-username" class="px-2 text-sm font-semibold text-gray-500">Email Address *</label>
-    <input 
-      formControlName="username" 
-      type="email" 
+    <label for="modal-register-username" class="px-2 text-sm font-semibold text-gray-500"
+      >Email Address *</label
+    >
+    <input
+      formControlName="username"
+      type="email"
       id="modal-register-username"
       class="p-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-      [class.border-red-500]="registerForm.get('username')?.errors && registerForm.get('username')?.touched"
+      [class.border-red-500]="
+        registerForm.get('username')?.errors && registerForm.get('username')?.touched
+      "
     />
-    <div *ngIf="registerForm.get('username')?.errors && registerForm.get('username')?.touched" class="text-red-500 text-xs">
+    <div
+      *ngIf="registerForm.get('username')?.errors && registerForm.get('username')?.touched"
+      class="text-red-500 text-xs"
+    >
       <div *ngIf="registerForm.get('username')?.hasError('required')">Email is required.</div>
       <div *ngIf="registerForm.get('username')?.hasError('email')">Invalid email address.</div>
     </div>
@@ -53,57 +78,154 @@
   <!-- Passwords -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="flex flex-col space-y-1">
-      <label for="modal-register-password" class="px-2 text-sm font-semibold text-gray-500">Password *</label>
+      <label for="modal-register-password" class="px-2 text-sm font-semibold text-gray-500"
+        >Password *</label
+      >
       <div class="relative">
-        <input 
-          formControlName="password" 
-          [type]="showPassword ? 'text' : 'password'" 
+        <input
+          formControlName="password"
+          [type]="showPassword ? 'text' : 'password'"
           id="modal-register-password"
           class="w-full p-2 pr-10 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-          [class.border-red-500]="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
+          [class.border-red-500]="
+            registerForm.get('password')?.errors && registerForm.get('password')?.touched
+          "
         />
         <button
           type="button"
           class="password-toggle"
           [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
-          (click)="togglePasswordVisibility()">
-          <svg *ngIf="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          (click)="togglePasswordVisibility()"
+        >
+          <svg
+            *ngIf="!showPassword"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
           </svg>
-          <svg *ngIf="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.88 4.49A8.8 8.8 0 0112 4.25C18 4.25 21.75 12 21.75 12a18.8 18.8 0 01-3.03 4.12"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.61 6.61C3.85 8.47 2.25 12 2.25 12S6 19.75 12 19.75c1.38 0 2.65-.32 3.8-.84"></path>
+          <svg
+            *ngIf="showPassword"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 3l18 18"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.88 4.49A8.8 8.8 0 0112 4.25C18 4.25 21.75 12 21.75 12a18.8 18.8 0 01-3.03 4.12"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6.61 6.61C3.85 8.47 2.25 12 2.25 12S6 19.75 12 19.75c1.38 0 2.65-.32 3.8-.84"
+            ></path>
           </svg>
         </button>
       </div>
     </div>
     <div class="flex flex-col space-y-1">
-      <label for="modal-confirmPassword" class="px-2 text-sm font-semibold text-gray-500">Confirm Password *</label>
+      <label for="modal-confirmPassword" class="px-2 text-sm font-semibold text-gray-500"
+        >Confirm Password *</label
+      >
       <div class="relative">
-        <input 
-          formControlName="confirm_password" 
-          [type]="showConfirmPassword ? 'text' : 'password'" 
+        <input
+          formControlName="confirm_password"
+          [type]="showConfirmPassword ? 'text' : 'password'"
           id="modal-confirmPassword"
           class="w-full p-2 pr-10 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-          [class.border-red-500]="registerForm.get('confirm_password')?.errors && registerForm.get('confirm_password')?.touched"
+          [class.border-red-500]="
+            registerForm.get('confirm_password')?.errors &&
+            registerForm.get('confirm_password')?.touched
+          "
         />
         <button
           type="button"
           class="password-toggle"
-          [attr.aria-label]="showConfirmPassword ? 'Hide password confirmation' : 'Show password confirmation'"
-          (click)="toggleConfirmPasswordVisibility()">
-          <svg *ngIf="!showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          [attr.aria-label]="
+            showConfirmPassword ? 'Hide password confirmation' : 'Show password confirmation'
+          "
+          (click)="toggleConfirmPasswordVisibility()"
+        >
+          <svg
+            *ngIf="!showConfirmPassword"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
           </svg>
-          <svg *ngIf="showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.88 4.49A8.8 8.8 0 0112 4.25C18 4.25 21.75 12 21.75 12a18.8 18.8 0 01-3.03 4.12"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.61 6.61C3.85 8.47 2.25 12 2.25 12S6 19.75 12 19.75c1.38 0 2.65-.32 3.8-.84"></path>
+          <svg
+            *ngIf="showConfirmPassword"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 3l18 18"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.88 4.49A8.8 8.8 0 0112 4.25C18 4.25 21.75 12 21.75 12a18.8 18.8 0 01-3.03 4.12"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6.61 6.61C3.85 8.47 2.25 12 2.25 12S6 19.75 12 19.75c1.38 0 2.65-.32 3.8-.84"
+            ></path>
           </svg>
         </button>
       </div>
@@ -114,73 +236,122 @@
     <div
       *ngFor="let rule of passwordChecklist"
       class="password-rule"
-      [class.password-rule-valid]="rule.passed">
+      [class.password-rule-valid]="rule.passed"
+    >
       <span class="password-rule-icon">{{ rule.passed ? '✓' : '•' }}</span>
       <span>{{ rule.label }}</span>
     </div>
   </div>
 
   <!-- Password validation messages -->
-  <div *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched" class="text-red-500 text-xs">
+  <div
+    *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
+    class="text-red-500 text-xs"
+  >
     <div *ngIf="registerForm.get('password')?.hasError('required')">Password is required.</div>
-    <div *ngIf="registerForm.get('password')?.hasError('minlength')">Password must be at least 8 characters long.</div>
-    <div *ngIf="registerForm.get('password')?.hasError('pattern')">Password must contain at least one uppercase letter, one lowercase letter and one number.</div>
+    <div *ngIf="registerForm.get('password')?.hasError('minlength')">
+      Password must be at least 8 characters long.
+    </div>
+    <div *ngIf="registerForm.get('password')?.hasError('pattern')">
+      Password must contain at least one uppercase letter, one lowercase letter and one number.
+    </div>
   </div>
 
-  <div *ngIf="registerForm.get('confirm_password')?.errors && registerForm.get('confirm_password')?.touched" class="text-red-500 text-xs">
-    <div *ngIf="registerForm.get('confirm_password')?.hasError('required')">Confirm Password is required.</div>
-    <div *ngIf="registerForm.get('confirm_password')?.hasError('mismatch')">Passwords do not match.</div>
+  <div
+    *ngIf="
+      registerForm.get('confirm_password')?.errors && registerForm.get('confirm_password')?.touched
+    "
+    class="text-red-500 text-xs"
+  >
+    <div *ngIf="registerForm.get('confirm_password')?.hasError('required')">
+      Confirm Password is required.
+    </div>
+    <div *ngIf="registerForm.get('confirm_password')?.hasError('mismatch')">
+      Passwords do not match.
+    </div>
   </div>
 
   <!-- Scopus ID -->
   <div class="flex flex-col space-y-1">
-    <label for="modal-scopusID" class="px-2 text-sm font-semibold text-gray-500">Scopus ID (optional)</label>
-    <input 
-      formControlName="scopus_id" 
-      type="text" 
+    <label for="modal-scopusID" class="px-2 text-sm font-semibold text-gray-500"
+      >Scopus ID (optional)</label
+    >
+    <input
+      formControlName="scopus_id"
+      type="text"
       id="modal-scopusID"
       class="p-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-      pattern="^[0-9]*$" 
-      (keypress)="preventNonNumeric($event)" 
+      pattern="^[0-9]*$"
+      (keypress)="preventNonNumeric($event)"
     />
-    <div *ngIf="registerForm.get('scopus_id')?.hasError('pattern') && registerForm.get('scopus_id')?.touched" class="text-red-500 text-xs">
+    <div
+      *ngIf="
+        registerForm.get('scopus_id')?.hasError('pattern') && registerForm.get('scopus_id')?.touched
+      "
+      class="text-red-500 text-xs"
+    >
       Scopus ID must be a positive number.
     </div>
   </div>
 
   <!-- Terms agreement -->
   <div class="flex items-center space-x-2">
-    <input 
-      formControlName="agree_terms" 
-      type="checkbox" 
+    <input
+      formControlName="agree_terms"
+      type="checkbox"
       id="modal-agree_terms"
-      class="w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200" 
+      class="w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
     />
     <label for="modal-agree_terms" class="text-sm font-semibold text-gray-500">
-      I agree to the <a href="#" class="underline text-blue-600 hover:text-blue-800">terms</a> and 
+      I agree to the <a href="#" class="underline text-blue-600 hover:text-blue-800">terms</a> and
       <a href="#" class="underline text-blue-600 hover:text-blue-800">conditions</a>
     </label>
   </div>
-  <div *ngIf="registerForm.get('agree_terms')?.errors && registerForm.get('agree_terms')?.touched" class="text-red-500 text-xs">
+  <div
+    *ngIf="registerForm.get('agree_terms')?.errors && registerForm.get('agree_terms')?.touched"
+    class="text-red-500 text-xs"
+  >
     You must agree to the terms and conditions.
   </div>
 
   <!-- Submit button -->
   <div>
-    <button 
+    <button
       type="submit"
       [disabled]="isLoading"
-      class="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg shadow-md hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+      class="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg shadow-md hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+    >
       <span *ngIf="!isLoading" class="flex items-center justify-center">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+          ></path>
         </svg>
         Create Account
       </span>
       <span *ngIf="isLoading" class="flex items-center justify-center">
-        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg
+          class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         Creating Account...
       </span>
@@ -188,7 +359,10 @@
   </div>
 
   <!-- Error messages -->
-  <div *ngIf="errorMessages.length > 0" class="mt-4 bg-red-100 border border-red-400 text-red-700 rounded p-3">
+  <div
+    *ngIf="errorMessages.length > 0"
+    class="mt-4 bg-red-100 border border-red-400 text-red-700 rounded p-3"
+  >
     <p class="font-bold">Errors:</p>
     <ul class="list-disc list-inside">
       <li *ngFor="let errorMessage of errorMessages" class="mt-1">

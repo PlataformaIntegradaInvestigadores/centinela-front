@@ -10,12 +10,15 @@ import { ContactComponent } from './profile/presentation/components/contact/cont
 import { ArticleComponent } from './profile/presentation/components/article/article.component';
 import { FingerprintComponent } from './profile/presentation/components/fingerprint/fingerprint.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { HomePageModule } from "./search-engine/presentation/home-page/home-page.module";
+import { HomePageModule } from './search-engine/presentation/home-page/home-page.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import {BrowserAnimationsModule, NoopAnimationsModule} from "@angular/platform-browser/animations";
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AboutUsModule } from './search-engine/presentation/about-us/about-us.module';
 import { AboutUsRoutingModule } from './search-engine/presentation/about-us/about-us.routing.module';
@@ -30,7 +33,8 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { MfaCodeInputComponent } from './auth/presentation/mfa-code-input/mfa-code-input.component';
 import { MfaEnrollmentFormComponent } from './auth/presentation/mfa-enrollment-form/mfa-enrollment-form.component';
 import { MfaVerifyFormComponent } from './auth/presentation/mfa-verify-form/mfa-verify-form.component';
-@NgModule({  declarations: [
+@NgModule({
+  declarations: [
     AppComponent,
     NetworkComponent,
     ContactComponent,
@@ -62,15 +66,15 @@ import { MfaVerifyFormComponent } from './auth/presentation/mfa-verify-form/mfa-
     AboutUsModule,
     AboutUsRoutingModule,
     FormsModule,
-    MatTableModule
+    MatTableModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

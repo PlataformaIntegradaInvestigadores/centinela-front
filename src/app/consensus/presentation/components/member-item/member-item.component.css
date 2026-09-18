@@ -1,22 +1,22 @@
 /* Colores base para el botón y el SVG */
 #messageButton {
-    color: '#1E3C8B'; /* Color inicial del SVG */
-    border-color:'#1E3C8B'; /* Color del borde */
+  color: '#1E3C8B'; /* Color inicial del SVG */
+  border-color: '#1E3C8B'; /* Color del borde */
 }
 
 /* Colores al pasar el ratón por encima */
 #messageButton:hover {
-    background-color:'#1E3C8B'; /* Fondo azul al hacer hover */
-    color: white; /* SVG y texto en blanco al hacer hover */
+  background-color: '#1E3C8B'; /* Fondo azul al hacer hover */
+  color: white; /* SVG y texto en blanco al hacer hover */
 }
 
 /* Estilos adicionales para modo oscuro, si es necesario */
 #messageButton.dark {
-    border-color: '#1E3C8B'; /* Borde en modo oscuro */
-    color: '#1E3C8B'; /* Texto y SVG en modo oscuro */
+  border-color: '#1E3C8B'; /* Borde en modo oscuro */
+  color: '#1E3C8B'; /* Texto y SVG en modo oscuro */
 }
 
 #messageButton.dark:hover {
-    background-color: '#1E3C8B'; /* Fondo azul en hover en modo oscuro */
-    color: white; /* Texto y SVG en blanco en hover en modo oscuro */
+  background-color: '#1E3C8B'; /* Fondo azul en hover en modo oscuro */
+  color: white; /* Texto y SVG en blanco en hover en modo oscuro */
 }

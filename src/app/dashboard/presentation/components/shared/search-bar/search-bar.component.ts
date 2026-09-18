@@ -1,22 +1,23 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {debounceTime, distinctUntilChanged, Subject, Subscription, switchMap} from "rxjs";
-import {SuggestionService} from "../../../../domain/services/suggestion.service";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+import { SuggestionService } from '../../../../domain/services/suggestion.service';
+import { AffiliationInfo, TopicInfo } from '../../../../../shared/interfaces/dashboard.interface';
 
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.css']
+  styleUrls: ['./search-bar.component.css'],
 })
 export class SearchBarComponent implements OnInit {
   private debouncerSubscription?: Subscription;
   searchQuery: string = '';
-  affiliations: any[] = [];
-  topics: any[] = [];
-  provinces: any[] = []
+  affiliations: AffiliationInfo[] = [];
+  topics: TopicInfo[] = [];
+  provinces: any[] = [];
   searchTerms = new Subject<string>();
   showSuggestions: boolean = false;
   @Input()
-  ph!:string
+  ph!: string;
 
   @Output()
   entity: EventEmitter<string> = new EventEmitter<string>();
@@ -33,31 +34,23 @@ export class SearchBarComponent implements OnInit {
     switch (this.code) {
       case 'affiliation':
         this.debouncerSubscription = this.searchTerms
-          .pipe(
-            debounceTime(1000),
-            distinctUntilChanged(),
-          ).subscribe(query => {
-              this.suggestionService.searchAffiliations(query).subscribe(affs => {
-                  this.affiliations = affs;
-                  this.showSuggestions = true;
-                }
-              )
-            }
-          );
+          .pipe(debounceTime(1000), distinctUntilChanged())
+          .subscribe((query) => {
+            this.suggestionService.searchAffiliations(query).subscribe((affs) => {
+              this.affiliations = affs;
+              this.showSuggestions = true;
+            });
+          });
         break;
       case 'topic':
         this.debouncerSubscription = this.searchTerms
-          .pipe(
-            debounceTime(1000),
-            distinctUntilChanged(),
-          ).subscribe(query => {
-              this.suggestionService.searchTopics(query).subscribe(tops => {
-                  this.topics = tops;
-                  this.showSuggestions = true;
-                }
-              )
-            }
-          );
+          .pipe(debounceTime(1000), distinctUntilChanged())
+          .subscribe((query) => {
+            this.suggestionService.searchTopics(query).subscribe((tops) => {
+              this.topics = tops;
+              this.showSuggestions = true;
+            });
+          });
         break;
     }
   }
@@ -71,7 +64,7 @@ export class SearchBarComponent implements OnInit {
   }
 
   onBlur(): void {
-    setTimeout(() => this.showSuggestions = false, 200); // Para permitir clics en sugerencias
+    setTimeout(() => (this.showSuggestions = false), 200); // Para permitir clics en sugerencias
   }
 
   emitEntity(entity: string): void {
@@ -81,12 +74,12 @@ export class SearchBarComponent implements OnInit {
     this.entity.emit(entity);
   }
 
-  selectSuggestion(entity: any): void {
-    switch (this.code){
+  selectSuggestion(entity: AffiliationInfo | TopicInfo): void {
+    switch (this.code) {
       case 'affiliation':
         this.searchQuery = `${entity.name}`;
         this.showSuggestions = false;
-        this.emitEntity(entity.scopus_id.toString());
+        this.emitEntity((entity as AffiliationInfo).scopus_id.toString());
         break;
       case 'topic':
         this.searchQuery = `${entity.name}`;

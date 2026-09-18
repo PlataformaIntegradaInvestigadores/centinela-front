@@ -1,39 +1,38 @@
 import {
   AfterViewInit,
-  Component, ElementRef,
+  Component,
+  ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges, ViewChild,
-  ViewContainerRef
+  ViewChild,
 } from '@angular/core';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
-import {LineChartInfo, NameValue} from "../../../interfaces/dashboard.interface";
+import { LineChartInfo, NameValue } from '../../../interfaces/dashboard.interface';
 
 @Component({
   selector: 'app-evolution-line-chart',
   templateUrl: './evolution-line-chart.component.html',
-  styleUrls: ['./evolution-line-chart.component.css']
+  styleUrls: ['./evolution-line-chart.component.css'],
 })
-export class EvolutionLineChartComponent implements OnInit, OnChanges, AfterViewInit{
+export class EvolutionLineChartComponent implements OnInit, AfterViewInit {
   @Input() multi!: LineChartInfo[];
-  multi1!:LineChartInfo[];
+  multi1!: LineChartInfo[];
   @Input() width!: number;
   @Input() height: number = 250;
 
   @Input()
-  general:Boolean = false
+  general: boolean = false;
   @Input()
-  affiliation:Boolean = false
+  affiliation: boolean = false;
   @Input()
-  topic:Boolean = false
+  topic: boolean = false;
 
   @ViewChild('ContainerRef')
   cont!: ElementRef<HTMLInputElement>;
-  drawed: boolean = false
-  view!:[number, number]
+  drawed: boolean = false;
+  view!: [number, number];
   @Output() selectedYear = new EventEmitter<any>();
   @Input() boolean = false;
 
@@ -52,7 +51,7 @@ export class EvolutionLineChartComponent implements OnInit, OnChanges, AfterView
     name: 'custom',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#0000ff']
+    domain: ['#0000ff'],
   };
 
   ngOnInit() {
@@ -61,13 +60,8 @@ export class EvolutionLineChartComponent implements OnInit, OnChanges, AfterView
   }
 
   ngAfterViewInit() {
-    this.view = [this.cont.nativeElement.offsetWidth, this.height]
-    this.drawed = true
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if(changes['multi']){
-    }
+    this.view = [this.cont.nativeElement.offsetWidth, this.height];
+    this.drawed = true;
   }
 
   onSelect(event: NameValue): void {
@@ -78,7 +72,6 @@ export class EvolutionLineChartComponent implements OnInit, OnChanges, AfterView
   onResize(event: any) {
     this.view = [event.target.cont.nativeElement.offsetWidth - 50, this.height];
   }
-
 
   protected readonly window = window;
 }

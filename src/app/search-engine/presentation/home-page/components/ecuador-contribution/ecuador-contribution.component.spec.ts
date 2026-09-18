@@ -13,9 +13,8 @@ describe('EcuadorContributionComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [EcuadorContributionComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule]
-    ,
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(EcuadorContributionComponent);
     component = fixture.componentInstance;

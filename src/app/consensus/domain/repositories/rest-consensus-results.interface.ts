@@ -4,8 +4,8 @@ export interface RESTConsensusResult {
 }
 
 export interface Result {
-  id_topic:    number;
-  topic_name:  string;
+  id_topic: number;
+  topic_name: string;
   final_value: number;
-  labels:      string[];
+  labels: string[];
 }

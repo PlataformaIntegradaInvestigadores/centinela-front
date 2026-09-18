@@ -13,9 +13,8 @@ describe('ConfirmDeleteModalComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ConfirmDeleteModalComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule]
-    ,
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(ConfirmDeleteModalComponent);
     component = fixture.componentInstance;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Group } from '../../domain/entities/group.interface';
 import { ModalService } from '../../domain/services/modalService.service';
@@ -7,11 +7,9 @@ import { TopicService } from 'src/app/consensus/domain/services/TopicDataService
 @Component({
   selector: 'card-group',
   templateUrl: './card-group.component.html',
-  styleUrls: ['./card-group.component.css']
+  styleUrls: ['./card-group.component.css'],
 })
-export class CardGroupComponent  {
-
-
+export class CardGroupComponent implements OnChanges {
   @Input() group: Group | undefined;
   @Input() isOwner: boolean = false;
   @Output() navigate = new EventEmitter<Group>();
@@ -22,15 +20,14 @@ export class CardGroupComponent  {
   currentPhase: string | null = null;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private modalService: ModalService,
-    private topicService: TopicService) 
-  {
-    this.modalService.modalOpen$.subscribe(isOpen => this.modalOpen = isOpen);
+    private topicService: TopicService,
+  ) {
+    this.modalService.modalOpen$.subscribe((isOpen) => (this.modalOpen = isOpen));
   }
 
   ngOnChanges(): void {
-
     if (this.group) {
       this.getCurrentPhase(this.group.id);
     }
@@ -38,21 +35,25 @@ export class CardGroupComponent  {
 
   getCurrentPhase(groupId: string): void {
     this.topicService.getUserCurrentPhase(groupId).subscribe(
-      response => {
+      (response) => {
         this.currentPhase = this.transformPhase(response.phase);
       },
-      error => {
+      (error) => {
         console.error('Error fetching current phase:', error);
-      }
+      },
     );
   }
-  
+
   transformPhase(phase: number): string {
-    switch(phase) {
-      case 0: return '1 of 3';
-      case 1: return '2 of 3';
-      case 2: return '3 of 3 complete';
-      default: return 'Unknown phase';
+    switch (phase) {
+      case 0:
+        return '1 of 3';
+      case 1:
+        return '2 of 3';
+      case 2:
+        return '3 of 3 complete';
+      default:
+        return 'Unknown phase';
     }
   }
 
@@ -69,5 +70,4 @@ export class CardGroupComponent  {
   onGroupLeaveed(groupId: string) {
     this.groupLeaveed.emit(groupId);
   }
-
 }

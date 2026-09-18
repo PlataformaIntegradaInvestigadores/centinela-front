@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-filters-sidebar',
-  templateUrl: './filters-sidebar.component.html'
+  templateUrl: './filters-sidebar.component.html',
 })
 export class FiltersSidebarComponent {
   @Input() title: string = 'FILTERS';

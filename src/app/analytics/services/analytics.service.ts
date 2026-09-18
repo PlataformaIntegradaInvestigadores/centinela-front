@@ -38,44 +38,55 @@ export interface RankingResponse {
 }
 
 export interface ModelPerformance {
-    mae: number;
-    rmse: number;
+  mae: number;
+  rmse: number;
 }
 
 export interface ModelDetailsResponse {
-    model_type: string;
-    training_data_range: string;
-    target_variable: string;
-    total_affiliations: number;
-    performance_metrics: ModelPerformance;
-    feature_importances: { [key: string]: number };
+  model_type: string;
+  training_data_range: string;
+  target_variable: string;
+  total_affiliations: number;
+  performance_metrics: ModelPerformance;
+  feature_importances: { [key: string]: number };
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AnalyticsService {
   private apiUrl = environment.apiPredictive;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAffiliations(): Observable<AffiliationListResponse> {
     return this.http.get<AffiliationListResponse>(`${this.apiUrl}/affiliations`);
   }
 
-  getProjection(affiliationName: string, projectionYears: number, hypotheticalAuthors?: number): Observable<ProjectionResponse> {
-    let params: any = { projection_years: projectionYears };
+  getProjection(
+    affiliationName: string,
+    projectionYears: number,
+    hypotheticalAuthors?: number,
+  ): Observable<ProjectionResponse> {
+    const params: { projection_years: number; hypothetical_authors?: number } = {
+      projection_years: projectionYears,
+    };
     if (hypotheticalAuthors !== null && hypotheticalAuthors !== undefined) {
       params.hypothetical_authors = hypotheticalAuthors;
     }
-    return this.http.get<ProjectionResponse>(`${this.apiUrl}/projection/${affiliationName}`, { params });
+    return this.http.get<ProjectionResponse>(`${this.apiUrl}/projection/${affiliationName}`, {
+      params,
+    });
   }
-  
-  getComparison(affiliationNames: string[], projectionYears: number): Observable<ComparisonResponse> {
+
+  getComparison(
+    affiliationNames: string[],
+    projectionYears: number,
+  ): Observable<ComparisonResponse> {
     const body = { affiliation_names: affiliationNames };
     return this.http.post<ComparisonResponse>(
       `${this.apiUrl}/projection/compare?projection_years=${projectionYears}`,
-      body
+      body,
     );
   }
 

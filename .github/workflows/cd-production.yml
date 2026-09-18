@@ -5,34 +5,32 @@ on:
     branches: [main]
 
 jobs:
-  # ── Tests Angular ────────────────────────────────────────────────────────
+  # ── Tests ──────────────────────────────────────────────────────────────────
   test:
     name: Pruebas unitarias (Karma/Jasmine)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: "18"
+          node-version: '18'
           cache: npm
-      - name: Instalar Chromium
-        run: sudo apt-get install -y chromium-browser
       - name: Instalar dependencias
-        run: npm ci
+        run: npm ci --no-audit --no-fund
       - name: Ejecutar tests
         env:
-          CHROME_BIN: /usr/bin/chromium-browser
+          CHROME_BIN: /usr/bin/google-chrome-stable
         run: |
           npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox \
             --no-progress --code-coverage
       - name: Subir reporte de cobertura
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report-prod
           path: coverage/
 
-  # ── Deploy producción ────────────────────────────────────────────────────
+  # ── Deploy producción ────────────────────────────────────────────────────────
   deploy-production:
     name: Deploy a servidor producción
     runs-on: [self-hosted, production]
@@ -40,14 +38,14 @@ jobs:
     steps:
       - name: Actualizar código
         run: |
-          cd /opt/centinela/frontend-app
+          cd /opt/centinela/centinela-front
           git fetch origin main
           git reset --hard origin/main
 
       - name: Reconstruir contenedor
         run: |
           cd /opt/centinela
-          docker compose up -d --build --no-deps angular-app
+          docker compose up -d --build --no-deps centinela-front
 
       - name: Health check con rollback automático
         run: |
@@ -63,8 +61,8 @@ jobs:
           done
           if [ "$HEALTHY" = "false" ]; then
             echo "Health check fallido — rollback al commit anterior"
-            cd /opt/centinela/frontend-app && git reset --hard HEAD~1
-            cd /opt/centinela && docker compose up -d --build --no-deps angular-app
+            cd /opt/centinela/centinela-front && git reset --hard HEAD~1
+            cd /opt/centinela && docker compose up -d --build --no-deps centinela-front
             exit 1
           fi
           echo "Deploy exitoso — frontend-app en producción"

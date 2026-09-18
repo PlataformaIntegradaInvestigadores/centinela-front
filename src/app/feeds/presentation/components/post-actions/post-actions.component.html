@@ -3,15 +3,26 @@
   <!-- Stats -->
   <div class="px-4 py-1.5" *ngIf="post.likes_count > 0 || post.comments_count > 0">
     <div class="flex items-center justify-between text-[11px] text-gray-500">
-      <div class="flex items-center gap-1 hover:text-red-500 transition-colors cursor-pointer group" *ngIf="post.likes_count > 0">
-        <div class="w-3.5 h-3.5 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+      <div
+        class="flex items-center gap-1 hover:text-red-500 transition-colors cursor-pointer group"
+        *ngIf="post.likes_count > 0"
+      >
+        <div
+          class="w-3.5 h-3.5 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors"
+        >
           <i class="fas fa-heart text-red-500 text-[8px]"></i>
         </div>
         <span class="font-medium text-gray-700">{{ post.likes_count }}</span>
-        <span>{{ post.likes_count === 1 ? 'persona le gusta esto' : 'personas les gusta esto' }}</span>
+        <span>{{
+          post.likes_count === 1 ? 'persona le gusta esto' : 'personas les gusta esto'
+        }}</span>
       </div>
-      
-      <div class="flex items-center gap-1 hover:text-blue-600 transition-colors cursor-pointer" *ngIf="post.comments_count > 0" (click)="onCommentToggle()">
+
+      <div
+        class="flex items-center gap-1 hover:text-blue-600 transition-colors cursor-pointer"
+        *ngIf="post.comments_count > 0"
+        (click)="onCommentToggle()"
+      >
         <span class="font-medium text-gray-700">{{ post.comments_count }}</span>
         <span>{{ post.comments_count === 1 ? 'comentario' : 'comentarios' }}</span>
       </div>
@@ -20,26 +31,33 @@
 
   <!-- Action Buttons -->
   <div class="flex items-center px-1 py-0.5 border-t border-gray-100" *ngIf="showActions">
-    <button 
+    <button
       class="flex-1 flex items-center justify-center py-1.5 mx-0.5 rounded-md text-[12px] font-semibold transition-all duration-200 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed group"
       [ngClass]="{
         'text-red-600': post.is_liked,
-        'text-gray-600': !post.is_liked
+        'text-gray-600': !post.is_liked,
       }"
       [disabled]="isLiking"
-      (click)="onLikeClick()">
-      <i [ngClass]="{
-        'fas fa-heart scale-110': post.is_liked,
-        'far fa-heart group-hover:scale-110': !post.is_liked
-      }" class="mr-1.5 text-[14px] transition-transform duration-200"></i>
+      (click)="onLikeClick()"
+    >
+      <i
+        [ngClass]="{
+          'fas fa-heart scale-110': post.is_liked,
+          'far fa-heart group-hover:scale-110': !post.is_liked,
+        }"
+        class="mr-1.5 text-[14px] transition-transform duration-200"
+      ></i>
       <span>{{ post.is_liked ? 'Me gusta' : 'Me gusta' }}</span>
     </button>
 
-    <button 
+    <button
       class="flex-1 flex items-center justify-center py-1.5 mx-0.5 rounded-md text-[12px] font-semibold text-gray-600 transition-all duration-200 hover:bg-gray-100 group"
       *ngIf="showComments"
-      (click)="onCommentToggle()">
-      <i class="far fa-comment mr-1.5 text-[14px] group-hover:scale-110 transition-transform duration-200"></i>
+      (click)="onCommentToggle()"
+    >
+      <i
+        class="far fa-comment mr-1.5 text-[14px] group-hover:scale-110 transition-transform duration-200"
+      ></i>
       <span>Comentar</span>
     </button>
   </div>

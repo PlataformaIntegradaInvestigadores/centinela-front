@@ -2,14 +2,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Result } from 'src/app/consensus/domain/repositories/rest-consensus-results.interface';
 import { TopicService } from 'src/app/consensus/domain/services/TopicDataService.service';
 
-
 @Component({
   selector: 'consensus-algorithm-selector',
   templateUrl: './algorithm-selector.component.html',
   styleUrls: ['./algorithm-selector.component.css'],
 })
 export class AlgorithmSelectorComponent implements OnInit {
-
   selectedAlgorithm: string = 'Positional Voting';
   compareAlgorithm: string = 'Non Positional Voting';
   @Input() groupId: string = '';
@@ -18,17 +16,19 @@ export class AlgorithmSelectorComponent implements OnInit {
 
   showModal: boolean = false;
 
-  constructor(
-    private topicService: TopicService,
-  ) { }
+  constructor(private topicService: TopicService) {}
 
   ngOnInit(): void {
-    this.topicService.getConsensusResultsByVotingType(this.groupId, 'positional-voting').subscribe((results) => {
-      this.rankings = results;
-    });
-    this.topicService.getConsensusResultsByVotingType(this.groupId, 'non-positional-voting').subscribe((results) => {
-      this.compareRankings = results;
-    });
+    this.topicService
+      .getConsensusResultsByVotingType(this.groupId, 'positional-voting')
+      .subscribe((results) => {
+        this.rankings = results;
+      });
+    this.topicService
+      .getConsensusResultsByVotingType(this.groupId, 'non-positional-voting')
+      .subscribe((results) => {
+        this.compareRankings = results;
+      });
   }
 
   calculateRankings(algorithm: string): Result[] {
@@ -49,7 +49,10 @@ export class AlgorithmSelectorComponent implements OnInit {
   }
 
   differenceValue(topic: Result): number {
-    return this.getRankingIndex(topic, this.compareAlgorithm) - this.getRankingIndex(topic, this.selectedAlgorithm)
+    return (
+      this.getRankingIndex(topic, this.compareAlgorithm) -
+      this.getRankingIndex(topic, this.selectedAlgorithm)
+    );
   }
 
   openModal(): void {

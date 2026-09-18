@@ -4,7 +4,7 @@ import { Job } from 'src/app/jobs/domain/entities/job.interface';
 @Component({
   selector: 'app-job-list',
   templateUrl: './job-list.component.html',
-  styleUrls: ['./job-list.component.css']
+  styleUrls: ['./job-list.component.css'],
 })
 export class JobListComponent {
   @Input() jobs: Job[] = [];

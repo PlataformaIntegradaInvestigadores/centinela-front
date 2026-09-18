@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -17,17 +17,15 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private title: Title,
     private tokenMonitorService: TokenMonitorService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle("Welcome");
+    this.title.setTitle('Welcome');
     initFlowbite();
-    
+
     // Suscribirse a eventos de refresh de token para reiniciar el monitoreo
-    this.authService.tokenRefresh$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
+    this.authService.tokenRefresh$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.tokenMonitorService.restartMonitoring();
     });
   }

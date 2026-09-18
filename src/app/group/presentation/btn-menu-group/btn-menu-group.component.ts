@@ -1,8 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { ModalService } from '../../domain/services/modalService.service';
-import { GetGroupsService } from '../../domain/services/getGroupsUser.service';
 import { GroupService } from '../../domain/entities/group.service';
-
 
 @Component({
   selector: 'btn-menu-group',
@@ -10,7 +8,6 @@ import { GroupService } from '../../domain/entities/group.service';
   styleUrls: ['./btn-menu-group.component.css'],
 })
 export class BtnMenuGroupComponent {
-
   @Input() isOwner: boolean = false;
   @Input() groupId: string = '';
   @Output() groupDeleted = new EventEmitter<string>();
@@ -20,13 +17,12 @@ export class BtnMenuGroupComponent {
   showDeleteGroupModal = false;
   modalOpen: boolean = false;
 
-  constructor(private groupService: GroupService, private modalService: ModalService) {
-    this.modalService.modalOpen$.subscribe(isOpen => this.modalOpen = isOpen);
+  constructor(
+    private groupService: GroupService,
+    private modalService: ModalService,
+  ) {
+    this.modalService.modalOpen$.subscribe((isOpen) => (this.modalOpen = isOpen));
   }
-
-  ngOnChanges(): void {
-  }
-
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -47,7 +43,7 @@ export class BtnMenuGroupComponent {
     this.groupService.leaveGroup(this.groupId).subscribe(() => {
       this.showConfirmLeaveModal = false;
       this.modalService.setModalOpen(false);
-      this.groupLeaveed.emit(this.groupId);  // Emitir un evento para notificar al componente padre
+      this.groupLeaveed.emit(this.groupId); // Emitir un evento para notificar al componente padre
       window.location.reload();
     });
   }
@@ -61,8 +57,8 @@ export class BtnMenuGroupComponent {
     this.groupService.deleteGroup(this.groupId).subscribe(() => {
       this.showDeleteGroupModal = false;
       this.modalService.setModalOpen(false);
-      this.groupDeleted.emit(this.groupId);  // Emitir un evento para notificar al componente padre
-      window.location.reload();  // Recargar la página después de eliminar el grupo
+      this.groupDeleted.emit(this.groupId); // Emitir un evento para notificar al componente padre
+      window.location.reload(); // Recargar la página después de eliminar el grupo
     });
   }
 
@@ -73,12 +69,12 @@ export class BtnMenuGroupComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-  if (this.menuOpen) {
-    const targetElement = event.target as HTMLElement;
-    if (!targetElement.closest('.relative')) {
-      this.menuOpen = false;
-      this.modalService.setModalOpen(false);
+    if (this.menuOpen) {
+      const targetElement = event.target as HTMLElement;
+      if (!targetElement.closest('.relative')) {
+        this.menuOpen = false;
+        this.modalService.setModalOpen(false);
+      }
     }
   }
-}
 }

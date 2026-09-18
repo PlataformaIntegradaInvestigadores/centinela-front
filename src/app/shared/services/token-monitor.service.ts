@@ -5,16 +5,16 @@ import { Subject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenMonitorService implements OnDestroy {
   private destroy$ = new Subject<void>();
-  private checkInterval: any;
+  private checkInterval: ReturnType<typeof setInterval> | undefined;
   private warningShown = false;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.startTokenMonitoring();
   }
@@ -46,7 +46,7 @@ export class TokenMonitorService implements OnDestroy {
     }
 
     const timeUntilExpiration = this.authService.getTokenExpirationTime();
-    
+
     // Si el token ha expirado
     if (timeUntilExpiration <= 0) {
       this.handleTokenExpired();
@@ -80,23 +80,26 @@ export class TokenMonitorService implements OnDestroy {
    */
   private attemptTokenRefresh(): void {
     console.log('Attempting to refresh token...');
-    
-    this.authService.refreshToken().pipe(
-      takeUntil(this.destroy$),
-      catchError((error) => {
-        console.error('Failed to refresh token:', error);
-        this.handleTokenExpired();
-        throw error;
-      })
-    ).subscribe({
-      next: (response) => {
-        console.log('Token refreshed successfully');
-        this.warningShown = false; // Reset warning flag
-      },
-      error: (error) => {
-        console.error('Token refresh failed:', error);
-      }
-    });
+
+    this.authService
+      .refreshToken()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError((error) => {
+          console.error('Failed to refresh token:', error);
+          this.handleTokenExpired();
+          throw error;
+        }),
+      )
+      .subscribe({
+        next: () => {
+          console.log('Token refreshed successfully');
+          this.warningShown = false; // Reset warning flag
+        },
+        error: (error) => {
+          console.error('Token refresh failed:', error);
+        },
+      });
   }
 
   /**
@@ -104,10 +107,10 @@ export class TokenMonitorService implements OnDestroy {
    */
   private showExpirationWarning(): void {
     this.warningShown = true;
-    
+
     // Solo mostrar en console por ahora, puedes integrar con un servicio de notificaciones
     console.warn('Session will expire soon. Activity detected, attempting to refresh token...');
-    
+
     // Opcional: Mostrar una notificación toast
     // this.notificationService.showWarning('Tu sesión expirará pronto. Se renovará automáticamente.');
   }
@@ -118,7 +121,7 @@ export class TokenMonitorService implements OnDestroy {
   private showExpiredMessage(): void {
     // Opcional: Mostrar una notificación toast
     console.warn('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-    
+
     // Si tienes un servicio de notificaciones:
     // this.notificationService.showError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
   }

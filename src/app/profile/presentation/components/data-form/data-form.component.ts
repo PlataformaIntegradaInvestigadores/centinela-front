@@ -4,7 +4,7 @@ import { AuthService } from 'src/app/auth/domain/services/auth.service';
 @Component({
   selector: 'app-data-form',
   templateUrl: './data-form.component.html',
-  styleUrls: ['./data-form.component.css']
+  styleUrls: ['./data-form.component.css'],
 })
 export class DataFormComponent implements OnInit {
   @Input() user: any;
@@ -26,7 +26,7 @@ export class DataFormComponent implements OnInit {
     email_institution: '',
   };
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     if (this.user) {
@@ -87,21 +87,20 @@ export class DataFormComponent implements OnInit {
 
     if (this.selectedFile) {
       formData.append('profile_picture', this.selectedFile, this.selectedFile.name);
-      console.log('Profile picture:', this.selectedFile);  // Asegúrate de que esto muestra la imagen seleccionada
+      console.log('Profile picture:', this.selectedFile); // Asegúrate de que esto muestra la imagen seleccionada
     }
 
-
     this.authService.updateUser(formData).subscribe(
-      response => {
+      (response) => {
         console.log('User updated successfully', response);
         this.formSubmitted.emit();
         this.errorMessage = null;
         window.location.reload();
       },
-      error => {
+      (error) => {
         this.errorMessage = error.message;
         console.error('There was an error updating the user!', error);
-      }
+      },
     );
   }
 
@@ -130,12 +129,14 @@ export class DataFormComponent implements OnInit {
    * @returns Verdadero si la URL es válida, falso en caso contrario.
    */
   isValidURL(url: string): boolean {
-    const urlPattern = new RegExp('^(https?:\\/\\/)?' +
-      '((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|' +
-      '((\\d{1,3}\\.){3}\\d{1,3}))' +
-      '(\\:\\d+)?(\\/[-a-zA-Z0-9@:%._\\+~#=]*)*' +
-      '(\\?[;&a-zA-Z0-9@:%._\\+~#=]*)?' +
-      '(\\#[-a-zA-Z0-9_]*)?$');
+    const urlPattern = new RegExp(
+      '^(https?:\\/\\/)?' +
+        '((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-zA-Z0-9@:%._\\+~#=]*)*' +
+        '(\\?[;&a-zA-Z0-9@:%._\\+~#=]*)?' +
+        '(\\#[-a-zA-Z0-9_]*)?$',
+    );
     return urlPattern.test(url);
   }
 

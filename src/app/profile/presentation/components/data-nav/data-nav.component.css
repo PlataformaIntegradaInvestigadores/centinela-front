@@ -37,7 +37,7 @@
 /* Active state styling - Enhanced specificity */
 a.nav-link.active,
 .nav-item a.nav-link.active,
-.nav-link[routerLinkActive="active"].active {
+.nav-link[routerLinkActive='active'].active {
   background-color: #1e3c8b !important;
   color: white !important;
   border-color: #1e3c8b !important;
@@ -48,20 +48,20 @@ a.nav-link.active,
 /* Active state for icons - Enhanced specificity */
 a.nav-link.active .nav-icon img,
 .nav-item a.nav-link.active .nav-icon img,
-.nav-link[routerLinkActive="active"].active .nav-icon img {
+.nav-link[routerLinkActive='active'].active .nav-icon img {
   filter: brightness(0) invert(1) !important;
 }
 
 /* Active state for text - Enhanced specificity */
 a.nav-link.active span,
 .nav-item a.nav-link.active span,
-.nav-link[routerLinkActive="active"].active span {
+.nav-link[routerLinkActive='active'].active span {
   color: white !important;
 }
 
 /* Global override for Angular Router Active states in profile navigation */
 app-data-nav .nav-link.active,
-app-data-nav a[routerLinkActive="active"].active,
+app-data-nav a[routerLinkActive='active'].active,
 app-data-nav .nav-item .nav-link.active {
   background-color: #1e3c8b !important;
   color: #ffffff !important;
@@ -72,13 +72,13 @@ app-data-nav .nav-item .nav-link.active {
 
 /* Override for icons in active state */
 app-data-nav .nav-link.active .nav-icon img,
-app-data-nav a[routerLinkActive="active"].active .nav-icon img {
+app-data-nav a[routerLinkActive='active'].active .nav-icon img {
   filter: brightness(0) invert(1) !important;
 }
 
 /* Override for text in active state */
 app-data-nav .nav-link.active span,
-app-data-nav a[routerLinkActive="active"].active span {
+app-data-nav a[routerLinkActive='active'].active span {
   color: #ffffff !important;
 }
 
@@ -136,7 +136,7 @@ app-data-nav a[routerLinkActive="active"].active span {
 /* Enhanced active state for bottom border */
 a.nav-link.active::before,
 .nav-item a.nav-link.active::before,
-.nav-link[routerLinkActive="active"].active::before {
+.nav-link[routerLinkActive='active'].active::before {
   transform: scaleX(1) !important;
 }
 

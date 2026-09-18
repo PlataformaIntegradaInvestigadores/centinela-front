@@ -2,34 +2,62 @@
 <div class="container mx-auto mb-2 rounded-xl border p-6 shadow-md bg-white">
   <div class="flex justify-between items-start mb-2">
     <h2 class="text-2xl font-semibold text-gray-800">About Me</h2>
-    <img *ngIf="isOwnProfile" src="assets/pencil-solid.svg" alt="Edit" class="cursor-pointer w-4 h-4"
-      (click)="toggleEditAboutMe()">
+    <img
+      *ngIf="isOwnProfile"
+      src="assets/pencil-solid.svg"
+      alt="Edit"
+      class="cursor-pointer w-4 h-4"
+      (click)="toggleEditAboutMe()"
+    />
   </div>
   <div *ngIf="!isEditing">
-    <p class="block text-sm text-justify text-gray-700" *ngIf="hasAboutMeContent(); else aboutMePlaceholder">
+    <p
+      class="block text-sm text-justify text-gray-700"
+      *ngIf="hasAboutMeContent(); else aboutMePlaceholder"
+    >
       {{ userInfo.about_me }}
     </p>
     <ng-template #aboutMePlaceholder>
-      <p class="text-sm text-gray-500">Please add some information about yourself to make your profile more appealing.
+      <p class="text-sm text-gray-500">
+        Please add some information about yourself to make your profile more appealing.
       </p>
     </ng-template>
   </div>
   <div *ngIf="isEditing">
     <label for="aboutMe" class="sr-only">About Me</label>
-    <textarea id="aboutMe" [(ngModel)]="editableUserInfo.about_me" class="w-full border rounded p-3 mb-3"
-      placeholder="Describe yourself" [attr.aria-label]="'About Me'"></textarea>
+    <textarea
+      id="aboutMe"
+      [(ngModel)]="editableUserInfo.about_me"
+      class="w-full border rounded p-3 mb-3"
+      placeholder="Describe yourself"
+      [attr.aria-label]="'About Me'"
+    ></textarea>
     <div class="flex space-x-3">
-      <button (click)="save()" 
-        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5">
+      <button
+        (click)="save()"
+        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5"
+      >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          ></path>
         </svg>
         Save
       </button>
-      <button (click)="cancel()" 
-        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg border border-gray-300 shadow-sm hover:bg-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200">
+      <button
+        (click)="cancel()"
+        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg border border-gray-300 shadow-sm hover:bg-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
+      >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
         </svg>
         Cancel
       </button>

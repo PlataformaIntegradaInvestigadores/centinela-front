@@ -2,27 +2,25 @@
   <div>Update Authors</div>
   <
 </div>
-<button
-class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
->
-Actualizar
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Actualizar
 </button>
 <div class="text-center">
-<div *ngIf="loading" class="mb-4">
-  <mat-spinner></mat-spinner>
-</div>
-<div
-  *ngIf="!loading && integrationStatus?.success"
-  class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-  role="alert"
->
-  <p>{{ integrationStatus?.message }}</p>
-</div>
-<div
-  *ngIf="!loading && !integrationStatus?.success"
-  class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-  role="alert"
->
-  <p>{{ integrationStatus?.message }}</p>
-</div>
+  <div *ngIf="loading" class="mb-4">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div
+    *ngIf="!loading && integrationStatus?.success"
+    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+    role="alert"
+  >
+    <p>{{ integrationStatus?.message }}</p>
+  </div>
+  <div
+    *ngIf="!loading && !integrationStatus?.success"
+    class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+    role="alert"
+  >
+    <p>{{ integrationStatus?.message }}</p>
+  </div>
 </div>

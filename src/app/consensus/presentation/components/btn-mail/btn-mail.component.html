@@ -1,8 +1,18 @@
-<a id="messageButton"  [href]="'mailto:' + (member?.username || 'example@example.com')"
-        class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-2 ml-1 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
-            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <title>{{ member?.username }}</title>
-            <path d="M64 128Q64 113 73 105 81 96 96 96L416 96Q431 96 440 105 448 113 448 128L448 144 256 272 64 144 64 128ZM256 328L448 200 448 384Q448 416 416 416L96 416Q64 416 64 384L64 200 256 328Z" />
-            </svg>
+<a
+  id="messageButton"
+  [href]="'mailto:' + (member?.username || 'example@example.com')"
+  class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-2 ml-1 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+>
+  <svg
+    fill="currentColor"
+    width="16px"
+    height="16px"
+    viewBox="0 0 512 512"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title>{{ member?.username }}</title>
+    <path
+      d="M64 128Q64 113 73 105 81 96 96 96L416 96Q431 96 440 105 448 113 448 128L448 144 256 272 64 144 64 128ZM256 328L448 200 448 384Q448 416 416 416L96 416Q64 416 64 384L64 200 256 328Z"
+    />
+  </svg>
 </a>
-

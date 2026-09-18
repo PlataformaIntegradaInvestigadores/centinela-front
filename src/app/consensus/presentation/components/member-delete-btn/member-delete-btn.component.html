@@ -1,29 +1,56 @@
 <!-- Botón de eliminar -->
-<button style="border: solid #1E3C8B 1px !important"
-        id="deleteButton-{{member?.id}}" (click)="openModal()" type="button"
-        class="ml-1.5 text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-2 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
-  <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
+<button
+  style="border: solid #1e3c8b 1px !important"
+  id="deleteButton-{{ member?.id }}"
+  (click)="openModal()"
+  type="button"
+  class="ml-1.5 text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-2 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+>
+  <svg
+    class="w-4 h-4"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path
+      d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"
+    />
   </svg>
   <span class="sr-only">Open deleted message</span>
 </button>
 
 <!-- Modal -->
-<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+<div
+  *ngIf="showModal"
+  class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
+>
   <div class="bg-white rounded-lg shadow-lg p-6 w-80 dark:bg-gray-800 lg:w-[425px] max-h-56">
     <div class="flex justify-between items-center mb-4 h-8">
       <h3 class="text-lg font-bold dark:text-white">Confirm Your Decision</h3>
-      <button (click)="closeModal()"
-        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+      <button
+        (click)="closeModal()"
+        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
         &times;
       </button>
     </div>
-    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure you want to remove this user? This action is irreversible and cannot be undone.</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+      Are you sure you want to remove this user? This action is irreversible and cannot be undone.
+    </p>
     <div class="flex justify-end space-x-4">
-      <button (click)="closeModal()"
-        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
-      <button (click)="deleteMember()"
-        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800">Confirm</button>
+      <button
+        (click)="closeModal()"
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="deleteMember()"
+        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800"
+      >
+        Confirm
+      </button>
     </div>
   </div>
 </div>

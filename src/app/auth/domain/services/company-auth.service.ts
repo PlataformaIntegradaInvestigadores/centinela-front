@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap, switchMap, map } from 'rxjs/operators';
+import { catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Company, LoginCredentials, AuthResponse, CompanyUpdate } from '../entities/interfaces';
+import { Company, LoginCredentials, AuthResponse } from '../entities/interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CompanyAuthService {
   private apiUrl = environment.apiIdentity;
@@ -19,9 +19,9 @@ export class CompanyAuthService {
    * @returns Un Observable que emite la respuesta del registro.
    */
   register(company: Company): Observable<any> {
-    return this.http.post(`${this.apiUrl}/companies/register/`, company).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .post(`${this.apiUrl}/companies/register/`, company)
+      .pipe(catchError(this.handleError));
   }
 
   /**
@@ -30,9 +30,9 @@ export class CompanyAuthService {
    * @returns Un Observable que emite la respuesta del inicio de sesión.
    */
   login(credentials: LoginCredentials): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/companies/token/`, credentials).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/companies/token/`, credentials)
+      .pipe(catchError(this.handleError));
   }
 
   /**
@@ -41,19 +41,19 @@ export class CompanyAuthService {
    * @returns Un Observable que emite el perfil de la empresa.
    */
   getCompanyProfile(companyId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/companies/${companyId}/`, {
-      headers: this.getAuthHeaders()
-    }).pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          // Token expirado, intentar refrescar
-          return this.refreshToken().pipe(
-            switchMap(() => this.getCompanyProfile(companyId))
-          );
-        }
-        return this.handleError(error);
+    return this.http
+      .get(`${this.apiUrl}/companies/${companyId}/`, {
+        headers: this.getAuthHeaders(),
       })
-    );
+      .pipe(
+        catchError((error) => {
+          if (error.status === 401) {
+            // Token expirado, intentar refrescar
+            return this.refreshToken().pipe(switchMap(() => this.getCompanyProfile(companyId)));
+          }
+          return this.handleError(error);
+        }),
+      );
   }
 
   /**
@@ -61,18 +61,18 @@ export class CompanyAuthService {
    * @returns Un Observable que emite el perfil de la empresa.
    */
   getMyProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/companies/profile/`, {
-      headers: this.getAuthHeaders()
-    }).pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          return this.refreshToken().pipe(
-            switchMap(() => this.getMyProfile())
-          );
-        }
-        return this.handleError(error);
+    return this.http
+      .get(`${this.apiUrl}/companies/profile/`, {
+        headers: this.getAuthHeaders(),
       })
-    );
+      .pipe(
+        catchError((error) => {
+          if (error.status === 401) {
+            return this.refreshToken().pipe(switchMap(() => this.getMyProfile()));
+          }
+          return this.handleError(error);
+        }),
+      );
   }
 
   /**
@@ -82,20 +82,22 @@ export class CompanyAuthService {
    * @returns Un Observable que emite la respuesta de la actualización.
    */
   updateProfile(companyId: string, formData: FormData): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/companies/${companyId}/update/`, formData, {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+    return this.http
+      .patch(`${this.apiUrl}/companies/${companyId}/update/`, formData, {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        }),
       })
-    }).pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          return this.refreshToken().pipe(
-            switchMap(() => this.updateProfile(companyId, formData))
-          );
-        }
-        return this.handleError(error);
-      })
-    );
+      .pipe(
+        catchError((error) => {
+          if (error.status === 401) {
+            return this.refreshToken().pipe(
+              switchMap(() => this.updateProfile(companyId, formData)),
+            );
+          }
+          return this.handleError(error);
+        }),
+      );
   }
 
   /**
@@ -103,20 +105,20 @@ export class CompanyAuthService {
    * @param verifiedOnly - Si solo incluir empresas verificadas.
    * @returns Un Observable que emite la lista de empresas.
    */
-  listCompanies(verifiedOnly: boolean = false): Observable<any[]> {
+  listCompanies(verifiedOnly: boolean = false): Observable<Company[]> {
     const params = verifiedOnly ? '?verified_only=true' : '';
-    return this.http.get<any[]>(`${this.apiUrl}/companies/${params}`, {
-      headers: this.getAuthHeaders()
-    }).pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          return this.refreshToken().pipe(
-            switchMap(() => this.listCompanies(verifiedOnly))
-          );
-        }
-        return this.handleError(error);
+    return this.http
+      .get<Company[]>(`${this.apiUrl}/companies/${params}`, {
+        headers: this.getAuthHeaders(),
       })
-    );
+      .pipe(
+        catchError((error) => {
+          if (error.status === 401) {
+            return this.refreshToken().pipe(switchMap(() => this.listCompanies(verifiedOnly)));
+          }
+          return this.handleError(error);
+        }),
+      );
   }
 
   /**
@@ -128,11 +130,13 @@ export class CompanyAuthService {
     if (!refreshToken) {
       return throwError(() => new Error('Refresh token not found'));
     }
-    return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh/`, { refresh: refreshToken }).pipe(
-      tap(response => {
-        localStorage.setItem('accessToken', response.access);
-      })
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/token/refresh/`, { refresh: refreshToken })
+      .pipe(
+        tap((response) => {
+          localStorage.setItem('accessToken', response.access);
+        }),
+      );
   }
 
   /**
@@ -142,7 +146,7 @@ export class CompanyAuthService {
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
   }
 
@@ -151,9 +155,9 @@ export class CompanyAuthService {
    * @param error - El error de la petición HTTP.
    * @returns Un Observable que emite el error procesado.
    */
-  private handleError(error: any): Observable<never> {
+  private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Error del cliente
       errorMessage = `Error: ${error.error.message}`;
@@ -164,7 +168,7 @@ export class CompanyAuthService {
         const errors = error.error.errors;
         const errorMessages = [];
         for (const field in errors) {
-          if (errors.hasOwnProperty(field)) {
+          if (Object.prototype.hasOwnProperty.call(errors, field)) {
             errorMessages.push(...errors[field]);
           }
         }
@@ -177,7 +181,7 @@ export class CompanyAuthService {
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
     }
-    
+
     return throwError(() => new Error(errorMessage));
   }
 }

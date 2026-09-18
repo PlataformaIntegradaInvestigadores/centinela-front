@@ -1,20 +1,18 @@
 /* Estilos para enlaces activos */
 .active {
-    background-color: #1E3C8B;
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    color: #fff;
-    border-radius: 12px;
+  background-color: #1e3c8b;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  color: #fff;
+  border-radius: 12px;
 }
 
-
-
 .active svg {
-    fill: #fff; /* El SVG también se mantiene blanco */
+  fill: #fff; /* El SVG también se mantiene blanco */
 }
 
 .cursor-default {
-    cursor: default;
-  }
+  cursor: default;
+}

@@ -1,17 +1,17 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { Group } from 'src/app/group/domain/entities/group.interface';
+import { UserG } from 'src/app/group/domain/entities/user.interface';
 
 @Component({
   selector: 'members-consensus',
   templateUrl: './members-consensus.component.html',
-  styleUrls: ['./members-consensus.component.css']
+  styleUrls: ['./members-consensus.component.css'],
 })
-
-export class MembersConsensusComponent implements OnInit {
+export class MembersConsensusComponent implements OnInit, OnChanges {
   @Input() group: Group | null = null;
   idOwnerGroup: string | null = null;
-  selectedUser: any = null; // Para almacenar el usuario seleccionado
+  selectedUser: UserG | null = null; // Para almacenar el usuario seleccionado
   successMessage: string | null = null; // Añadir successMessage
 
   ngOnInit(): void {
@@ -35,7 +35,7 @@ export class MembersConsensusComponent implements OnInit {
 
   onMemberDeleted(memberId: string): void {
     if (this.group && this.group.users) {
-      this.group.users = this.group.users.filter(member => member.id !== memberId);
+      this.group.users = this.group.users.filter((member) => member.id !== memberId);
       this.successMessage = 'Member has been removed successfully.';
       setTimeout(() => {
         this.successMessage = null;

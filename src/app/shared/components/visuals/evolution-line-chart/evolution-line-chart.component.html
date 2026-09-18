@@ -1,4 +1,4 @@
-<div *ngIf="boolean" class="flex justify-center items-start overflow-hidden w-full  h-[200px]">
+<div *ngIf="boolean" class="flex justify-center items-start overflow-hidden w-full h-[200px]">
   <ngx-charts-line-chart
     [view]="[width, height]"
     [showXAxisLabel]="showXAxisLabel"
@@ -10,28 +10,14 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 
 <div *ngIf="!boolean && general" class="hidden xl:block" #ContainerRef>
   <ngx-charts-line-chart
-          [view]="[window.innerWidth*0.7, height]"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [scheme]="colorScheme"
-          [xAxis]="xAxis"
-          [yAxis]="yAxis"
-          [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          [timeline]="timeline"
-          [results]="multi"
-          (select)="onSelect($event)">
-  </ngx-charts-line-chart>
-</div>
-<div *ngIf="!boolean && general" class="hidden md:block xl:hidden" #ContainerRef>
-  <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.9, height]"
+    [view]="[window.innerWidth * 0.7, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -41,13 +27,30 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
+  </ngx-charts-line-chart>
+</div>
+<div *ngIf="!boolean && general" class="hidden md:block xl:hidden" #ContainerRef>
+  <ngx-charts-line-chart
+    [view]="[window.innerWidth * 0.9, height]"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [scheme]="colorScheme"
+    [xAxis]="xAxis"
+    [yAxis]="yAxis"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [timeline]="timeline"
+    [results]="multi"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 
 <div *ngIf="!boolean && general" class="block md:hidden" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.95, height]"
+    [view]="[window.innerWidth * 0.95, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -57,14 +60,15 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 
 <!--affiliation-->
 <div *ngIf="!boolean && affiliation" class="hidden xl:block" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.7, height]"
+    [view]="[window.innerWidth * 0.7, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -74,12 +78,13 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 <div *ngIf="!boolean && affiliation" class="hidden md:block xl:hidden" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.82, height]"
+    [view]="[window.innerWidth * 0.82, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -89,12 +94,13 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 <div *ngIf="!boolean && affiliation" class="block md:hidden" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.98, height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -104,14 +110,15 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 
 <!-- topic -->
 <div *ngIf="!boolean && topic" class="hidden xl:block" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.7, height]"
+    [view]="[window.innerWidth * 0.7, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -121,12 +128,13 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 <div *ngIf="!boolean && topic" class="hidden md:block xl:hidden" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.82, height]"
+    [view]="[window.innerWidth * 0.82, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -136,13 +144,14 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>
 
 <div *ngIf="!boolean && topic" class="block md:hidden" #ContainerRef>
   <ngx-charts-line-chart
-    [view]="[window.innerWidth*0.98, height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [showXAxisLabel]="showXAxisLabel"
     [showYAxisLabel]="showYAxisLabel"
     [scheme]="colorScheme"
@@ -152,6 +161,7 @@
     [yAxisLabel]="yAxisLabel"
     [timeline]="timeline"
     [results]="multi"
-    (select)="onSelect($event)">
+    (select)="onSelect($event)"
+  >
   </ngx-charts-line-chart>
 </div>

@@ -8,6 +8,8 @@
   <app-coauthors-graph *ngIf="!loading && author" [author]="author"></app-coauthors-graph>
 
   <!-- No data -->
-  <app-no-results *ngIf="!loading && !author"
-                  title="Could not load this author's coauthor network"></app-no-results>
+  <app-no-results
+    *ngIf="!loading && !author"
+    title="Could not load this author's coauthor network"
+  ></app-no-results>
 </div>

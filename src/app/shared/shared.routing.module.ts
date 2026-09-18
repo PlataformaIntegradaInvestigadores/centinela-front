@@ -1,10 +1,9 @@
-import { RouterModule, Routes } from "@angular/router";
-import { HomePageComponent } from "../search-engine/presentation/home-page/pages/home-page/home-page.component";
-import { SearchResultComponent } from "../search-engine/presentation/home-page/components/search-result/search-result.component";
-import { AnaliticaComponent } from "../search-engine/presentation/home-page/components/analitica/analitica.component";
-import { NgModule } from "@angular/core";
-import {ArticlePageComponent} from "../search-engine/presentation/home-page/pages/article-page/article-page.component";
-import { researcherOnlyGuard } from "src/guards/researcher-only.guard";
+import { RouterModule, Routes } from '@angular/router';
+import { HomePageComponent } from '../search-engine/presentation/home-page/pages/home-page/home-page.component';
+import { SearchResultComponent } from '../search-engine/presentation/home-page/components/search-result/search-result.component';
+import { NgModule } from '@angular/core';
+import { ArticlePageComponent } from '../search-engine/presentation/home-page/pages/article-page/article-page.component';
+import { researcherOnlyGuard } from 'src/guards/researcher-only.guard';
 
 const routes: Routes = [
   {
@@ -17,25 +16,28 @@ const routes: Routes = [
       },
       {
         path: 'article/:scopusId',
-        component: ArticlePageComponent
+        component: ArticlePageComponent,
       },
       {
         path: 'analitica',
-        loadChildren: () => import('src/app/dashboard/dashboard.module').then(m => m.DashboardModule)
+        loadChildren: () =>
+          import('src/app/dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
       {
         path: 'recommendations',
         loadChildren: () =>
           import('src/app/recommendations/recommendations.module').then(
-            (m) => m.RecommendationsModule
+            (m) => m.RecommendationsModule,
           ),
         canActivate: [researcherOnlyGuard],
       },
       {
         path: 'about-us',
-        loadChildren: () => import('src/app/search-engine/presentation/about-us/about-us.module').then(m => m.AboutUsModule)
-      }
-
+        loadChildren: () =>
+          import('src/app/search-engine/presentation/about-us/about-us.module').then(
+            (m) => m.AboutUsModule,
+          ),
+      },
     ],
   },
 

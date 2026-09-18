@@ -4,7 +4,7 @@ import { UserInfo } from 'src/app/profile/domain/entities/user.interfaces';
 @Component({
   selector: 'app-about-me-profile',
   templateUrl: './about-me-profile.component.html',
-  styleUrls: ['./about-me-profile.component.css']
+  styleUrls: ['./about-me-profile.component.css'],
 })
 export class AboutMeProfileComponent implements OnChanges {
   @Input() userInfo: UserInfo = this.initializeUserInfo();

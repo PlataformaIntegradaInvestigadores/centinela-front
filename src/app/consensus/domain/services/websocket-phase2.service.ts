@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 import { environment } from 'src/environments/environment';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebSocketPhase2Service {
-
   private groupSockets: { [key: string]: WebSocketSubject<any> } = {};
   public topicReceived: Subject<any> = new Subject<any>();
   public notificationReceived: Subject<any> = new Subject<any>();
-  
+
   /**
    * Connect to WebSocket for the specified group ID.
    * @param groupId - The group ID to connect to.
@@ -20,10 +19,7 @@ export class WebSocketPhase2Service {
   connect(groupId: string): WebSocketSubject<any> {
     if (!this.groupSockets[groupId] || this.groupSockets[groupId].closed) {
       this.groupSockets[groupId] = webSocket(`${environment.wsUrl}/phase2/groups/${groupId}/`);
-      this.groupSockets[groupId].subscribe(
-        message => this.handleMessage(groupId, message),
-      );
-    } else {
+      this.groupSockets[groupId].subscribe((message) => this.handleMessage(groupId, message));
     }
     return this.groupSockets[groupId];
   }
@@ -37,7 +33,7 @@ export class WebSocketPhase2Service {
     //console.log(`Message received on WebSocket 2 for group ${groupId}:`, JSON.stringify(message, null, 2));
 
     if (message && message.message) {
-      const { type, topic_name, notification_message, active_connections } = message.message;
+      const { type } = message.message;
 
       switch (type) {
         case 'connection_count':
@@ -48,8 +44,7 @@ export class WebSocketPhase2Service {
         case 'topic_tag':
           this.topicReceived.next(message.message);
           break;
-        
-        
+
         default:
           console.warn('Unknown message type:', type);
       }

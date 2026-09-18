@@ -1,97 +1,204 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 overflow-y-auto">
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 overflow-y-auto"
+>
   <div
-    class="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl mx-4 sm:mx-6 md:mx-8 my-6 h-min max-h-screen overflow-y-auto">
+    class="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl mx-4 sm:mx-6 md:mx-8 my-6 h-min max-h-screen overflow-y-auto"
+  >
     <!-- Botón de cierre -->
-    <button (click)="closeForm()" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900" title="Close">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    <button
+      (click)="closeForm()"
+      class="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+      title="Close"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
       </svg>
     </button>
     <form (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="space-y-6">
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <!-- Campos del formulario -->
         <div>
-          <label for="first_name" class="block text-sm font-medium text-gray-700">First Name *</label>
-          <input type="text" id="first_name" [(ngModel)]="formData.first_name" name="first_name"
+          <label for="first_name" class="block text-sm font-medium text-gray-700"
+            >First Name *</label
+          >
+          <input
+            type="text"
+            id="first_name"
+            [(ngModel)]="formData.first_name"
+            name="first_name"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
-            required>
-          <div *ngIf="errorMessages.first_name" class="text-red-500 text-sm mt-1">{{ errorMessages.first_name }}</div>
+            required
+          />
+          <div *ngIf="errorMessages.first_name" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.first_name }}
+          </div>
         </div>
         <div>
           <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name *</label>
-          <input type="text" id="last_name" [(ngModel)]="formData.last_name" name="last_name"
+          <input
+            type="text"
+            id="last_name"
+            [(ngModel)]="formData.last_name"
+            name="last_name"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
-            required>
-          <div *ngIf="errorMessages.last_name" class="text-red-500 text-sm mt-1">{{ errorMessages.last_name }}</div>
+            required
+          />
+          <div *ngIf="errorMessages.last_name" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.last_name }}
+          </div>
         </div>
         <div class="sm:col-span-2">
-          <label for="email_institution" class="block text-sm font-medium text-gray-700">Institutional Email</label>
-          <input type="email" id="email_institution" [(ngModel)]="formData.email_institution" name="email_institution"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm">
-          <div *ngIf="errorMessages.email_institution" class="text-red-500 text-sm mt-1">{{
-            errorMessages.email_institution }}</div>
+          <label for="email_institution" class="block text-sm font-medium text-gray-700"
+            >Institutional Email</label
+          >
+          <input
+            type="email"
+            id="email_institution"
+            [(ngModel)]="formData.email_institution"
+            name="email_institution"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
+          />
+          <div *ngIf="errorMessages.email_institution" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.email_institution }}
+          </div>
         </div>
         <div>
-          <label for="institution" class="block text-sm font-medium text-gray-700">Institution</label>
-          <input type="text" id="institution" [(ngModel)]="formData.institution" name="institution"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm">
-          <div *ngIf="errorMessages.institution" class="text-red-500 text-sm mt-1">{{ errorMessages.institution }}</div>
+          <label for="institution" class="block text-sm font-medium text-gray-700"
+            >Institution</label
+          >
+          <input
+            type="text"
+            id="institution"
+            [(ngModel)]="formData.institution"
+            name="institution"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
+          />
+          <div *ngIf="errorMessages.institution" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.institution }}
+          </div>
         </div>
         <div>
-          <label for="investigation_camp" class="block text-sm font-medium text-gray-700">Research Field</label>
-          <input type="text" id="investigation_camp" [(ngModel)]="formData.investigation_camp" name="investigation_camp"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm">
-          <div *ngIf="errorMessages.investigation_camp" class="text-red-500 text-sm mt-1">{{
-            errorMessages.investigation_camp }}</div>
+          <label for="investigation_camp" class="block text-sm font-medium text-gray-700"
+            >Research Field</label
+          >
+          <input
+            type="text"
+            id="investigation_camp"
+            [(ngModel)]="formData.investigation_camp"
+            name="investigation_camp"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
+          />
+          <div *ngIf="errorMessages.investigation_camp" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.investigation_camp }}
+          </div>
         </div>
         <div>
-          <label for="interests" class="block text-sm font-medium text-gray-700">Research Interests</label>
-          <input type="text" id="interests" [(ngModel)]="formData.interests" name="interests"
+          <label for="interests" class="block text-sm font-medium text-gray-700"
+            >Research Interests</label
+          >
+          <input
+            type="text"
+            id="interests"
+            [(ngModel)]="formData.interests"
+            name="interests"
             placeholder="e.g. Machine Learning, Data Science, AI"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm">
-          <div *ngIf="errorMessages.interests" class="text-red-500 text-sm mt-1">{{
-            errorMessages.interests }}</div>
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
+          />
+          <div *ngIf="errorMessages.interests" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.interests }}
+          </div>
         </div>
         <div class="sm:col-span-2">
           <label for="skills" class="block text-sm font-medium text-gray-700">Skills</label>
-          <input type="text" id="skills" [(ngModel)]="formData.skills" name="skills"
+          <input
+            type="text"
+            id="skills"
+            [(ngModel)]="formData.skills"
+            name="skills"
             placeholder="e.g. Python, Angular, Data Analysis"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm">
-          <div *ngIf="errorMessages.skills" class="text-red-500 text-sm mt-1">{{
-            errorMessages.skills }}</div>
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus:border-primary_tailwind sm:text-sm"
+          />
+          <div *ngIf="errorMessages.skills" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.skills }}
+          </div>
         </div>
         <div>
           <label for="scopus_id" class="block text-sm font-medium text-gray-700">Scopus ID</label>
-          <input type="text" id="scopus_id" [(ngModel)]="formData.scopus_id" name="scopus_id"
+          <input
+            type="text"
+            id="scopus_id"
+            [(ngModel)]="formData.scopus_id"
+            name="scopus_id"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus-within:to-blue-500 sm:text-sm"
-            pattern="^[0-9]*$" (keypress)="preventNonNumeric($event)">
-          <div *ngIf="errorMessages.scopus_id" class="text-red-500 text-sm mt-1">{{ errorMessages.scopus_id }}</div>
+            pattern="^[0-9]*$"
+            (keypress)="preventNonNumeric($event)"
+          />
+          <div *ngIf="errorMessages.scopus_id" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.scopus_id }}
+          </div>
         </div>
         <div>
           <label for="website" class="block text-sm font-medium text-gray-700">Website</label>
-          <input type="url" id="website" [(ngModel)]="formData.website" name="website"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus-within:to-blue-500 sm:text-sm">
-          <div *ngIf="errorMessages.website" class="text-red-500 text-sm mt-1">{{ errorMessages.website }}</div>
+          <input
+            type="url"
+            id="website"
+            [(ngModel)]="formData.website"
+            name="website"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary_tailwind focus-within:to-blue-500 sm:text-sm"
+          />
+          <div *ngIf="errorMessages.website" class="text-red-500 text-sm mt-1">
+            {{ errorMessages.website }}
+          </div>
         </div>
         <div class="sm:col-span-2 text-center">
-          <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+          <label for="profile_picture" class="block text-sm font-medium text-gray-700"
+            >Profile Picture</label
+          >
           <div
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-primary_tailwind focus-within:to-blue-500 sm:text-sm">
-            <input type="file" id="profile_picture" (change)="onFileSelected($event)" accept="image/*"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-primary_tailwind focus-within:to-blue-500 sm:text-sm"
+          >
+            <input
+              type="file"
+              id="profile_picture"
+              (change)="onFileSelected($event)"
+              accept="image/*"
               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              aria-label="Upload Photo">
+              aria-label="Upload Photo"
+            />
             <div *ngIf="formData.profile_picture" class="mt-4 flex justify-center">
-              <img [src]="formData.profile_picture" alt="Profile Picture Preview" class="w-24 h-24 object-cover">
+              <img
+                [src]="formData.profile_picture"
+                alt="Profile Picture Preview"
+                class="w-24 h-24 object-cover"
+              />
             </div>
           </div>
         </div>
       </div>
       <div *ngIf="errorMessage" class="text-red-500 text-sm mb-4">{{ errorMessage }}</div>
       <div class="flex justify-end">
-        <button type="submit"
-          class="inline-flex items-center justify-center py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5">
+        <button
+          type="submit"
+          class="inline-flex items-center justify-center py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5"
+        >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
           </svg>
           Submit
         </button>

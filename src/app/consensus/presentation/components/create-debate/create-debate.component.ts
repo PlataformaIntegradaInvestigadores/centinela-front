@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 @Component({
   selector: 'app-create-debate',
   templateUrl: './create-debate.component.html',
-  styleUrls: ['./create-debate.component.css']
+  styleUrls: ['./create-debate.component.css'],
 })
 export class CreateDebateComponent {
   @Input() debateTitle!: string;
@@ -11,7 +11,7 @@ export class CreateDebateComponent {
   @Input() durationHours!: number;
   @Input() durationMinutes!: number;
 
-  @Output() close = new EventEmitter<void>();
+  @Output() closeModalRequested = new EventEmitter<void>();
   @Output() submitDebate = new EventEmitter<void>();
 
   onSubmit(): void {
@@ -19,7 +19,6 @@ export class CreateDebateComponent {
   }
 
   closeModal(): void {
-    this.close.emit();
+    this.closeModalRequested.emit();
   }
-
 }

@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 @Component({
   selector: 'app-disciplines',
   templateUrl: './disciplines.component.html',
-  styleUrls: ['./disciplines.component.css']
+  styleUrls: ['./disciplines.component.css'],
 })
 export class DisciplinesComponent implements OnChanges {
   @Input() disciplines: string[] = [];

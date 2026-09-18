@@ -1,4 +1,7 @@
-<div *ngIf="isVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75">
+<div
+  *ngIf="isVisible"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
     <!-- Header -->
     <div class="px-6 py-4 border-b border-gray-200">
@@ -8,7 +11,10 @@
     <!-- Form -->
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="p-6">
       <!-- Error Message -->
-      <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+      <div
+        *ngIf="errorMessage"
+        class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded"
+      >
         {{ errorMessage }}
       </div>
 
@@ -17,28 +23,60 @@
         <label class="block text-sm font-medium text-gray-700 mb-2">Logo de la Empresa</label>
         <div class="flex items-center gap-4">
           <!-- Logo Preview -->
-          <div class="w-20 h-20 border-2 border-gray-300 border-dashed rounded-lg flex items-center justify-center overflow-hidden">
-            <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo preview" class="w-full h-full object-cover">
-            <svg *ngIf="!logoPreview" class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          <div
+            class="w-20 h-20 border-2 border-gray-300 border-dashed rounded-lg flex items-center justify-center overflow-hidden"
+          >
+            <img
+              *ngIf="logoPreview"
+              [src]="logoPreview"
+              alt="Logo preview"
+              class="w-full h-full object-cover"
+            />
+            <svg
+              *ngIf="!logoPreview"
+              class="w-8 h-8 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
             </svg>
           </div>
 
           <!-- File Input -->
           <div class="flex-1">
-            <input 
-              type="file" 
+            <input
+              type="file"
               id="logo-input"
-              accept="image/*" 
+              accept="image/*"
               (change)="onFileSelected($event)"
-              class="hidden">
-            <label for="logo-input" class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+              class="hidden"
+            />
+            <label
+              for="logo-input"
+              class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                ></path>
               </svg>
               Subir Logo
             </label>
-            <button *ngIf="logoPreview" type="button" (click)="removeLogo()" class="ml-2 text-red-600 hover:text-red-800 text-sm">
+            <button
+              *ngIf="logoPreview"
+              type="button"
+              (click)="removeLogo()"
+              class="ml-2 text-red-600 hover:text-red-800 text-sm"
+            >
               Remover
             </button>
           </div>
@@ -56,7 +94,10 @@
           id="company_name"
           formControlName="company_name"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          [class.border-red-500]="editForm.get('company_name')?.invalid && editForm.get('company_name')?.touched">
+          [class.border-red-500]="
+            editForm.get('company_name')?.invalid && editForm.get('company_name')?.touched
+          "
+        />
         <div *ngIf="getFieldError('company_name')" class="text-red-500 text-xs mt-1">
           {{ getFieldError('company_name') }}
         </div>
@@ -71,9 +112,14 @@
           id="industry"
           formControlName="industry"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          [class.border-red-500]="editForm.get('industry')?.invalid && editForm.get('industry')?.touched">
+          [class.border-red-500]="
+            editForm.get('industry')?.invalid && editForm.get('industry')?.touched
+          "
+        >
           <option value="">Selecciona una industria</option>
-          <option *ngFor="let industry of industries" [value]="industry.value">{{ industry.label }}</option>
+          <option *ngFor="let industry of industries" [value]="industry.value">
+            {{ industry.label }}
+          </option>
         </select>
         <div *ngIf="getFieldError('industry')" class="text-red-500 text-xs mt-1">
           {{ getFieldError('industry') }}
@@ -90,7 +136,8 @@
           formControlName="description"
           rows="3"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Describe tu empresa..."></textarea>
+          placeholder="Describe tu empresa..."
+        ></textarea>
       </div>
 
       <!-- Website -->
@@ -103,20 +150,20 @@
           id="website"
           formControlName="website"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="https://ejemplo.com">
+          placeholder="https://ejemplo.com"
+        />
       </div>
 
       <!-- Phone -->
       <div class="mb-4">
-        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-          Teléfono
-        </label>
+        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1"> Teléfono </label>
         <input
           type="tel"
           id="phone"
           formControlName="phone"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="+1 234 567 8900">
+          placeholder="+1 234 567 8900"
+        />
       </div>
 
       <!-- Address -->
@@ -129,7 +176,8 @@
           id="address"
           formControlName="address"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Dirección completa">
+          placeholder="Dirección completa"
+        />
       </div>
 
       <!-- Founded Year and Employee Count -->
@@ -144,8 +192,11 @@
             id="founded_year"
             formControlName="founded_year"
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            [class.border-red-500]="editForm.get('founded_year')?.invalid && editForm.get('founded_year')?.touched"
-            placeholder="2020">
+            [class.border-red-500]="
+              editForm.get('founded_year')?.invalid && editForm.get('founded_year')?.touched
+            "
+            placeholder="2020"
+          />
           <div *ngIf="getFieldError('founded_year')" class="text-red-500 text-xs mt-1">
             {{ getFieldError('founded_year') }}
           </div>
@@ -159,9 +210,12 @@
           <select
             id="employee_count"
             formControlName="employee_count"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
             <option value="">Selecciona un rango</option>
-            <option *ngFor="let count of employeeCounts" [value]="count.value">{{ count.label }}</option>
+            <option *ngFor="let count of employeeCounts" [value]="count.value">
+              {{ count.label }}
+            </option>
           </select>
         </div>
       </div>
@@ -172,18 +226,36 @@
           type="button"
           (click)="close()"
           [disabled]="isLoading"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50">
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+        >
           Cancelar
         </button>
         <button
           type="submit"
           [disabled]="!editForm.valid || isLoading"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <span *ngIf="!isLoading">Guardar Cambios</span>
           <span *ngIf="isLoading" class="flex items-center">
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             Guardando...
           </span>

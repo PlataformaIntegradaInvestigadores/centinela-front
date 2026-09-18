@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -10,7 +10,7 @@ import { Article } from 'src/app/shared/interfaces/article.interface';
   templateUrl: './article-page.component.html',
   styleUrls: ['./article-page.component.css'],
 })
-export class ArticlePageComponent {
+export class ArticlePageComponent implements OnInit {
   article!: Article | undefined;
   isLoading: boolean = true;
   loadError: string | null = null;
@@ -22,14 +22,14 @@ export class ArticlePageComponent {
     private articleService: ArticleService,
     private title: Title,
     private location: Location,
-    @Inject(Router) private router: Router
+    @Inject(Router) private router: Router,
   ) {}
   setArticleTitle() {
-    this.title.setTitle(this.article?.title!);
+    this.title.setTitle(this.article?.title ?? '');
   }
 
   ngOnInit(): void {
-    window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     this.route.params.subscribe((params) => {
       this.scopusId = params['scopusId'];
     });
@@ -48,17 +48,18 @@ export class ArticlePageComponent {
       error: (error) => {
         console.error('Error fetching article detail', error);
         this.article = undefined;
-        this.loadError = error?.status === 404
-          ? 'The requested article could not be found.'
-          : 'Article details are temporarily unavailable.';
+        this.loadError =
+          error?.status === 404
+            ? 'The requested article could not be found.'
+            : 'Article details are temporarily unavailable.';
         this.isLoading = false;
-      }
+      },
     });
   }
   goToArticle(scopus: string | undefined) {
     window.open(
       `https://www.scopus.com/record/display.uri?eid=2-s2.0-${scopus}&origin=resultslist`,
-      '_blank'
+      '_blank',
     );
   }
 

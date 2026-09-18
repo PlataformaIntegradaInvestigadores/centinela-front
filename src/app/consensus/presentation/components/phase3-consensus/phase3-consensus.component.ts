@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConsensusResult } from 'src/app/consensus/domain/entities/consensus-result.interface';
@@ -9,17 +9,16 @@ import { WebSocketPhase3Service } from 'src/app/consensus/domain/services/websoc
 @Component({
   selector: 'phase3-consensus',
   templateUrl: './phase3-consensus.component.html',
-  styleUrls: ['./phase3-consensus.component.css']
+  styleUrls: ['./phase3-consensus.component.css'],
 })
 export class Phase3ConsensusComponent implements OnInit, OnDestroy {
-
   groupId: string = '';
   consensusResults: ConsensusResult[] = [];
   private wsSubscription: Subscription | undefined;
   activeConnections: number = 0;
   showResults: boolean = false;
   isDraw: boolean = false;
-  userId: string = "";
+  userId: string = '';
 
   debateId: number = 0;
   totalAgree: number = 0;
@@ -33,10 +32,10 @@ export class Phase3ConsensusComponent implements OnInit, OnDestroy {
     private webSocketService: WebSocketPhase3Service,
     private router: Router,
     private dashboardService: DebateStatisticsService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.groupId = params.get('groupId') || '';
       this.userId = params.get('id') || '';
       this.loadConsensusResults();
@@ -69,29 +68,23 @@ export class Phase3ConsensusComponent implements OnInit, OnDestroy {
         this.showResults = true;
         this.consensusResults = results.results;
         this.checkForTie();
-
       },
       (error) => {
-        if (error.error === "Not all users have completed phase 1 and 2") {
+        if (error.error === 'Not all users have completed phase 1 and 2') {
           this.showResults = false;
         }
         console.error('Error loading consensus results:', error);
-      }
+      },
     );
   }
 
   connectWebSocket(): void {
     if (this.groupId) {
-
-
       const socket = this.webSocketService.connect(this.groupId);
       this.wsSubscription = socket.subscribe(
-        message => {
-
-
+        (message) => {
           if (message.message.type === 'connection_count') {
             this.activeConnections = message.message.active_connections;
-
           }
 
           if (message.message.type === 'consensus_calculation_completed') {
@@ -106,14 +99,18 @@ export class Phase3ConsensusComponent implements OnInit, OnDestroy {
               const phaseKey = `phase_${this.groupId}`;
               localStorage.setItem(phaseKey, '1');
               setTimeout(() => {
-                this.router.navigate([`/profile/${this.userId}/my-groups/${this.groupId}/consensus/valuation`]);
+                this.router.navigate([
+                  `/profile/${this.userId}/my-groups/${this.groupId}/consensus/valuation`,
+                ]);
               }, 1500);
             }
             if (phase === 0) {
               const phaseKey = `phase_${this.groupId}`;
               localStorage.setItem(phaseKey, '0');
               setTimeout(() => {
-                this.router.navigate([`/profile/${this.userId}/my-groups/${this.groupId}/consensus/recommend-topics`]);
+                this.router.navigate([
+                  `/profile/${this.userId}/my-groups/${this.groupId}/consensus/recommend-topics`,
+                ]);
               }, 1500);
             }
           }
@@ -124,19 +121,19 @@ export class Phase3ConsensusComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.error('Error receiving consensus results via WebSocket:', error);
-        }
+        },
       );
     }
   }
   private checkForTie(): void {
     const valueCounts = new Map<number, number>();
 
-    this.consensusResults.forEach(result => {
+    this.consensusResults.forEach((result) => {
       const count = valueCounts.get(result.final_value) || 0;
       valueCounts.set(result.final_value, count + 1);
     });
 
-    this.isDraw = Array.from(valueCounts.values()).some(count => count > 1);
+    this.isDraw = Array.from(valueCounts.values()).some((count) => count > 1);
   }
 
   loadPostureStatistics(): void {
@@ -161,11 +158,10 @@ export class Phase3ConsensusComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.error('Error loading posture statistics:', error);
-      }
+      },
     );
 
     // Añadir la suscripción a un grupo de suscripciones (para manejo centralizado)
     this.subscriptions.add(postureSub);
   }
-
 }

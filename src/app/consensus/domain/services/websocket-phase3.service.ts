@@ -5,10 +5,9 @@ import { Subject } from 'rxjs';
 import { ConsensusResult } from '../entities/consensus-result.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebSocketPhase3Service {
-
   private groupSockets: { [key: string]: WebSocketSubject<any> } = {};
   public notificationReceived: Subject<ConsensusResult> = new Subject<ConsensusResult>();
   public userSatisfactionReceived: Subject<any> = new Subject<any>();
@@ -18,17 +17,14 @@ export class WebSocketPhase3Service {
   connect(groupId: string): WebSocketSubject<any> {
     if (!this.groupSockets[groupId] || this.groupSockets[groupId].closed) {
       this.groupSockets[groupId] = webSocket(`${environment.wsUrl}/phase3/groups/${groupId}/`);
-      this.groupSockets[groupId].subscribe(
-        message => this.handleMessage(groupId, message),
-      );
+      this.groupSockets[groupId].subscribe((message) => this.handleMessage(groupId, message));
     }
     return this.groupSockets[groupId];
   }
 
   private handleMessage(groupId: string, message: any): void {
-
     if (message && message.message) {
-      const { type, results, active_connections } = message.message;
+      const { type, results } = message.message;
       switch (type) {
         case 'connection_count':
           break;

@@ -8,10 +8,9 @@ import { Group } from 'src/app/group/domain/entities/group.interface';
 @Component({
   selector: 'consensus-page',
   templateUrl: './consensus-page.component.html',
-  styleUrls: ['./consensus-page.component.css']
+  styleUrls: ['./consensus-page.component.css'],
 })
 export class ConsensusPageComponent implements OnInit {
-
   isDecisionPhase: boolean = false;
   isPhaseTwo: boolean = false;
   group: Group | null = null;
@@ -25,7 +24,7 @@ export class ConsensusPageComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private consensusService: ConsensusService,
     private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
-    private topicService: TopicService
+    private topicService: TopicService,
   ) {}
 
   ngOnInit() {
@@ -37,7 +36,7 @@ export class ConsensusPageComponent implements OnInit {
       this.loadGroup(this.groupId);
     }
 
-    this.router.events.subscribe((event) => {
+    this.router.events.subscribe(() => {
       this.updateComponentVisibility();
     });
   }
@@ -53,10 +52,9 @@ export class ConsensusPageComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching group:', error);
         this.errorMessage = 'You do not have permission to access this group.'; // Set error message
-      }
+      },
     });
   }
-
 
   navigateToPhase(groupId: string, phase: number) {
     let redirectPhase: string;
@@ -78,19 +76,25 @@ export class ConsensusPageComponent implements OnInit {
 
     const currentPath = this.router.url.split('/').pop();
     if (currentPath !== redirectPhase) {
-      this.router.navigate([`/profile/${this.userId}/my-groups/${groupId}/consensus/${redirectPhase}`]);
+      this.router.navigate([
+        `/profile/${this.userId}/my-groups/${groupId}/consensus/${redirectPhase}`,
+      ]);
     }
   }
 
   updateComponentVisibility() {
     const url = this.router.url;
-    this.isDecisionPhase = url.includes(`/profile/${this.userId}/my-groups/${this.groupId}/consensus/decision`);
-    this.isPhaseTwo = url.includes(`/profile/${this.userId}/my-groups/${this.groupId}/consensus/valuation`);
+    this.isDecisionPhase = url.includes(
+      `/profile/${this.userId}/my-groups/${this.groupId}/consensus/decision`,
+    );
+    this.isPhaseTwo = url.includes(
+      `/profile/${this.userId}/my-groups/${this.groupId}/consensus/valuation`,
+    );
   }
 
   onMemberDeleted(memberId: string): void {
     if (this.group && this.group.users) {
-      this.group.users = this.group.users.filter(member => member.id !== memberId);
+      this.group.users = this.group.users.filter((member) => member.id !== memberId);
       this.successMessage = 'Member has been removed successfully.';
       this.cdr.detectChanges(); // Forzar detección de cambios
       setTimeout(() => {

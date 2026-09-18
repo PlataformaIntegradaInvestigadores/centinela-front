@@ -1,5 +1,4 @@
 <div class="feed-post-card bg-white rounded-lg border border-gray-200 overflow-hidden">
-  
   <!-- Post Header -->
   <app-post-header
     [post]="post"
@@ -7,7 +6,8 @@
     [formattedDate]="formattedDate"
     (profileClick)="navigateToProfile()"
     (deleteClick)="onDeleteClick()"
-    (editClick)="onEditClick()">
+    (editClick)="onEditClick()"
+  >
   </app-post-header>
 
   <!-- Post Content -->
@@ -17,15 +17,13 @@
     [showFullContent]="showFullContent"
     [shouldTruncateContent]="shouldTruncateContent"
     [tags]="post.tags || []"
-    (toggleContent)="toggleFullContent()">
+    (toggleContent)="toggleFullContent()"
+  >
   </app-post-content>
 
   <!-- Poll Section -->
   <div class="px-4">
-    <app-post-poll
-      *ngIf="post.poll"
-      [poll]="post.poll"
-      (optionClick)="onPollOptionClick($event)">
+    <app-post-poll *ngIf="post.poll" [poll]="post.poll" (optionClick)="onPollOptionClick($event)">
     </app-post-poll>
   </div>
 
@@ -34,7 +32,8 @@
     <app-post-files
       [files]="post.files || []"
       (fileOpen)="openFile($event)"
-      (fileDownload)="downloadFile($event)">
+      (fileDownload)="downloadFile($event)"
+    >
     </app-post-files>
   </div>
 
@@ -46,16 +45,18 @@
     [isLiking]="isLiking"
     [showCommentsSection]="showCommentsSection"
     (likeClick)="onLikeClick()"
-    (commentToggle)="showCommentsSection = !showCommentsSection">
+    (commentToggle)="showCommentsSection = !showCommentsSection"
+  >
   </app-post-actions>
 
   <!-- Comments Section -->
   <div class="border-t border-gray-100 bg-gray-50" *ngIf="showCommentsSection">
-    <app-post-comments 
+    <app-post-comments
       [postId]="post.id"
       [commentsCount]="post.comments_count"
       (commentAdded)="onCommentAdded($event)"
-      (commentsCountUpdated)="onCommentsCountUpdated($event)">
+      (commentsCountUpdated)="onCommentsCountUpdated($event)"
+    >
     </app-post-comments>
   </div>
 
@@ -63,8 +64,9 @@
   <app-post-editor
     [post]="post"
     [showModal]="showEditModal"
-    (close)="onCloseEditModal()"
-    (save)="onSaveEdit($event)">
+    (closeEditor)="onCloseEditModal()"
+    (save)="onSaveEdit($event)"
+  >
   </app-post-editor>
 
   <!-- Media Viewer Modal -->
@@ -73,14 +75,16 @@
     class="media-viewer fixed inset-0 z-[200000]"
     role="dialog"
     aria-modal="true"
-    (click)="closeMediaViewer()">
+    (click)="closeMediaViewer()"
+  >
     <div class="media-viewer-shell" (click)="$event.stopPropagation()">
       <section class="media-stage">
         <button
           type="button"
           class="media-close media-close-mobile"
           aria-label="Cerrar imagen"
-          (click)="closeMediaViewer()">
+          (click)="closeMediaViewer()"
+        >
           <i class="fas fa-times"></i>
         </button>
 
@@ -89,21 +93,24 @@
           type="button"
           class="media-nav media-nav-prev"
           aria-label="Imagen anterior"
-          (click)="showPreviousMedia()">
+          (click)="showPreviousMedia()"
+        >
           <i class="fas fa-chevron-left"></i>
         </button>
 
         <img
           [src]="getSelectedMediaUrl()"
           [alt]="selectedMediaFile.original_filename || 'Imagen de la publicación'"
-          class="media-viewer-image">
+          class="media-viewer-image"
+        />
 
         <button
           *ngIf="hasMultipleImages"
           type="button"
           class="media-nav media-nav-next"
           aria-label="Siguiente imagen"
-          (click)="showNextMedia()">
+          (click)="showNextMedia()"
+        >
           <i class="fas fa-chevron-right"></i>
         </button>
       </section>
@@ -115,7 +122,8 @@
               [src]="post.author.profile_picture || '/assets/profile.png'"
               [alt]="post.author.first_name + ' ' + post.author.last_name"
               class="w-10 h-10 rounded object-cover border border-gray-200"
-              onerror="this.src='/assets/profile.png'">
+              onerror="this.src = '/assets/profile.png'"
+            />
             <div class="min-w-0">
               <h3 class="text-sm font-semibold text-gray-950 truncate">
                 {{ post.author.first_name }} {{ post.author.last_name }}
@@ -128,7 +136,8 @@
             type="button"
             class="media-close"
             aria-label="Cerrar imagen"
-            (click)="closeMediaViewer()">
+            (click)="closeMediaViewer()"
+          >
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -142,7 +151,8 @@
               *ngIf="shouldTruncateMediaContent"
               type="button"
               class="media-see-more"
-              (click)="toggleMediaContent()">
+              (click)="toggleMediaContent()"
+            >
               {{ showFullMediaContent ? 'Ver menos' : 'Ver más' }}
             </button>
           </div>
@@ -150,7 +160,8 @@
           <div class="flex flex-wrap gap-1.5 mt-3" *ngIf="post.tags && post.tags.length > 0">
             <span
               *ngFor="let tag of post.tags"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-100"
+            >
               #{{ tag }}
             </span>
           </div>
@@ -171,16 +182,14 @@
               [postId]="post.id"
               [commentsCount]="post.comments_count"
               (commentAdded)="onCommentAdded($event)"
-              (commentsCountUpdated)="onCommentsCountUpdated($event)">
+              (commentsCountUpdated)="onCommentsCountUpdated($event)"
+            >
             </app-post-comments>
           </div>
         </div>
 
         <div class="media-context-actions" *ngIf="showActions">
-          <button
-            type="button"
-            [class.media-action-active]="post.is_liked"
-            (click)="onLikeClick()">
+          <button type="button" [class.media-action-active]="post.is_liked" (click)="onLikeClick()">
             <i [ngClass]="post.is_liked ? 'fas fa-heart' : 'far fa-heart'"></i>
             Me gusta
           </button>

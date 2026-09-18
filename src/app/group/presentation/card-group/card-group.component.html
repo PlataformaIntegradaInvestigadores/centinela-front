@@ -1,11 +1,18 @@
-<div (click)="onNavigate()" tabindex="0" class="max-w-xs mx-auto p-3 bg-white rounded-lg hover-effect border-gray">
+<div
+  (click)="onNavigate()"
+  tabindex="0"
+  class="max-w-xs mx-auto p-3 bg-white rounded-lg hover-effect border-gray"
+>
   <div class="flex justify-between items-center mb-2">
     <span class="text-xl truncate">{{ group?.title }}</span><!--
     <dropdown-btn (click)="$event.stopPropagation()"></dropdown-btn> -->
     <btn-menu-group [isOwner]="isOwner" [groupId]="group?.id || ''"></btn-menu-group>
   </div>
   <div class="text-sm">
-    <span class="text-sm"><span class="font-medium">Consensus phase:</span> {{ currentPhase !== null ? currentPhase : 'Loading...' }}</span>
+    <span class="text-sm"
+      ><span class="font-medium">Consensus phase:</span>
+      {{ currentPhase !== null ? currentPhase : 'Loading...' }}</span
+    >
     <div class="flex items-center text-gray-700 mt-3">
       <i class="fas fa-user text-primary_tailwind mr-2"></i>
       <span> <span class="font-medium">Owner:</span> {{ group?.owner }}</span>
@@ -14,7 +21,7 @@
       <i class="fas fa-users text-primary_tailwind mr-2 mt-1"></i>
       <span><span class="font-medium">Members:</span> {{ group?.users?.length }}</span>
     </div>
-<!--
+    <!--
     <div class="flex items-center text-gray-700 gap-1">
       <span>
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">

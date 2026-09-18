@@ -1,21 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Article, PaginationArticleResult, SearchFiltersResponse } from "../../../shared/interfaces/article.interface";
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {
+  Article,
+  PaginationArticleResult,
+  SearchFiltersResponse,
+} from '../../../shared/interfaces/article.interface';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ArticleService {
-
   rootURL: string = environment.apiSearch;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   getArticleById(id: string): Observable<Article> {
-    return this.http.get<Article>(`${this.rootURL}/v2/articles/${id}`)
+    return this.http.get<Article>(`${this.rootURL}/v2/articles/${id}`);
   }
 
   getSearchFilters(): Observable<SearchFiltersResponse> {
@@ -26,24 +28,28 @@ export class ArticleService {
     query: string,
     page: number,
     size: number,
-    years?: number[]
+    years?: number[],
   ): Observable<PaginationArticleResult> {
-
-    const bodyParams: any = {
+    const bodyParams: {
+      query: string;
+      page: number;
+      page_size: number;
+      filters?: { years: number[] };
+    } = {
       query,
       page,
       page_size: size,
     };
 
     if (years && years.length > 0) {
-      bodyParams['filters'] = {
-        years: years ?? []
+      bodyParams.filters = {
+        years: years ?? [],
       };
     }
 
     return this.http.post<PaginationArticleResult>(
       `${this.rootURL}/v2/articles/relevant`,
-      bodyParams
+      bodyParams,
     );
   }
 

@@ -1,22 +1,22 @@
 <div *ngIf="single.length > 0 && colorsCharged && general" class="hidden xl:block">
   <ngx-charts-bar-vertical
-                           [view]="[window.innerWidth*0.7, height]"
-                           [results]="single"
-                           [gradient]="gradient"
-                           [xAxis]="showXAxis"
-                           [yAxis]="showYAxis"
-                           [showXAxisLabel]="showXAxisLabel"
-                           [showYAxisLabel]="showYAxisLabel"
-                           [xAxisLabel]="xAxisLabel"
-                           [yAxisLabel]="yAxisLabel"
-                           (select)="onSelect($event)"
-                           [scheme]=colorScheme
+    [view]="[window.innerWidth * 0.7, height]"
+    [results]="single"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    (select)="onSelect($event)"
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && general" class="hidden md:block xl:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.98, height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [results]="single"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -26,13 +26,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && general" class="block md:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.95, height]"
+    [view]="[window.innerWidth * 0.95, height]"
     [results]="single1"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -42,13 +42,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme1
+    [scheme]="colorScheme1"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && affiliation" class="hidden xl:block">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.8, height]"
+    [view]="[window.innerWidth * 0.8, height]"
     [results]="single"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -58,13 +58,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && affiliation" class="hidden md:block xl:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.9, height]"
+    [view]="[window.innerWidth * 0.9, height]"
     [results]="single"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -74,13 +74,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && affiliation" class="block md:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.98, height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [results]="single1"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -90,14 +90,14 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme1
+    [scheme]="colorScheme1"
   >
   </ngx-charts-bar-vertical>
 </div>
 
 <div *ngIf="single.length > 0 && colorsCharged && topic" class="hidden xl:block">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.77, height]"
+    [view]="[window.innerWidth * 0.77, height]"
     [results]="single"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -107,13 +107,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && topic" class="hidden md:block xl:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.82, height]"
+    [view]="[window.innerWidth * 0.82, height]"
     [results]="single"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -123,13 +123,13 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme
+    [scheme]="colorScheme"
   >
   </ngx-charts-bar-vertical>
 </div>
 <div *ngIf="single.length > 0 && colorsCharged && topic" class="block md:hidden">
   <ngx-charts-bar-vertical
-    [view]="[window.innerWidth*0.98, height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [results]="single1"
     [gradient]="gradient"
     [xAxis]="showXAxis"
@@ -139,7 +139,7 @@
     [xAxisLabel]="xAxisLabel"
     [yAxisLabel]="yAxisLabel"
     (select)="onSelect($event)"
-    [scheme]=colorScheme1
+    [scheme]="colorScheme1"
   >
   </ngx-charts-bar-vertical>
 </div>

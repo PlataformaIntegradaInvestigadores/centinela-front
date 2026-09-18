@@ -4,10 +4,9 @@ import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DebateStatisticsService {
-
   private apiUrl = `${environment.apiSocial}/v1/debates`;
   private debateIdSubject = new Subject<number>(); // Emitirá el debateId
   debateId$ = this.debateIdSubject.asObservable();

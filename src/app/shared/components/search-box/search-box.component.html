@@ -1,72 +1,114 @@
 <!-- <img src="assets/img.png" class="min-h-[490px] object-cover"> -->
-<div class="flex flex-col items-center justify-center bg-black bg-opacity-75 py-10 rounded my-16 px-8 md:min-w-[800px]">
-  <div class="text-white flex justify-center items-center p-2 md:p-0 text-3xl mb-4">WELCOME TO CENTINELA EPN</div>
+<div
+  class="flex flex-col items-center justify-center bg-black bg-opacity-75 py-10 rounded my-16 px-8 md:min-w-[800px]"
+>
+  <div class="text-white flex justify-center items-center p-2 md:p-0 text-3xl mb-4">
+    WELCOME TO CENTINELA EPN
+  </div>
 
   <div class="relative w-full flex flex-col items-center">
     <!-- Floating Toast Error Message -->
-    <div *ngIf="showError" class="absolute -top-12 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 animate-fade-in-up">
+    <div
+      *ngIf="showError"
+      class="absolute -top-12 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 animate-fade-in-up"
+    >
       <mat-icon class="text-xl">error_outline</mat-icon>
-      <span class="text-sm font-semibold">Por favor, ingresa una búsqueda válida para continuar.</span>
+      <span class="text-sm font-semibold"
+        >Por favor, ingresa una búsqueda válida para continuar.</span
+      >
     </div>
 
-    <div class="flex items-stretch w-full bg-white rounded-lg shadow-sm border border-transparent transition-all"
-         [ngClass]="{'border-red-500 ring-2 ring-red-200': showError, 'focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-200': !showError}">
-    <!-- Dropdown start -->
-    <div class="relative">
-      <button
-        class="h-full text-white bg-red-800 hover:bg-red-900 rounded-l-lg text-sm flex items-center justify-between px-4 py-2 dropdown-button w-auto transition-all duration-300"
-        type="button" (click)="changeStateDropdown()">
-        <div class="flex items-center justify-between flex-1">
-          <fa-icon [icon]="selectedOption.icon"></fa-icon>
-          <div class="hidden md:block pl-2 whitespace-nowrap text-left">
-            {{ selectedOption.label }}
+    <div
+      class="flex items-stretch w-full bg-white rounded-lg shadow-sm border border-transparent transition-all"
+      [ngClass]="{
+        'border-red-500 ring-2 ring-red-200': showError,
+        'focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-200': !showError,
+      }"
+    >
+      <!-- Dropdown start -->
+      <div class="relative">
+        <button
+          class="h-full text-white bg-red-800 hover:bg-red-900 rounded-l-lg text-sm flex items-center justify-between px-4 py-2 dropdown-button w-auto transition-all duration-300"
+          type="button"
+          (click)="changeStateDropdown()"
+        >
+          <div class="flex items-center justify-between flex-1">
+            <fa-icon [icon]="selectedOption.icon"></fa-icon>
+            <div class="hidden md:block pl-2 whitespace-nowrap text-left">
+              {{ selectedOption.label }}
+            </div>
+          </div>
+          <svg
+            class="w-2.5 h-2.5 ml-3 flex-shrink-0"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+        <!-- Dropdown menu -->
+        <div
+          class="absolute top-full left-0 mt-1 z-50 w-48 bg-white border border-gray-100 rounded-lg shadow-lg transform transition-all duration-200 origin-top-left"
+          [ngClass]="{
+            'opacity-0 scale-95 pointer-events-none': folded,
+            'opacity-100 scale-100': !folded,
+          }"
+        >
+          <div class="py-1">
+            <ng-container *ngFor="let option of searchOptions">
+              <button
+                *ngIf="selectedOption !== option"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-800 transition-colors flex items-center gap-2"
+                (click)="setOption(option); changeStateDropdown()"
+              >
+                <fa-icon [icon]="option.icon"></fa-icon>
+                {{ option.label }}
+              </button>
+            </ng-container>
           </div>
         </div>
-        <svg class="w-2.5 h-2.5 ml-3 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 10 6">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="m1 1 4 4 4-4" />
-        </svg>
-      </button>
-      <!-- Dropdown menu -->
-      <div class="absolute top-full left-0 mt-1 z-50 w-48 bg-white border border-gray-100 rounded-lg shadow-lg transform transition-all duration-200 origin-top-left"
-           [ngClass]="{'opacity-0 scale-95 pointer-events-none': folded, 'opacity-100 scale-100': !folded}">
-        <div class="py-1">
-          <ng-container *ngFor="let option of searchOptions">
-            <button *ngIf="selectedOption !== option"
-              class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-800 transition-colors flex items-center gap-2"
-              (click)="setOption(option); changeStateDropdown()">
-              <fa-icon [icon]="option.icon"></fa-icon>
-              {{ option.label }}
-            </button>
-          </ng-container>
+      </div>
+
+      <!-- Input -->
+      <div class="flex-1 flex relative">
+        <label for="inputQuery" class="sr-only">Search</label>
+        <input
+          id="inputQuery"
+          class="text-sm py-2 px-3 w-full border-none outline-none text-gray-800 cursor-text bg-white"
+          placeholder="{{ selectedOption.placeholder }}"
+          [(ngModel)]="inputValue"
+          (keyup)="onEnter($event)"
+          (input)="showError = false"
+        />
+        <datalist id="datalistOptions">
+          <option *ngFor="let item of randItems" [value]="item.value"></option>
+        </datalist>
+      </div>
+
+      <!-- Search Button -->
+      <button
+        type="button"
+        class="text-white bg-red-800 hover:bg-red-900 rounded-r-lg text-sm flex items-center justify-center px-4 dropdown-button transition-colors border-l border-red-900"
+        (click)="triggerSearch()"
+        [disabled]="isLoading"
+      >
+        <div *ngIf="isLoading; else normal">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span class="sr-only">Buscando...</span>
         </div>
-      </div>
+        <ng-template #normal>
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </ng-template>
+        <div class="hidden md:block pl-2">Search</div>
+      </button>
     </div>
-    
-    <!-- Input -->
-    <div class="flex-1 flex relative">
-      <label for="inputQuery" class="sr-only">Search</label>
-      <input id="inputQuery" class="text-sm py-2 px-3 w-full border-none outline-none text-gray-800 cursor-text bg-white" placeholder="{{selectedOption.placeholder}}"
-        [(ngModel)]="inputValue" (keyup)="onEnter($event)" (input)="showError = false">
-      <datalist id="datalistOptions">
-        <option *ngFor="let item of randItems" [value]="item.value"></option>
-      </datalist>
-    </div>
-    
-    <!-- Search Button -->
-    <button type="button"
-      class="text-white bg-red-800 hover:bg-red-900 rounded-r-lg text-sm flex items-center justify-center px-4 dropdown-button transition-colors border-l border-red-900"
-      (click)="triggerSearch()" [disabled]="isLoading">
-      <div *ngIf="isLoading; else normal">
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span class="sr-only">Buscando...</span>
-      </div>
-      <ng-template #normal>
-        <fa-icon [icon]="faSearch"></fa-icon>
-      </ng-template>
-      <div class="hidden md:block pl-2"> Search</div>
-    </button>
   </div>
 </div>
-

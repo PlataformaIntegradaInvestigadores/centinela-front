@@ -1,10 +1,12 @@
-@media (max-width: 640px) { /* Pantallas menores a sm */
+@media (max-width: 640px) {
+  /* Pantallas menores a sm */
   .responsive-element {
     width: 97vw; /* 97% del ancho de la pantalla */
   }
 }
 
-@media (min-width: 641px) { /* Pantallas mayores a sm */
+@media (min-width: 641px) {
+  /* Pantallas mayores a sm */
   .responsive-element {
     width: auto; /* El ancho predeterminado en pantallas grandes */
   }

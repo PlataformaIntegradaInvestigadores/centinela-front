@@ -6,13 +6,20 @@ import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { TopicService } from 'src/app/consensus/domain/services/TopicDataService.service';
 import { WebSocketPhase3Service } from 'src/app/consensus/domain/services/websocket-phase3.service';
 
+interface SatisfactionCounts {
+  Unsatisfied: number;
+  'Slightly Unsatisfied': number;
+  Neutral: number;
+  'Slightly Satisfied': number;
+  Satisfied: number;
+}
+
 @Component({
   selector: 'satisfaction-level',
   templateUrl: './satisfaction-level.component.html',
-  styleUrls: ['./satisfaction-level.component.css']
+  styleUrls: ['./satisfaction-level.component.css'],
 })
 export class SatisfactionLevelComponent implements OnInit, OnDestroy {
-
   isDecisionPhase: boolean = false;
   private wsSubscription: Subscription | undefined;
   showAlreadyVotedNotification = false;
@@ -21,12 +28,12 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
   hasVoted = false; // Nuevo estado para verificar si el usuario ha votado
   groupId = this.activatedRoute.snapshot.paramMap.get('groupId') || '';
 
-  satisfactionCounts: any = {
+  satisfactionCounts: SatisfactionCounts = {
     Unsatisfied: 0,
     'Slightly Unsatisfied': 0,
     Neutral: 0,
     'Slightly Satisfied': 0,
-    Satisfied: 0
+    Satisfied: 0,
   };
 
   constructor(
@@ -35,7 +42,7 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
     private topicService: TopicService,
     private webSocketService: WebSocketPhase3Service,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -53,7 +60,7 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
 
   connectWebSocket(): void {
     if (this.groupId) {
-      const socket = this.webSocketService.connect(this.groupId);
+      this.webSocketService.connect(this.groupId);
       this.wsSubscription = this.webSocketService.userSatisfactionReceived.subscribe(
         (message) => {
           this.updateSatisfactionCounts(message.counts);
@@ -61,7 +68,7 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.error('Error receiving WebSocket message:', error);
-        }
+        },
       );
     }
   }
@@ -69,22 +76,23 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
   loadSatisfactionCounts(): void {
     const groupId = this.activatedRoute.snapshot.paramMap.get('groupId') || '';
     this.topicService.getSatisfactionCounts(groupId).subscribe(
-      counts => {
+      (counts) => {
         this.satisfactionCounts = counts.counts;
         this.cdr.detectChanges();
       },
-      error => {
+      (error) => {
         console.error('Error loading satisfaction counts:', error);
-      }
+      },
     );
   }
 
-  updateSatisfactionCounts(counts: any): void {
+  updateSatisfactionCounts(counts: SatisfactionCounts): void {
     this.satisfactionCounts = counts;
   }
 
   openModal(level: string): void {
-    if (!this.hasVoted) { // Solo abrir el modal si el usuario no ha votado
+    if (!this.hasVoted) {
+      // Solo abrir el modal si el usuario no ha votado
       this.selectedSatisfactionLevel = level;
       this.showModal = true;
     } else {
@@ -108,11 +116,11 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
     const userId = this.authService.getUserId();
     if (groupId && userId) {
       this.topicService.saveUserSatisfaction(groupId, userId, level).subscribe(
-        response => {
+        (response) => {
           console.log('User satisfaction saved:', response);
           this.hasVoted = true; // Actualizar el estado para indicar que el usuario ha votado
         },
-        error => {
+        (error) => {
           if (error.status === 500) {
             this.showAlreadyVotedNotification = true;
             setTimeout(() => {
@@ -120,7 +128,7 @@ export class SatisfactionLevelComponent implements OnInit, OnDestroy {
               this.cdr.detectChanges();
             }, 4000);
           }
-        }
+        },
       );
     }
   }

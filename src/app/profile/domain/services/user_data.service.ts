@@ -4,7 +4,7 @@ import { User } from 'src/app/profile/domain/entities/user.interfaces';
 import { Author } from 'src/app/shared/interfaces/author.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserDataService {
   unsubscribe() {
@@ -14,7 +14,7 @@ export class UserDataService {
   public user$: Observable<User | null> = this.userSubject.asObservable();
   public author: Author | undefined;
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Cambia el usuario actual.
@@ -28,14 +28,13 @@ export class UserDataService {
    * Establece el usuario actual.
    * @param user - El usuario a establecer.
    */
-  setUser(user: User | null, author:Author |undefined): void {
-
-    if ( user?.id && !user.isOwnProfile) {
+  setUser(user: User | null, author: Author | undefined): void {
+    if (user?.id && !user.isOwnProfile) {
       user.isOwnProfile = this.isCurrentUser(user.id);
     }
     this.userSubject.next(user);
 
-    if(author){
+    if (author) {
       this.author = author;
     }
   }

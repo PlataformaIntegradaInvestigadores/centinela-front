@@ -1,4 +1,16 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  OnDestroy,
+  ViewChild,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { FeedPost } from '../../../domain/entities/feed.interface';
@@ -6,14 +18,14 @@ import { FeedPost } from '../../../domain/entities/feed.interface';
 @Component({
   selector: 'app-post-editor',
   templateUrl: './post-editor.component.html',
-  styleUrls: ['./post-editor.component.css']
+  styleUrls: ['./post-editor.component.css'],
 })
 export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() post: FeedPost | null = null;
   @Input() showModal: boolean = false;
 
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<{ content: string, tags: string[] }>();
+  @Output() closeEditor = new EventEmitter<void>();
+  @Output() save = new EventEmitter<{ content: string; tags: string[] }>();
 
   @ViewChild('modalTemplate', { static: true }) modalTemplate!: TemplateRef<any>;
   @ViewChild('contentTextarea') contentTextarea: any;
@@ -29,8 +41,8 @@ export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef
-  ) { }
+    private viewContainerRef: ViewContainerRef,
+  ) {}
 
   ngOnInit(): void {
     this.initializeEditor();
@@ -65,15 +77,12 @@ export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
         positionStrategy: this.overlay.position().global(),
         hasBackdrop: false, // Manejamos nuestro propio backdrop
         panelClass: 'post-editor-overlay-panel',
-        scrollStrategy: this.overlay.scrollStrategies.block()
+        scrollStrategy: this.overlay.scrollStrategies.block(),
       });
     }
 
     if (!this.portal) {
-      this.portal = new TemplatePortal(
-        this.modalTemplate,
-        this.viewContainerRef
-      );
+      this.portal = new TemplatePortal(this.modalTemplate, this.viewContainerRef);
     }
 
     // Renderizar el modal en el overlay (fuera del árbol de componentes)
@@ -117,7 +126,12 @@ export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
     if (this.post && this.showModal) {
       this.editedContent = this.post.content;
       this.editedTags = [...(this.post.tags || [])];
-      console.log('PostEditor initialized with content:', this.editedContent, 'tags:', this.editedTags);
+      console.log(
+        'PostEditor initialized with content:',
+        this.editedContent,
+        'tags:',
+        this.editedTags,
+      );
     }
   }
 
@@ -126,7 +140,7 @@ export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
    */
   onClose(): void {
     if (!this.isSubmitting) {
-      this.close.emit();
+      this.closeEditor.emit();
     }
   }
 
@@ -141,7 +155,7 @@ export class PostEditorComponent implements OnInit, OnChanges, OnDestroy {
       setTimeout(() => {
         this.save.emit({
           content: this.editedContent.trim(),
-          tags: this.editedTags
+          tags: this.editedTags,
         });
         // El isSubmitting se resetea cuando se cierra el modal
       }, 100);

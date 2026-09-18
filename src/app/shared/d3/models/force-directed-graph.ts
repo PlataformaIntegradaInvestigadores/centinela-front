@@ -1,13 +1,13 @@
-import {EventEmitter} from "@angular/core";
-import {Link} from './link';
-import {Node} from './node';
+import { EventEmitter } from '@angular/core';
+import { Link } from './link';
+import { Node } from './node';
 import * as d3 from 'd3';
 
 const FORCES = {
   LINKS: 1 / 500,
   COLLISION: 1,
-  CHARGE: -1
-}
+  CHARGE: -1,
+};
 
 export class ForceDirectedGraph {
   public ticker: EventEmitter<d3.Simulation<Node, Link>> = new EventEmitter();
@@ -15,15 +15,19 @@ export class ForceDirectedGraph {
 
   public nodes: Node[] = [];
   public links: Link[] = [];
-  public forces: { manyBody: number, collide: number }
+  public forces: { manyBody: number; collide: number };
 
-  constructor(nodes: Node[], links: Link[], options: { width: number, height: number }, forces: { manyBody: number, collide: number }) {
+  constructor(
+    nodes: Node[],
+    links: Link[],
+    options: { width: number; height: number },
+    forces: { manyBody: number; collide: number },
+  ) {
     this.nodes = nodes;
     this.links = links;
-    this.forces = forces
+    this.forces = forces;
     this.initSimulation(options);
   }
-
 
   initNodes() {
     if (!this.simulation) {
@@ -38,18 +42,20 @@ export class ForceDirectedGraph {
       throw new Error('simulation was not initialized yet');
     }
 
-    this.simulation.force('links',
-      d3.forceLink(this.links)
-        .id(d => {
-          // @ts-ignore
-          return d['id']
+    this.simulation.force(
+      'links',
+      d3
+        .forceLink(this.links)
+        .id((d) => {
+          // @ts-expect-error d3 force-link node datum typing doesn't expose custom 'id' property
+          return d['id'];
         })
         .distance((d: any) => {
           const sourceR = d.source?.r || 35;
           const targetR = d.target?.r || 35;
           return sourceR + targetR + 80;
         })
-        .iterations(4)
+        .iterations(4),
       /*.strength(d =>{
         return d['strokeWidth'] / 100
       })*/
@@ -58,14 +64,14 @@ export class ForceDirectedGraph {
     );
   }
 
-  initSimulation(options: { width: number, height: number }) {
+  initSimulation(options: { width: number; height: number }) {
     if (!options || !options.width || !options.height) {
       throw new Error('missing options when initializing simulation');
     }
 
     const centerX = options.width / 2;
     const centerY = options.height / 2;
-    this.nodes.forEach(node => {
+    this.nodes.forEach((node) => {
       if (node.level === 0) {
         node.fx = centerX;
         node.fy = centerY;
@@ -76,20 +82,23 @@ export class ForceDirectedGraph {
     if (!this.simulation) {
       const ticker = this.ticker;
 
-      this.simulation = d3.forceSimulation()
+      this.simulation = d3
+        .forceSimulation()
         .velocityDecay(0.45)
-        .force('charge',
-          d3.forceManyBody()
-            .strength(() => -150)
+        .force(
+          'charge',
+          d3.forceManyBody().strength(() => -150),
         )
-        .force('collide',
-          d3.forceCollide()
+        .force(
+          'collide',
+          d3
+            .forceCollide()
             .strength(FORCES.COLLISION)
-            .radius(d => {
-              // @ts-ignore
-              return (d['r'] || 35) + 15
+            .radius((d) => {
+              // @ts-expect-error d3 force-collide node datum typing doesn't expose custom 'r' property
+              return (d['r'] || 35) + 15;
             })
-            .iterations(4)
+            .iterations(4),
         );
 
       // Connecting the d3 ticker to an angular event emitter

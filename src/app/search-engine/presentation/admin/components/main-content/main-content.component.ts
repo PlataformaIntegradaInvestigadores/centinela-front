@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   ArticleComparator,
   AuthorComparator,
   Status,
 } from 'src/app/search-engine/domain/entities/author.comparator.interface';
-import {DashboardAdminService} from 'src/app/search-engine/domain/services/dashboard-admin.service';
-import {UpdateCentinelaService} from 'src/app/search-engine/domain/services/update-centinela.service';
+import { DashboardAdminService } from 'src/app/search-engine/domain/services/dashboard-admin.service';
+import { UpdateCentinelaService } from 'src/app/search-engine/domain/services/update-centinela.service';
 
 @Component({
   selector: 'app-main-content',
@@ -31,17 +31,16 @@ export class MainContentComponent implements OnInit {
   loadingAuthorsComparator: boolean = false;
   loadingModel: boolean = false;
   loadingCorpus: boolean = false;
-  authorsNumberNoSqlDb: number = 0
-  lastYearInfoNoSqlDB: number = 0
+  authorsNumberNoSqlDb: number = 0;
+  lastYearInfoNoSqlDB: number = 0;
   messageNoSqlDb: string = '';
   isErrorUpdatingNoSqlDb: boolean = false;
-  populating:boolean = false
+  populating: boolean = false;
 
   constructor(
     private dashboardAdminService: DashboardAdminService,
     private updateCentinela: UpdateCentinelaService,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getAuthorComparator();
@@ -83,7 +82,7 @@ export class MainContentComponent implements OnInit {
           };
         }
         this.loadingAuthorsComparator = false;
-        this.authorComparator = {authors_no_updated: 0, total_authors: 0};
+        this.authorComparator = { authors_no_updated: 0, total_authors: 0 };
       },
     });
   }
@@ -121,7 +120,7 @@ export class MainContentComponent implements OnInit {
           };
         }
         this.loadingArticleComparator = false;
-        this.articleComparator = {total_centinela: 0, total_scopus: 0};
+        this.articleComparator = { total_centinela: 0, total_scopus: 0 };
       },
     });
   }
@@ -134,7 +133,7 @@ export class MainContentComponent implements OnInit {
       return;
     }
 
-    const {authors_no_updated, total_authors} = this.authorComparator;
+    const { authors_no_updated, total_authors } = this.authorComparator;
 
     if (total_authors === 0) {
       this.authorPercentage = 0;
@@ -152,7 +151,7 @@ export class MainContentComponent implements OnInit {
       return;
     }
 
-    const {total_centinela, total_scopus} = this.articleComparator;
+    const { total_centinela, total_scopus } = this.articleComparator;
 
     if (total_scopus === 0) {
       this.articlePercentage = 0;
@@ -204,7 +203,6 @@ export class MainContentComponent implements OnInit {
         this.corpusStatus.message = 'Corpus generated successfully';
         this.getModelCorpusObserver();
         this.loadingCorpus = false;
-
       },
       error: (error) => {
         if (error.status === 0) {
@@ -273,10 +271,9 @@ export class MainContentComponent implements OnInit {
           };
           this.loadingModel = false;
         }
-        this.loadingModel = false
+        this.loadingModel = false;
       },
-      complete: () => {
-      },
+      complete: () => {},
     });
   }
 
@@ -366,31 +363,31 @@ export class MainContentComponent implements OnInit {
   }
 
   getNoSqlDbYears() {
-    this.dashboardAdminService.getNoSqlDbYears().subscribe(data => {
-      let yearOptions = data.map(item => item.year);
+    this.dashboardAdminService.getNoSqlDbYears().subscribe((data) => {
+      const yearOptions = data.map((item) => item.year);
       this.lastYearInfoNoSqlDB = yearOptions[yearOptions.length - 1];
-      this.getNoSqlInfo(this.lastYearInfoNoSqlDB)
+      this.getNoSqlInfo();
     });
   }
 
-  getNoSqlInfo(year: number) {
-    this.dashboardAdminService.getNoSqlDbCounts(this.lastYearInfoNoSqlDB).subscribe(data => {
-      this.authorsNumberNoSqlDb = data.author
-    })
+  getNoSqlInfo() {
+    this.dashboardAdminService.getNoSqlDbCounts(this.lastYearInfoNoSqlDB).subscribe((data) => {
+      this.authorsNumberNoSqlDb = data.author;
+    });
   }
 
   populateNoSqlDb() {
-    this.populating = true
+    this.populating = true;
     this.dashboardAdminService.populateNoSqlDb().subscribe({
       next: (response) => {
         this.messageNoSqlDb = response.message;
         this.isErrorUpdatingNoSqlDb = false;
-        this.populating = false
+        this.populating = false;
       },
       error: (error) => {
         this.messageNoSqlDb = error.error.error;
         this.isErrorUpdatingNoSqlDb = true;
-      }
+      },
     });
   }
 }

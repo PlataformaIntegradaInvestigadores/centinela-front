@@ -1,17 +1,16 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TopicService } from 'src/app/consensus/domain/services/TopicDataService.service';
 import { WebSocketPhase3Service } from 'src/app/consensus/domain/services/websocket-phase3.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'phase3-consensus-notification',
   templateUrl: './phase3-consensus-notification.component.html',
-  styleUrls: ['./phase3-consensus-notification.component.css']
+  styleUrls: ['./phase3-consensus-notification.component.css'],
 })
-export class Phase3ConsensusNotificationComponent {
+export class Phase3ConsensusNotificationComponent implements OnInit, OnDestroy {
   satisfactionNotifications: any[] = [];
   groupId: string = '';
   private wsSubscription: Subscription | undefined;
@@ -21,11 +20,11 @@ export class Phase3ConsensusNotificationComponent {
     private topicService: TopicService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.groupId = params.get('groupId') || '';
       this.loadNotifications();
       this.connectWebSocket();
@@ -40,7 +39,7 @@ export class Phase3ConsensusNotificationComponent {
 
   loadNotifications(): void {
     this.topicService.getUserSatisfactionNotifications(this.groupId).subscribe(
-      notifications => {
+      (notifications) => {
         notifications.forEach((notification: any) => {
           // Convertir `created_at` a objeto Date
           notification.created_at = new Date(notification.created_at);
@@ -50,34 +49,34 @@ export class Phase3ConsensusNotificationComponent {
         this.sortNotifications();
         this.cdr.detectChanges();
       },
-      error => {
+      (error) => {
         console.error('Error loading notifications:', error);
-      }
+      },
     );
   }
 
   connectWebSocket(): void {
     if (this.groupId) {
-      const socket = this.webSocketService.connect(this.groupId);
+      this.webSocketService.connect(this.groupId);
       this.wsSubscription = this.webSocketService.userSatisfactionReceived.subscribe(
-        msg => {
+        (msg) => {
           // Convertir `added_at` a objeto Date si existe
           if (msg.added_at) {
             msg.added_at = new Date(msg.added_at);
           }
           // Convertir `created_at` a objeto Date si no es null, de lo contrario usar `added_at`
           msg.created_at = msg.created_at ? new Date(msg.created_at) : msg.added_at;
-     
-          msg.profile_picture_url= this.getProfilePictureUrl(msg.profile_picture_url)
+
+          msg.profile_picture_url = this.getProfilePictureUrl(msg.profile_picture_url);
 
           this.satisfactionNotifications.push(msg);
           // Ordenar notificaciones por `created_at` de más reciente a más antigua
           this.sortNotifications();
           this.cdr.detectChanges();
         },
-        error => {
+        (error) => {
           console.error('Error receiving WebSocket notification:', error);
-        }
+        },
       );
     }
   }
@@ -102,5 +101,4 @@ export class Phase3ConsensusNotificationComponent {
     const baseUrl = '';
     return url ? `${baseUrl}${url}` : '../../../../../assets/profile.png';
   }
-
 }

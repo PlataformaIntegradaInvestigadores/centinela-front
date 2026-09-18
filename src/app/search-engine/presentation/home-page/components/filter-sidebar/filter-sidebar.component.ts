@@ -1,13 +1,13 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-filter-sidebar',
   templateUrl: './filter-sidebar.component.html',
-  styleUrls: ['./filter-sidebar.component.css']
+  styleUrls: ['./filter-sidebar.component.css'],
 })
 export class FilterSidebarComponent {
   @Input()
-  code!: String;
+  code!: string;
 
   @Input()
   years: number[] = [];
@@ -26,7 +26,7 @@ export class FilterSidebarComponent {
     { nombre: 'Universidad Técnica de Machala' },
     { nombre: 'Universidad Estatal de Milagro' },
     { nombre: 'Universidad Católica de Santiago de Guayaquil' },
-    { nombre: 'Universidad Laica Eloy Alfaro de Manabí' }
+    { nombre: 'Universidad Laica Eloy Alfaro de Manabí' },
   ];
 
   @Output() yearsSelected: EventEmitter<number[]> = new EventEmitter<number[]>();
@@ -43,8 +43,8 @@ export class FilterSidebarComponent {
     this.yearsSelected.emit(this.selectedYears);
   }
   yearSelected(years: number[]) {
-    console.log(years)
-    this.years=years
-    console.log(this.years)
+    console.log(years);
+    this.years = years;
+    console.log(this.years);
   }
 }

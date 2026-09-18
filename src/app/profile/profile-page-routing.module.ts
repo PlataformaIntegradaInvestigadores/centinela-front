@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { ProfileComponent } from './presentation/pages/profile-page/profile.component';
 import { NetworkComponent } from './presentation/components/network/network.component';
@@ -18,22 +18,18 @@ const routes: Routes = [
       { path: 'article', component: ArticleComponent },
       { path: 'fingerprint', component: FingerprintComponent },
       { path: 'my-groups', component: ListGroupComponent },
-    ]
+    ],
   },
   {
     path: 'my-groups/:groupId',
-    loadChildren: () => import('src/app/consensus/consensus.module').then(m => m.ConsensusModule)
+    loadChildren: () => import('src/app/consensus/consensus.module').then((m) => m.ConsensusModule),
   },
   { path: '', redirectTo: 'about-me', pathMatch: 'full' },
-  { path: '**', redirectTo: 'about-me' }
+  { path: '**', redirectTo: 'about-me' },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class ProfilePageRoutingModule { }
+export class ProfilePageRoutingModule {}

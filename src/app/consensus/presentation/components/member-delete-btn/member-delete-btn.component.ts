@@ -1,17 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { initFlowbite } from 'flowbite';
-import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { ConsensusService } from 'src/app/consensus/domain/services/GetGroupDataService.service';
 import { UserG } from 'src/app/group/domain/entities/user.interface';
 
 @Component({
   selector: 'member-delete-btn',
   templateUrl: './member-delete-btn.component.html',
-  styleUrls: ['./member-delete-btn.component.css']
+  styleUrls: ['./member-delete-btn.component.css'],
 })
-export class MemberDeleteBtnComponent implements OnInit{
-
+export class MemberDeleteBtnComponent implements OnInit {
   @Input() member: UserG | null = null;
   groupId: string | null = null;
   @Output() memberDeleted = new EventEmitter<string>(); // Emitir el ID del miembro eliminado
@@ -45,17 +43,16 @@ export class MemberDeleteBtnComponent implements OnInit{
 
   deleteMember(): void {
     if (this.groupId && this.member?.id) {
-      this.consensusService.removeMember(this.groupId, this.member.id)
-        .subscribe(
-          response => {
-            this.memberDeleted.emit(this.member?.id ?? ''); // Emitir el evento con un valor predeterminado
-            this.closeModal();
-          },
-          error => {
-            // Maneja los errores
-            console.error('Error removing member:', error);
-          }
-        );
+      this.consensusService.removeMember(this.groupId, this.member.id).subscribe(
+        () => {
+          this.memberDeleted.emit(this.member?.id ?? ''); // Emitir el evento con un valor predeterminado
+          this.closeModal();
+        },
+        (error) => {
+          // Maneja los errores
+          console.error('Error removing member:', error);
+        },
+      );
     }
   }
 }

@@ -2,8 +2,13 @@
 <div class="container mx-auto mb-2 rounded-xl border p-6 shadow-md bg-white">
   <div class="flex justify-between items-start mb-2">
     <h2 class="text-2xl font-semibold text-gray-800">Contact Information</h2>
-    <img *ngIf="isOwnProfile" src="assets/pencil-solid.svg" alt="Edit" class="cursor-pointer w-4 h-4"
-      (click)="toggleEditContactInfo()">
+    <img
+      *ngIf="isOwnProfile"
+      src="assets/pencil-solid.svg"
+      alt="Edit"
+      class="cursor-pointer w-4 h-4"
+      (click)="toggleEditContactInfo()"
+    />
   </div>
   <div *ngIf="!isEditing">
     <div class="text-sm text-gray-700" *ngIf="contactInfo.length > 0; else contactInfoPlaceholder">
@@ -18,25 +23,51 @@
       </div>
     </div>
     <ng-template #contactInfoPlaceholder>
-      <p class="text-sm text-gray-500">Please add your contact information to make it easier for others to reach you.
+      <p class="text-sm text-gray-500">
+        Please add your contact information to make it easier for others to reach you.
       </p>
     </ng-template>
   </div>
   <div *ngIf="isEditing">
     <div class="text-sm text-gray-700">
-      <div class="flex items-center justify-between space-x-2 mb-2" *ngFor="let contact of editableContactInfo">
+      <div
+        class="flex items-center justify-between space-x-2 mb-2"
+        *ngFor="let contact of editableContactInfo"
+      >
         <span class="break-all">{{ contact.value }}</span>
-        <button (click)="removeContactInfo(contact)"
-          class="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600">Remove</button>
+        <button
+          (click)="removeContactInfo(contact)"
+          class="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+        >
+          Remove
+        </button>
       </div>
-      <input [(ngModel)]="newContactValue" class="w-full border rounded p-3 mb-3"
-        placeholder="(e.g., phone number, email, URL)" [attr.aria-label]="'Contact Value'" />
-      <button (click)="addContactInfo()"
-        class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black">Add</button>
+      <input
+        [(ngModel)]="newContactValue"
+        class="w-full border rounded p-3 mb-3"
+        placeholder="(e.g., phone number, email, URL)"
+        [attr.aria-label]="'Contact Value'"
+      />
+      <button
+        (click)="addContactInfo()"
+        class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black"
+      >
+        Add
+      </button>
     </div>
     <div class="flex space-x-3 mt-3">
-      <button (click)="save()" class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black">Save</button>
-      <button (click)="cancel()" class="px-4 py-2 rounded bg-gray-300 text-gray-700 hover:bg-gray-400">Cancel</button>
+      <button
+        (click)="save()"
+        class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black"
+      >
+        Save
+      </button>
+      <button
+        (click)="cancel()"
+        class="px-4 py-2 rounded bg-gray-300 text-gray-700 hover:bg-gray-400"
+      >
+        Cancel
+      </button>
     </div>
   </div>
   <div *ngIf="saveMessage" class="mt-3 text-green-600">{{ saveMessage }}</div>

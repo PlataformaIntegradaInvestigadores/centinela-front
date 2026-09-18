@@ -28,8 +28,8 @@ body {
 }
 
 /* Estilo para los inputs */
-input[type="text"],
-input[type="password"] {
+input[type='text'],
+input[type='password'] {
   padding: 1rem; /* Ajuste del relleno */
   border: 1px solid #ccc; /* Borde gris */
   border-radius: 0.25rem; /* Bordes redondeados */

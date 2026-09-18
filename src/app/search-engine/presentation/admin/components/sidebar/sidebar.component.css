@@ -1,11 +1,15 @@
 .active {
   background: linear-gradient(to top right, #2563eb, #60a5fa);
-  box-shadow: 0 1px 3px 0 rgba(59, 130, 246, 0.2), 0 1px 2px 0 rgba(59, 130, 246, 0.1);
+  box-shadow:
+    0 1px 3px 0 rgba(59, 130, 246, 0.2),
+    0 1px 2px 0 rgba(59, 130, 246, 0.1);
   opacity: 0.85;
 }
 
 .active:hover {
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4), 0 4px 6px -2px rgba(59, 130, 246, 0.1);
+  box-shadow:
+    0 10px 15px -3px rgba(59, 130, 246, 0.4),
+    0 4px 6px -2px rgba(59, 130, 246, 0.1);
 }
 
 .active:active {

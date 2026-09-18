@@ -1,17 +1,17 @@
 <!-- Post Comments Component -->
 <div class="border-t border-gray-200 p-4">
   <!-- Error message -->
-  <div *ngIf="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+  <div
+    *ngIf="error"
+    class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+  >
     {{ error }}
   </div>
 
   <!-- Write a comment section -->
   <div class="flex items-start space-x-3 mb-4">
-    <img 
-      src="/assets/profile.png" 
-      alt="Tu foto" 
-      class="w-8 h-8 rounded-full object-cover">
-    
+    <img src="/assets/profile.png" alt="Tu foto" class="w-8 h-8 rounded-full object-cover" />
+
     <div class="flex-1">
       <div class="relative">
         <textarea
@@ -20,13 +20,15 @@
           class="w-full p-3 pr-12 bg-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm"
           rows="1"
           (keyup.enter)="submitComment()"
-          [disabled]="isSubmittingComment">
+          [disabled]="isSubmittingComment"
+        >
         </textarea>
-        
+
         <button
           (click)="submitComment()"
           [disabled]="!newCommentContent.trim() || isSubmittingComment"
-          class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed">
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+        >
           <i class="fas fa-paper-plane" *ngIf="!isSubmittingComment"></i>
           <i class="fas fa-spinner fa-spin" *ngIf="isSubmittingComment"></i>
         </button>
@@ -42,15 +44,16 @@
 
   <!-- Comments list -->
   <div class="space-y-4" *ngIf="!isLoadingComments && comments.length > 0">
-    <div 
-      *ngFor="let comment of comments; trackBy: trackByCommentId" 
-      class="flex items-start space-x-3">
-      
-      <img 
-        [src]="comment.author.profile_picture || '/assets/profile.png'" 
-        [alt]="comment.author.first_name || 'Usuario'" 
-        class="w-8 h-8 rounded-full object-cover">
-      
+    <div
+      *ngFor="let comment of comments; trackBy: trackByCommentId"
+      class="flex items-start space-x-3"
+    >
+      <img
+        [src]="comment.author.profile_picture || '/assets/profile.png'"
+        [alt]="comment.author.first_name || 'Usuario'"
+        class="w-8 h-8 rounded-full object-cover"
+      />
+
       <div class="flex-1">
         <div class="bg-gray-100 rounded-2xl px-4 py-2">
           <div class="font-semibold text-sm text-gray-900">
@@ -60,23 +63,27 @@
             {{ comment.content }}
           </div>
         </div>
-        
+
         <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
-          <button 
+          <button
             (click)="toggleCommentLike(comment)"
-            [class]="comment.is_liked ? 'text-red-600 font-medium' : 'text-gray-500 hover:text-red-600'"
-            class="transition-colors">
+            [class]="
+              comment.is_liked ? 'text-red-600 font-medium' : 'text-gray-500 hover:text-red-600'
+            "
+            class="transition-colors"
+          >
             <i [class]="comment.is_liked ? 'fas fa-heart' : 'far fa-heart'" class="mr-1"></i>
             {{ comment.likes_count > 0 ? comment.likes_count : '' }}
             {{ comment.is_liked ? 'Te gusta' : 'Me gusta' }}
           </button>
-          
+
           <span>{{ formatDate(comment.created_at) }}</span>
-          
-          <button 
+
+          <button
             *ngIf="canDeleteComment(comment)"
             (click)="deleteComment(comment)"
-            class="text-red-500 hover:text-red-700 font-medium">
+            class="text-red-500 hover:text-red-700 font-medium"
+          >
             Eliminar
           </button>
         </div>

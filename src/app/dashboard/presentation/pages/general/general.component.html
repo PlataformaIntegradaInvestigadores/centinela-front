@@ -2,17 +2,27 @@
 <!--  pantallas muy grandes-->
 <div class="w-full">
   <ng-container *ngIf="isCharged()">
-    <div class="flex flex-col justify-center items-center mb-3 ">
-
-      <h1 class="my-6 w-full border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900">Ecuador Statistics</h1>
+    <div class="flex flex-col justify-center items-center mb-3">
+      <h1
+        class="my-6 w-full border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900"
+      >
+        Ecuador Statistics
+      </h1>
       <div class="gap-y-3">
         <div class="flex flex-col md:flex-row mb-1 justify-between font-black">
           <div class="border-2 border-blue-900 rounded-md mr-1 mb-1">
-            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Statistics in Ecuador</h3>
+            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+              Statistics in Ecuador
+            </h3>
             <div class="flex justify-center sm:flex-col px-2 gap-y-2 pb-2">
               <div class="flex justify-center items-center">
                 <label class="mr-3" *ngFor="let option of options" (change)="updateData(year)">
-                  <input type="radio" name="grupoOpciones" [(ngModel)]="selectedOption" [value]="option">
+                  <input
+                    type="radio"
+                    name="grupoOpciones"
+                    [(ngModel)]="selectedOption"
+                    [value]="option"
+                  />
                   {{ option }}
                 </label>
               </div>
@@ -22,87 +32,152 @@
             </div>
           </div>
           <div class="border-2 border-blue-900 rounded-md flex flex-col flex-grow mb-1">
-            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start text-[10px] md:text-[20px]">Ecuador total contribution
-              {{selectedOption| lowercase}} {{ year }}</h3>
+            <h3
+              class="flex bg-blue-900 text-white p-1 justify-start items-start text-[10px] md:text-[20px]"
+            >
+              Ecuador total contribution {{ selectedOption | lowercase }} {{ year }}
+            </h3>
             <app1-summary [counts]="counts"></app1-summary>
           </div>
         </div>
         <div class="max-h-60 overflow-hidden border-blue-900 border-2 rounded-md mb-2">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start " *ngIf="year.toString()==='2000'">
-            Articles contribution in
-            Ecuador in  {{ year }}</h3>
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start " *ngIf="selectedOption==='In'">Articles
-            contribution in
-            Ecuador {{selectedOption|lowercase}}  {{ year }}</h3>
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start "
-              *ngIf="selectedOption==='Until' && year.toString()!=='2000'">Articles contribution evolution in
-            Ecuador from {{yearOptions[0]}} {{selectedOption|lowercase}}  {{ year }}</h3>
+          <h3
+            class="flex bg-blue-900 text-white p-1 justify-start items-start"
+            *ngIf="year.toString() === '2000'"
+          >
+            Articles contribution in Ecuador in {{ year }}
+          </h3>
+          <h3
+            class="flex bg-blue-900 text-white p-1 justify-start items-start"
+            *ngIf="selectedOption === 'In'"
+          >
+            Articles contribution in Ecuador {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <h3
+            class="flex bg-blue-900 text-white p-1 justify-start items-start"
+            *ngIf="selectedOption === 'Until' && year.toString() !== '2000'"
+          >
+            Articles contribution evolution in Ecuador from {{ yearOptions[0] }}
+            {{ selectedOption | lowercase }} {{ year }}
+          </h3>
           <div class="w-full flex justify-center items-center">
-            <app-evolution-line-chart [width]="(actualWidth*0.7)" [height]="250" [multi]="lineChartInfo" [general]="true"
-                                      (selectedYear)="updateData($event)"></app-evolution-line-chart>
+            <app-evolution-line-chart
+              [width]="actualWidth * 0.7"
+              [height]="250"
+              [multi]="lineChartInfo"
+              [general]="true"
+              (selectedYear)="updateData($event)"
+            ></app-evolution-line-chart>
           </div>
         </div>
-        <div class=" border-blue-900 border-2 rounded-md mb-2">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Affiliations with most articles
-            contribution's in Ecuador {{selectedOption| lowercase}} {{ year }}</h3>
+        <div class="border-blue-900 border-2 rounded-md mb-2">
+          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+            Affiliations with most articles contribution's in Ecuador
+            {{ selectedOption | lowercase }} {{ year }}
+          </h3>
           <div class="flex flex-col justify-center items-center">
-            <app-bar-chart [width]="(actualWidth*0.7)" [height]="300" [single]="barChartInfo" [general]="true"
-                           (selectedAffiliation)="getId($event)"></app-bar-chart>
+            <app-bar-chart
+              [width]="actualWidth * 0.7"
+              [height]="300"
+              [single]="barChartInfo"
+              [general]="true"
+              (selectedAffiliation)="getId($event)"
+            ></app-bar-chart>
           </div>
         </div>
       </div>
       <div class="flex flex-col md:flex-row">
         <div class="border-blue-900 border-2 rounded-md mb-1 mr-0 md:mr-2">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Topics with most articles in Ecuador
-            {{selectedOption| lowercase}} {{ year }}</h3>
-          <app-tree-map-chart [width]="550" [height]="400" [single]="treeMapInfo" [general]="true"
-                              (selectedTopic)="onSearchTopic($event)"></app-tree-map-chart>
+          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+            Topics with most articles in Ecuador {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <app-tree-map-chart
+            [width]="550"
+            [height]="400"
+            [single]="treeMapInfo"
+            [general]="true"
+            (selectedTopic)="onSearchTopic($event)"
+          ></app-tree-map-chart>
         </div>
-<!--        <div class="border-blue-900 border-2 rounded-md mb-1 hidden xl:block ">-->
-<!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
-<!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
-<!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.295" [scale]="3200" [x]="-75.8"></app-ecuador-map>-->
-<!--        </div>-->
-<!--        <div class="border-blue-900 border-2 rounded-md mb-1 hidden md:block xl:hidden">-->
-<!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
-<!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
-<!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.47" [scale]="3000"></app-ecuador-map>-->
-<!--        </div>-->
-<!--        <div class="border-blue-900 border-2 rounded-md mb-1 block md:hidden">-->
-<!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
-<!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
-<!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.9" [scale]="4000"></app-ecuador-map>-->
-<!--        </div>-->
+        <!--        <div class="border-blue-900 border-2 rounded-md mb-1 hidden xl:block ">-->
+        <!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
+        <!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
+        <!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.295" [scale]="3200" [x]="-75.8"></app-ecuador-map>-->
+        <!--        </div>-->
+        <!--        <div class="border-blue-900 border-2 rounded-md mb-1 hidden md:block xl:hidden">-->
+        <!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
+        <!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
+        <!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.47" [scale]="3000"></app-ecuador-map>-->
+        <!--        </div>-->
+        <!--        <div class="border-blue-900 border-2 rounded-md mb-1 block md:hidden">-->
+        <!--          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces-->
+        <!--            contribution {{selectedOption| lowercase}} {{ year }}</h3>-->
+        <!--          <app-ecuador-map  [response]="provinces" [width]="window.innerWidth*0.9" [scale]="4000"></app-ecuador-map>-->
+        <!--        </div>-->
 
         <div class="border-blue-900 border-2 rounded-md mb-1" *ngIf="window.innerWidth >= 1280">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces contribution {{ selectedOption | lowercase }} {{ year }}</h3>
-          <app-ecuador-map [response]="provinces" [width]="window.innerWidth * 0.295" [scale]="3000" [x]="-76"></app-ecuador-map>
+          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+            Provinces contribution {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <app-ecuador-map
+            [response]="provinces"
+            [width]="window.innerWidth * 0.295"
+            [scale]="3000"
+            [x]="-76"
+          ></app-ecuador-map>
         </div>
 
-        <div class="border-blue-900 border-2 rounded-md mb-1" *ngIf="window.innerWidth >= 768 && window.innerWidth < 1280">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces contribution {{ selectedOption | lowercase }} {{ year }}</h3>
-          <app-ecuador-map [response]="provinces" [width]="window.innerWidth * 0.47" [scale]="2500" [x]="-73.4"></app-ecuador-map>
+        <div
+          class="border-blue-900 border-2 rounded-md mb-1"
+          *ngIf="window.innerWidth >= 768 && window.innerWidth < 1280"
+        >
+          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+            Provinces contribution {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <app-ecuador-map
+            [response]="provinces"
+            [width]="window.innerWidth * 0.47"
+            [scale]="2500"
+            [x]="-73.4"
+          ></app-ecuador-map>
         </div>
 
         <div class="border-blue-900 border-2 rounded-md mb-1" *ngIf="window.innerWidth < 768">
-          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">Provinces contribution {{ selectedOption | lowercase }} {{ year }}</h3>
-          <app-ecuador-map [response]="provinces" [width]="window.innerWidth * 0.98" [scale]="2300" [x]="-72"></app-ecuador-map>
+          <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start">
+            Provinces contribution {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <app-ecuador-map
+            [response]="provinces"
+            [width]="window.innerWidth * 0.98"
+            [scale]="2300"
+            [x]="-72"
+          ></app-ecuador-map>
         </div>
       </div>
       <div class="flex flex-col justify-center border-2 border-blue-900 rounded-2">
-        <h3 class="bg-blue-900 text-white flex justify-center items-center">More Statistics about:</h3>
+        <h3 class="bg-blue-900 text-white flex justify-center items-center">
+          More Statistics about:
+        </h3>
         <div class="flex gap-x-5 px-5 pb-2">
           <div class="flex items-center justify-center gap-x-4">
             <div class="flex flex-col items-center justify-center" routerLinkActive="active">
-              <div class="flex justify-center items-center" routerLink="affiliations" style="cursor: pointer;">
-                <mat-icon style="font-size: 40px; width: 50px; height: 50px;">apartment</mat-icon>
+              <div
+                class="flex justify-center items-center"
+                routerLink="affiliations"
+                style="cursor: pointer"
+              >
+                <mat-icon style="font-size: 40px; width: 50px; height: 50px">apartment</mat-icon>
               </div>
               <dd class="font-light">Affiliations</dd>
             </div>
 
             <div class="flex flex-col items-center justify-center">
-              <div class="flex justify-center items-center" routerLink="topic" style="cursor: pointer;">
-                <mat-icon style="font-size: 40px; width: 50px; height: 50px;">school</mat-icon>
+              <div
+                class="flex justify-center items-center"
+                routerLink="topic"
+                style="cursor: pointer"
+              >
+                <mat-icon style="font-size: 40px; width: 50px; height: 50px">school</mat-icon>
               </div>
               <dd class="font-light">Knowledge Areas</dd>
             </div>
@@ -437,5 +512,3 @@
     <!--    </div>-->
   </ng-container>
 </div>
-
-

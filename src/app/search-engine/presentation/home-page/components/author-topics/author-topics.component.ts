@@ -1,12 +1,11 @@
-import {Component, Input} from '@angular/core';
-import {Topic} from "../../../../../shared/interfaces/author.interface";
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-author-topics',
   templateUrl: './author-topics.component.html',
-  styleUrls: ['./author-topics.component.css']
+  styleUrls: ['./author-topics.component.css'],
 })
 export class AuthorTopicsComponent {
   @Input()
-  topics:String[]=[];
+  topics: string[] = [];
 }

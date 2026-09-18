@@ -41,7 +41,7 @@ import { SharedModule } from '../shared/shared.module';
     PostPollComponent,
     PostFilesComponent,
     PostActionsComponent,
-    PostEditorComponent
+    PostEditorComponent,
   ],
   imports: [
     CommonModule,
@@ -56,10 +56,8 @@ import { SharedModule } from '../shared/shared.module';
     PostCommentsComponent,
     PostCreatorComponent,
     PostListComponent,
-    PostEditorComponent // <-- exportar el editor de post
+    PostEditorComponent, // <-- exportar el editor de post
   ],
-  providers: [
-    FeedService
-  ]
+  providers: [FeedService],
 })
-export class FeedsModule { }
+export class FeedsModule {}

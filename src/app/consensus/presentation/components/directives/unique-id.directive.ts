@@ -1,7 +1,7 @@
 import { Directive, ElementRef, OnInit } from '@angular/core';
 
 @Directive({
-  selector: '[appUniqueID]'
+  selector: '[appUniqueID]',
 })
 export class UniqueIDDirective implements OnInit {
   private static count = 0;

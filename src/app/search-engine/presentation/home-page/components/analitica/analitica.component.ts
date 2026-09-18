@@ -1,22 +1,20 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-analitica',
   templateUrl: './analitica.component.html',
-  styleUrls: ['./analitica.component.css']
+  styleUrls: ['./analitica.component.css'],
 })
-export class AnaliticaComponent {
+export class AnaliticaComponent implements OnInit {
   @Input()
-  code!: String;
+  code!: string;
 
-  constructor(private title:Title){
-
-  }
+  constructor(private title: Title) {}
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    this.title.setTitle("Analytics")
+    this.title.setTitle('Analytics');
   }
 }

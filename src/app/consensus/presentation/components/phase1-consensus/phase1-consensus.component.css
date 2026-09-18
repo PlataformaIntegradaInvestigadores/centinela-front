@@ -1,75 +1,81 @@
-#noob-label, #expert-label {
-    transition: opacity 0.3s ease-in-out;
+#noob-label,
+#expert-label {
+  transition: opacity 0.3s ease-in-out;
 }
 
 input::placeholder {
-    text-align: left; /* Alinear el texto a la izquierda */
+  text-align: left; /* Alinear el texto a la izquierda */
 }
 
 /* Circulo de la barra de nivel */
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Desactivar la apariencia por defecto */
-    appearance: none;
-    width: 20px; /* Ancho del thumb */
-    height: 20px; /* Alto del thumb */
-    background: #1E3C8B; /* Color de fondo del thumb */
-    cursor: pointer; /* Cursor tipo pointer para indicar que es interactivo */
-    border: none; /* Sin bordes */
-    border-radius: 50%; /* Hacerlo completamente circular */
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Desactivar la apariencia por defecto */
+  appearance: none;
+  width: 20px; /* Ancho del thumb */
+  height: 20px; /* Alto del thumb */
+  background: #1e3c8b; /* Color de fondo del thumb */
+  cursor: pointer; /* Cursor tipo pointer para indicar que es interactivo */
+  border: none; /* Sin bordes */
+  border-radius: 50%; /* Hacerlo completamente circular */
 }
 
-input[type="range"]::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    background: #1E3C8B;
-    cursor: pointer;
-    border-radius: 50%;
-    border: none;
+input[type='range']::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #1e3c8b;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
 }
 
-input[type="range"]::-ms-thumb {
-    width: 24px;
-    height: 24px;
-    background: #1E3C8B;
-    cursor: pointer;
-    border-radius: 50%;
-    border: none;
+input[type='range']::-ms-thumb {
+  width: 24px;
+  height: 24px;
+  background: #1e3c8b;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
 }
 
 /* Estilos para los botones */
-#btn-combined-search, #btn-expertice, #btn-add-topic, #btn-next, #btn-add-debate, #btn-join-debate {
-    border: solid #1E3C8B 1px !important;
+#btn-combined-search,
+#btn-expertice,
+#btn-add-topic,
+#btn-next,
+#btn-add-debate,
+#btn-join-debate {
+  border: solid #1e3c8b 1px !important;
 }
 
 #btn-next:hover {
-    color: #1E3C8B;
+  color: #1e3c8b;
 }
 
 #btn-next:hover svg {
-    fill: #1E3C8B; /* Cambia el color de relleno del SVG */
-    stroke: #1E3C8B; /* Cambia el color del stroke */
+  fill: #1e3c8b; /* Cambia el color de relleno del SVG */
+  stroke: #1e3c8b; /* Cambia el color del stroke */
 }
 
 #btn-expertice:hover .svg-path {
-    stroke: #ffffff; /* Cambia el color del stroke a blanco */
+  stroke: #ffffff; /* Cambia el color del stroke a blanco */
 }
 
 .text-container {
-    word-break: break-all;
-    overflow-wrap: break-word;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 640px) {
-    .movil-margin-cero {
-      margin-left: 0;
-      margin-right: 0;
-    }
+  .movil-margin-cero {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .active-ring {
-    border: 1px solid #1E3C8B; /* Cambia #1E3C8B por el color de tu elección */
-    box-shadow: 0 0 0 2px rgba(30, 60, 139, 0.5); /* Ajusta los valores y colores según sea necesario */
+  border: 1px solid #1e3c8b; /* Cambia #1E3C8B por el color de tu elección */
+  box-shadow: 0 0 0 2px rgba(30, 60, 139, 0.5); /* Ajusta los valores y colores según sea necesario */
 }

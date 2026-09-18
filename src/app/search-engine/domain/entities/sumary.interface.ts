@@ -1,5 +1,5 @@
-export interface Summary{
-  authors:number;
-  articles:number;
-  topics:number;
+export interface Summary {
+  authors: number;
+  articles: number;
+  topics: number;
 }

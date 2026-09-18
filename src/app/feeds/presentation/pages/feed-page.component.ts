@@ -9,7 +9,7 @@ import {
   FeedResponse,
   FeedFilters,
   CreatePostData,
-  UserFeedStats
+  UserFeedStats,
 } from '../../domain/entities/feed.interface';
 import { PostCreatorData } from '../types/post.types';
 import { PostCreatorComponent } from '../components/post-creator/post-creator.component';
@@ -17,7 +17,7 @@ import { PostCreatorComponent } from '../components/post-creator/post-creator.co
 @Component({
   selector: 'app-feed-page',
   templateUrl: './feed-page.component.html',
-  styleUrls: ['./feed-page.component.css']
+  styleUrls: ['./feed-page.component.css'],
 })
 export class FeedPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -54,8 +54,8 @@ export class FeedPageComponent implements OnInit, OnDestroy {
     private feedService: FeedService,
     private authService: AuthService,
     private userService: UserService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     console.log('FeedPageComponent: Inicializando componente');
@@ -82,24 +82,29 @@ export class FeedPageComponent implements OnInit, OnDestroy {
 
     const filters: FeedFilters = {
       feed_type: this.selectedFilter,
-      limit: 20
+      limit: 20,
     };
 
     // Agregar filtro de tiempo para trending
     if (this.selectedFilter === 'trending') {
-      filters.time_range = this.trendingTimeRange === '24h' ? 'day' :
-        this.trendingTimeRange === '7d' ? 'week' : 'month';
+      filters.time_range =
+        this.trendingTimeRange === '24h'
+          ? 'day'
+          : this.trendingTimeRange === '7d'
+            ? 'week'
+            : 'month';
     }
 
     console.log('FeedPageComponent: Enviando request con filtros:', filters);
 
-    this.feedService.getFeed(filters)
+    this.feedService
+      .getFeed(filters)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
           console.log('FeedPageComponent: Finalizando carga, isLoading = false');
           this.isLoading = false;
-        })
+        }),
       )
       .subscribe({
         next: (response: FeedResponse) => {
@@ -111,8 +116,11 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('FeedPageComponent: Error loading feed:', error);
-          this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo cargar el feed. Intenta de nuevo.');
-        }
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'No se pudo cargar el feed. Intenta de nuevo.',
+          );
+        },
       });
   }
 
@@ -127,19 +135,24 @@ export class FeedPageComponent implements OnInit, OnDestroy {
     const filters: FeedFilters = {
       feed_type: this.selectedFilter,
       cursor: this.nextCursor,
-      limit: 20
+      limit: 20,
     };
 
     // Agregar filtro de tiempo para trending
     if (this.selectedFilter === 'trending') {
-      filters.time_range = this.trendingTimeRange === '24h' ? 'day' :
-        this.trendingTimeRange === '7d' ? 'week' : 'month';
+      filters.time_range =
+        this.trendingTimeRange === '24h'
+          ? 'day'
+          : this.trendingTimeRange === '7d'
+            ? 'week'
+            : 'month';
     }
 
-    this.feedService.getFeed(filters)
+    this.feedService
+      .getFeed(filters)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoadingMore = false)
+        finalize(() => (this.isLoadingMore = false)),
       )
       .subscribe({
         next: (response: FeedResponse) => {
@@ -149,7 +162,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading more posts:', error);
-        }
+        },
       });
   }
 
@@ -157,7 +170,8 @@ export class FeedPageComponent implements OnInit, OnDestroy {
    * Carga las estadísticas del usuario
    */
   loadUserStats(): void {
-    this.feedService.getUserFeedStats()
+    this.feedService
+      .getUserFeedStats()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (stats) => {
@@ -165,7 +179,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading user stats:', error);
-        }
+        },
       });
   }
 
@@ -197,25 +211,29 @@ export class FeedPageComponent implements OnInit, OnDestroy {
    * Maneja el toggle de like en un post
    */
   onToggleLike(post: FeedPost): void {
-    this.feedService.toggleLikePost(post.id)
+    this.feedService
+      .toggleLikePost(post.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           // Actualizar el estado del post en la lista
-          const postIndex = this.posts.findIndex(p => p.id === post.id);
+          const postIndex = this.posts.findIndex((p) => p.id === post.id);
           if (postIndex !== -1) {
             this.posts[postIndex] = {
               ...this.posts[postIndex],
               is_liked: response.liked,
-              likes_count: response.likes_count
+              likes_count: response.likes_count,
             };
           }
           console.log(`Post ${post.id} ${response.liked ? 'liked' : 'unliked'}`);
         },
         error: (error) => {
           console.error('Error toggling like:', error);
-          this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo procesar el like. Intenta de nuevo.');
-        }
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'No se pudo procesar el like. Intenta de nuevo.',
+          );
+        },
       });
   }
 
@@ -223,42 +241,47 @@ export class FeedPageComponent implements OnInit, OnDestroy {
    * Maneja la eliminación de un post
    */
   onDeletePost(postId: string): void {
-    if (!confirm('¿Estás seguro de que quieres eliminar este post?')) {
+    if (!confirm('Are you sure you want to delete this post?')) {
       return;
     }
 
-    this.feedService.deletePost(postId)
+    this.feedService
+      .deletePost(postId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           // Remover el post de la lista
-          this.posts = this.posts.filter(p => p.id !== postId);
+          this.posts = this.posts.filter((p) => p.id !== postId);
           this.loadUserStats(); // Actualizar estadísticas
           console.log(`Post ${postId} eliminado`);
         },
         error: (error) => {
           console.error('Error deleting post:', error);
-          this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo eliminar la publicación. Intenta de nuevo.');
-        }
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'Could not delete the post. Please try again.',
+          );
+        },
       });
   }
 
   /**
    * Maneja la edición de un post
    */
-  onEditPost(editData: { postId: string, content: string, tags: string[] }): void {
+  onEditPost(editData: { postId: string; content: string; tags: string[] }): void {
     console.log('feed-page: onEditPost called with data:', editData);
 
-    this.feedService.updatePost(editData.postId, {
-      content: editData.content,
-      tags: editData.tags
-    })
+    this.feedService
+      .updatePost(editData.postId, {
+        content: editData.content,
+        tags: editData.tags,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (updatedPost) => {
           console.log('feed-page: post updated successfully:', updatedPost);
           // Actualizar el post en la lista
-          const postIndex = this.posts.findIndex(p => p.id === editData.postId);
+          const postIndex = this.posts.findIndex((p) => p.id === editData.postId);
           if (postIndex !== -1) {
             this.posts[postIndex] = updatedPost;
             console.log('feed-page: post updated in list at index:', postIndex);
@@ -267,39 +290,46 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error updating post:', error);
-          this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo editar la publicación. Intenta de nuevo.');
-        }
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'Could not edit the post. Please try again.',
+          );
+        },
       });
   }
 
   /**
    * Maneja la votación en una encuesta
    */
-  onVotePoll(voteData: { pollId: string, optionId: string, isMultipleChoice: boolean }): void {
+  onVotePoll(voteData: { pollId: string; optionId: string; isMultipleChoice: boolean }): void {
     // Convertir optionId a array ya que el servicio espera un array
     const optionIds = [voteData.optionId];
 
-    this.feedService.votePoll(voteData.pollId, optionIds)
+    this.feedService
+      .votePoll(voteData.pollId, optionIds)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           // Actualizar el post con los nuevos datos de la encuesta
-          const postIndex = this.posts.findIndex(p => p.poll?.id === voteData.pollId);
+          const postIndex = this.posts.findIndex((p) => p.poll?.id === voteData.pollId);
           if (postIndex !== -1 && this.posts[postIndex].poll) {
             // El backend retorna la encuesta dentro de response.poll
             const updatedPoll = response.poll || response;
             this.posts[postIndex] = {
               ...this.posts[postIndex],
-              poll: updatedPoll
+              poll: updatedPoll,
             };
           }
-          console.log(`Voto registrado para encuesta ${voteData.pollId}, opción ${voteData.optionId}`);
+          console.log(
+            `Voto registrado para encuesta ${voteData.pollId}, opción ${voteData.optionId}`,
+          );
         },
         error: (error) => {
           console.error('Error voting in poll:', error);
-          const errorMessage = error.error?.error || 'No se pudo registrar el voto. Intenta de nuevo.';
+          const errorMessage =
+            error.error?.error || 'No se pudo registrar el voto. Intenta de nuevo.';
           this.error = errorMessage;
-        }
+        },
       });
   }
 
@@ -318,13 +348,14 @@ export class FeedPageComponent implements OnInit, OnDestroy {
 
     console.log('🔍 Iniciando búsqueda semántica:', this.searchQuery, 'Tags:', this.selectedTags);
 
-    this.feedService.searchPosts(this.searchQuery, this.selectedTags)
+    this.feedService
+      .searchPosts(this.searchQuery, this.selectedTags)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
           this.isSearching = false;
           console.log('🔍 Búsqueda completada');
-        })
+        }),
       )
       .subscribe({
         next: (posts) => {
@@ -335,8 +366,8 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error en búsqueda:', error);
-          this.error = 'No se pudo realizar la búsqueda. Intenta de nuevo.';
-        }
+          this.error = 'Could not perform the search. Please try again.';
+        },
       });
   }
 
@@ -360,7 +391,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
     if (event) {
       event.preventDefault();
     }
-    
+
     const tag = this.tagInput.trim().replace(/^#/, '');
     if (tag && !this.selectedTags.includes(tag) && this.selectedTags.length < 5) {
       this.selectedTags.push(tag);
@@ -422,17 +453,20 @@ export class FeedPageComponent implements OnInit, OnDestroy {
       content: postData.content,
       tags: postData.tags,
       files: postData.files,
-      is_public: true,  // Todos los posts serán públicos por defecto
-      poll_data: postData.poll ? {
-        question: postData.poll.question,
-        options: postData.poll.options
-      } : undefined
+      is_public: true, // Todos los posts serán públicos por defecto
+      poll_data: postData.poll
+        ? {
+            question: postData.poll.question,
+            options: postData.poll.options,
+          }
+        : undefined,
     };
 
-    this.feedService.createPost(createPostData)
+    this.feedService
+      .createPost(createPostData)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isSubmittingPost = false)
+        finalize(() => (this.isSubmittingPost = false)),
       )
       .subscribe({
         next: (newPost) => {
@@ -444,9 +478,9 @@ export class FeedPageComponent implements OnInit, OnDestroy {
           console.error('Error creando post:', error);
           this.error = this.feedService.getFriendlyErrorMessage(
             error,
-            'No se pudo crear la publicación. Revisa la descripción y los archivos adjuntos.'
+            'Could not create the post. Please check the description and attached files.',
           );
-        }
+        },
       });
   }
 
@@ -455,7 +489,8 @@ export class FeedPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.userService.getUserById(this.currentUserId)
+    this.userService
+      .getUserById(this.currentUserId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (user) => {
@@ -464,7 +499,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading current user profile:', error);
-        }
+        },
       });
   }
 
@@ -497,6 +532,6 @@ export class FeedPageComponent implements OnInit, OnDestroy {
    */
   onViewProfile(userId: string): void {
     console.log('Ver perfil del usuario:', userId);
-    this.router.navigate(['/profile', userId, 'about-me']); 
+    this.router.navigate(['/profile', userId, 'about-me']);
   }
 }

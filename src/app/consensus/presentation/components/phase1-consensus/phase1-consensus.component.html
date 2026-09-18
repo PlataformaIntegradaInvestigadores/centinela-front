@@ -2,102 +2,196 @@
 
 <div *ngIf="userPhase === 0">
   <div class="container mx-auto mb-2 rounded-xl border p-4 sm:p-1 shadow-md bg-white">
-    <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-4 space-y-4 md:space-y-0">
+    <div
+      class="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-4 space-y-4 md:space-y-0"
+    >
       <div class="text-xl font-bold w-full md:w-auto">Your group recommendation</div>
-      <div class="text-lg font-bold w-full md:w-auto">Active Connections: {{ activeConnections }}</div>
-      <button id="btn-next"
+      <div class="text-lg font-bold w-full md:w-auto">
+        Active Connections: {{ activeConnections }}
+      </div>
+      <button
+        id="btn-next"
         class="transition duration-300 bg-primary_tailwind font-bold text-white hover:bg-gray-100 hover:text-gray-300 focus:ring-2 focus:outline-none focus:ring-primary_tailwind rounded-full text-sm px-2 py-1.5 text-center inline-flex items-center ml-0 md:ml-1 w-auto self-center md:self-auto"
-        (click)="completeConsensusPhaseOne()">
-        <svg fill="#ffffff" width="16" height="16" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" id="arrow">
+        (click)="completeConsensusPhaseOne()"
+      >
+        <svg
+          fill="#ffffff"
+          width="16"
+          height="16"
+          viewBox="0 0 15 15"
+          xmlns="http://www.w3.org/2000/svg"
+          id="arrow"
+        >
           <path
-            d="M8.29289 2.29289C8.68342 1.90237 9.31658 1.90237 9.70711 2.29289L14.2071 6.79289C14.5976 7.18342 14.5976 7.81658 14.2071 8.20711L9.70711 12.7071C9.31658 13.0976 8.68342 13.0976 8.29289 12.7071C7.90237 12.3166 7.90237 11.6834 8.29289 11.2929L11 8.5H1.5C0.947715 8.5 0.5 8.05228 0.5 7.5C0.5 6.94772 0.947715 6.5 1.5 6.5H11L8.29289 3.70711C7.90237 3.31658 7.90237 2.68342 8.29289 2.29289Z" />
+            d="M8.29289 2.29289C8.68342 1.90237 9.31658 1.90237 9.70711 2.29289L14.2071 6.79289C14.5976 7.18342 14.5976 7.81658 14.2071 8.20711L9.70711 12.7071C9.31658 13.0976 8.68342 13.0976 8.29289 12.7071C7.90237 12.3166 7.90237 11.6834 8.29289 11.2929L11 8.5H1.5C0.947715 8.5 0.5 8.05228 0.5 7.5C0.5 6.94772 0.947715 6.5 1.5 6.5H11L8.29289 3.70711C7.90237 3.31658 7.90237 2.68342 8.29289 2.29289Z"
+          />
         </svg>
       </button>
     </div>
 
     <div class="container text-sm text-gray-900">
-      <p class="mb-3">Explore the suggested topics list and acquaint yourself with the available choices</p>
+      <p class="mb-3">
+        Explore the suggested topics list and acquaint yourself with the available choices
+      </p>
 
       <div class="flex flex-col justify-start items-start gap-2 ml-2">
-
         <!-- Combinend Search Option -->
         <div class="flex items-center">
-          <button id="btn-combined-search" type="button"
+          <button
+            id="btn-combined-search"
+            type="button"
             class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
-            [ngClass]="{'active-ring': enableCombinedSearch}" (click)="enableCombinedSearch = !enableCombinedSearch">
-            <svg fill="currentColor" width="18px" height="18px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
-              class="fill-current">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M14.573 2.729c-0.729 0.484-4.292 2.849-7.917 5.255s-6.589 4.396-6.589 4.422c0 0.026 0.182 0.146 0.406 0.266 0.224 0.13 3.797 2.109 7.953 4.411l7.542 4.193 0.193-0.099c0.109-0.052 2.891-1.641 6.188-3.521l5.99-3.427 0.036 10.599h3.557v-12.401l-4.615-3.094c-6.219-4.167-11.188-7.448-11.307-7.474-0.063-0.010-0.703 0.38-1.438 0.87zM7.141 22.177l0.016 2.672 8.828 5.292 8.891-5.339v-2.641c0-1.458-0.016-2.646-0.031-2.646-0.021 0-1.76 1.042-3.87 2.323l-4.406 2.661-0.578 0.339-1.755-1.052c-1.464-0.875-2.927-1.755-4.385-2.641l-2.672-1.615c-0.031-0.010-0.042 1.177-0.036 2.646z" />
+            [ngClass]="{ 'active-ring': enableCombinedSearch }"
+            (click)="enableCombinedSearch = !enableCombinedSearch"
+          >
+            <svg
+              fill="currentColor"
+              width="18px"
+              height="18px"
+              viewBox="0 0 32 32"
+              xmlns="http://www.w3.org/2000/svg"
+              class="fill-current"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14.573 2.729c-0.729 0.484-4.292 2.849-7.917 5.255s-6.589 4.396-6.589 4.422c0 0.026 0.182 0.146 0.406 0.266 0.224 0.13 3.797 2.109 7.953 4.411l7.542 4.193 0.193-0.099c0.109-0.052 2.891-1.641 6.188-3.521l5.99-3.427 0.036 10.599h3.557v-12.401l-4.615-3.094c-6.219-4.167-11.188-7.448-11.307-7.474-0.063-0.010-0.703 0.38-1.438 0.87zM7.141 22.177l0.016 2.672 8.828 5.292 8.891-5.339v-2.641c0-1.458-0.016-2.646-0.031-2.646-0.021 0-1.76 1.042-3.87 2.323l-4.406 2.661-0.578 0.339-1.755-1.052c-1.464-0.875-2.927-1.755-4.385-2.641l-2.672-1.615c-0.031-0.010-0.042 1.177-0.036 2.646z"
+              />
             </svg>
           </button>
 
-          <label for="btn-combined-search"
-            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer">
+          <label
+            for="btn-combined-search"
+            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer"
+          >
             I want to enable combined search
           </label>
 
-          <button *ngIf="enableCombinedSearch" (click)="combinedSearch()" type="button"
-            class="px-1.5 py-1 text-sm font-medium text-center text-white bg-primary_tailwind rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2">
+          <button
+            *ngIf="enableCombinedSearch"
+            (click)="combinedSearch()"
+            type="button"
+            class="px-1.5 py-1 text-sm font-medium text-center text-white bg-primary_tailwind rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
+          >
             Ok
           </button>
         </div>
 
         <!-- Expertise Option -->
         <div class="flex items-center">
-          <button id="btn-expertice" type="button"
-            class=" text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
-            (click)="showSliders = !showSliders" [ngClass]="{'active-ring': showSliders}">
-            <svg width="18px" height="18px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"
-              class="svg-icon">
+          <button
+            id="btn-expertice"
+            type="button"
+            class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
+            (click)="showSliders = !showSliders"
+            [ngClass]="{ 'active-ring': showSliders }"
+          >
+            <svg
+              width="18px"
+              height="18px"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="svg-icon"
+            >
               <rect width="48" height="48" fill="white" fill-opacity="0.01" />
-              <path class="svg-path"
+              <path
+                class="svg-path"
                 d="M19.036 44.0001C18.0561 40.8045 16.5778 38.4222 14.6011 36.8532C11.636 34.4997 6.92483 35.9624 5.18458 33.5349C3.44433 31.1073 6.40382 26.6431 7.44234 24.009C8.48086 21.375 3.46179 20.4436 4.04776 19.6958C4.43842 19.1973 6.97471 17.7587 11.6567 15.3801C12.987 7.79346 17.9008 4.00014 26.3982 4.00014C39.1441 4.00014 44 14.8061 44 21.679C44 28.552 38.1201 35.9563 29.7441 37.5528C28.9951 38.6436 30.0754 40.7927 32.9848 44.0001"
-                stroke="#1E3C8B" stroke-width="4.66685" stroke-linecap="round" stroke-linejoin="round" />
-              <path class="svg-path" fill-rule="evenodd" clip-rule="evenodd"
+                stroke="#1E3C8B"
+                stroke-width="4.66685"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                class="svg-path"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
                 d="M19.4997 14.5C18.8464 17.0342 19.0408 18.8138 20.0829 19.8385C21.125 20.8633 22.9011 21.5334 25.4112 21.8489C24.8417 25.1176 25.5361 26.6511 27.4942 26.4493C29.4524 26.2475 30.6289 25.4338 31.0239 24.0083C34.0842 24.8684 35.7428 24.1486 35.9997 21.8489C36.3852 18.3993 34.525 15.6475 33.7624 15.6475C32.9997 15.6475 31.0239 15.5547 31.0239 14.5C31.0239 13.4452 28.7159 12.8493 26.6329 12.8493C24.5499 12.8493 25.8035 11.4452 22.9432 12C21.0363 12.3698 19.8885 13.2031 19.4997 14.5Z"
-                fill="#2F88FF" stroke="#1E3C8B" stroke-width="4" stroke-linejoin="round" />
-              <path class="svg-path"
+                fill="#2F88FF"
+                stroke="#1E3C8B"
+                stroke-width="4"
+                stroke-linejoin="round"
+              />
+              <path
+                class="svg-path"
                 d="M30.5002 25.5001C29.4833 26.1311 28.0878 27.1804 27.5002 28.0001C26.0313 30.0496 24.8398 31.2975 24.5791 32.6082"
-                stroke="#1E3C8B" stroke-width="4" stroke-linecap="round" />
+                stroke="#1E3C8B"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
             </svg>
           </button>
-          <label for="btn-expertice"
-            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer">
+          <label
+            for="btn-expertice"
+            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer"
+          >
             I want to choose my expertise in each topic
           </label>
         </div>
 
         <!-- Add Topic Option -->
         <div class="flex items-center">
-          <button id="btn-add-topic" type="button"
-            class=" text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
-            (click)="showAddTopicForm = !showAddTopicForm" [ngClass]="{'active-ring': showAddTopicForm}">
-            <svg fill="currentColor" width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M2 7a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1zm0 5a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1zm1 4a1 1 0 1 0 0 2h9a1 1 0 1 0 0-2H3zm12 1a1 1 0 0 1 1-1h2v-2a1 1 0 1 1 2 0v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0v-2h-2a1 1 0 0 1-1-1z" />
+          <button
+            id="btn-add-topic"
+            type="button"
+            class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
+            (click)="showAddTopicForm = !showAddTopicForm"
+            [ngClass]="{ 'active-ring': showAddTopicForm }"
+          >
+            <svg
+              fill="currentColor"
+              width="18px"
+              height="18px"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M2 7a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1zm0 5a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1zm1 4a1 1 0 1 0 0 2h9a1 1 0 1 0 0-2H3zm12 1a1 1 0 0 1 1-1h2v-2a1 1 0 1 1 2 0v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0v-2h-2a1 1 0 0 1-1-1z"
+              />
             </svg>
           </button>
 
-          <label for="btn-add-topic"
-            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer">
+          <label
+            for="btn-add-topic"
+            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer"
+          >
             I want to add a new topic
           </label>
         </div>
 
         <!-- Add Debate Option -->
         <div *ngIf="!isDebateActive" class="flex items-center">
-          <button id="btn-add-debate" type="button"
+          <button
+            id="btn-add-debate"
+            type="button"
             class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
-            (click)="toggleDebate()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="none" viewBox="0 0 24 24"
-              stroke-width="1.5" stroke="currentColor" class="size-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+            (click)="toggleDebate()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18px"
+              height="18px"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+              />
             </svg>
           </button>
-          <label for="btn-add-debate"
-            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer">
+          <label
+            for="btn-add-debate"
+            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer"
+          >
             I want to create a new debate
           </label>
         </div>
@@ -111,45 +205,98 @@
               <form (ngSubmit)="onSubmitDebate()" #debateForm="ngForm">
                 <!-- Campo para el título -->
                 <div class="mb-4">
-                  <label for="debateTitle" class="block text-sm font-medium text-gray-700">Debate Title</label>
-                  <input type="text" id="debateTitle" name="debateTitle" class="form-input mt-1 block w-full"
-                    [(ngModel)]="debateTitle" required maxlength="255">
+                  <label for="debateTitle" class="block text-sm font-medium text-gray-700"
+                    >Debate Title</label
+                  >
+                  <input
+                    type="text"
+                    id="debateTitle"
+                    name="debateTitle"
+                    class="form-input mt-1 block w-full"
+                    [(ngModel)]="debateTitle"
+                    required
+                    maxlength="255"
+                  />
                 </div>
                 <!-- Campo para la descripción -->
                 <div class="mb-4">
-                  <label for="debateDescription" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea id="debateDescription" name="debateDescription" class="form-textarea mt-1 block w-full"
-                    [(ngModel)]="debateDescription" required></textarea>
+                  <label for="debateDescription" class="block text-sm font-medium text-gray-700"
+                    >Description</label
+                  >
+                  <textarea
+                    id="debateDescription"
+                    name="debateDescription"
+                    class="form-textarea mt-1 block w-full"
+                    [(ngModel)]="debateDescription"
+                    required
+                  ></textarea>
                 </div>
                 <!-- Campo para la duración -->
                 <div class="mb-4">
-                  <label for="duration" class="block text-sm font-medium text-gray-700">Debate Duration</label>
+                  <label for="duration" class="block text-sm font-medium text-gray-700"
+                    >Debate Duration</label
+                  >
                   <div class="flex space-x-2">
                     <div class="flex flex-col w-1/3">
                       <label for="hours" class="block text-xs text-gray-500">Hours</label>
-                      <input type="number" id="hours" name="hours" class="form-input" [(ngModel)]="durationHours"
-                        min="0" placeholder="Hours" required>
+                      <input
+                        type="number"
+                        id="hours"
+                        name="hours"
+                        class="form-input"
+                        [(ngModel)]="durationHours"
+                        min="0"
+                        placeholder="Hours"
+                        required
+                      />
                     </div>
                     <div class="flex flex-col w-1/3">
                       <label for="minutes" class="block text-xs text-gray-500">Minutes</label>
-                      <input type="number" id="minutes" name="minutes" class="form-input" [(ngModel)]="durationMinutes"
-                        min="0" max="59" placeholder="Minutes" required>
+                      <input
+                        type="number"
+                        id="minutes"
+                        name="minutes"
+                        class="form-input"
+                        [(ngModel)]="durationMinutes"
+                        min="0"
+                        max="59"
+                        placeholder="Minutes"
+                        required
+                      />
                     </div>
                   </div>
-                  <p class="text-sm text-gray-500 mt-1">Specify the debate duration. Hours can be 0, but minutes cannot
-                    be 0.</p>
-                  <div *ngIf="durationHours === 0 && durationMinutes === 0" class="text-xs text-red-500">
+                  <p class="text-sm text-gray-500 mt-1">
+                    Specify the debate duration. Hours can be 0, but minutes cannot be 0.
+                  </p>
+                  <div
+                    *ngIf="durationHours === 0 && durationMinutes === 0"
+                    class="text-xs text-red-500"
+                  >
                     The duration cannot be 00:00.
                   </div>
                 </div>
                 <!-- Botones -->
                 <div class="flex justify-end space-x-4">
-                  <button type="button" class="bg-gray-200 text-gray-700 py-2 px-4 rounded"
-                    (click)="toggleDebate()">Cancel</button>
-                  <button type="submit" class="py-2 px-4 rounded text-white"
-                    [class.bg-primary_tailwind]="!debateForm.invalid && !(durationHours === 0 && durationMinutes === 0)"
-                    [class.bg-gray-400]="debateForm.invalid || (durationHours === 0 && durationMinutes === 0)"
-                    [disabled]="debateForm.invalid || (durationHours === 0 && durationMinutes === 0)">
+                  <button
+                    type="button"
+                    class="bg-gray-200 text-gray-700 py-2 px-4 rounded"
+                    (click)="toggleDebate()"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    class="py-2 px-4 rounded text-white"
+                    [class.bg-primary_tailwind]="
+                      !debateForm.invalid && !(durationHours === 0 && durationMinutes === 0)
+                    "
+                    [class.bg-gray-400]="
+                      debateForm.invalid || (durationHours === 0 && durationMinutes === 0)
+                    "
+                    [disabled]="
+                      debateForm.invalid || (durationHours === 0 && durationMinutes === 0)
+                    "
+                  >
                     Create
                   </button>
                 </div>
@@ -158,28 +305,39 @@
           </div>
         </div>
 
-
-
-
-
         <!-- Join Debate Option -->
         <div *ngIf="isDebateActive" class="flex items-center">
-          <button id="btn-join-debate" type="button"
+          <button
+            id="btn-join-debate"
+            type="button"
             class="text-primary_tailwind border border-primary_tailwind hover:bg-primary_tailwind hover:text-white focus:ring-2 focus:outline-none focus:ring-primary_tailwind font-medium rounded-full text-sm p-1 text-center inline-flex items-center"
-            (click)="joinDebate()">
-            <svg width="18px" height="18px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke-width="1.5" stroke="currentColor" class="w-5 h-5 stroke-2 stroke-white-500">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+            (click)="joinDebate()"
+          >
+            <svg
+              width="18px"
+              height="18px"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 stroke-2 stroke-white-500"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+              />
             </svg>
           </button>
 
-          <label for="btn-join-debate"
-            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer">
+          <label
+            for="btn-join-debate"
+            class="ml-2 text-sm font-medium text-gray-900 hover:text-primary_tailwind cursor-pointer"
+          >
             I want to join the debate
           </label>
         </div>
-
       </div>
 
       <div *ngIf="showSliders" class="flex justify-between px-4 py-2 -mb-4">
@@ -191,56 +349,115 @@
       <div class="flex justify-center items-center mt-4">
         <!-- Se agrego css en movil-margin-cero para dejar en cero el margen en dispositivos moviles -->
         <div
-          class="movil-margin-cero w-full mx-6 text-sm text-gray-900 bg-white border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white relative">
+          class="movil-margin-cero w-full mx-6 text-sm text-gray-900 bg-white border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white relative"
+        >
           <!-- Mostrar los labels "Junior" y "Expert" arriba de la tabla cuando showSliders es true -->
-          <div *ngFor="let topic of recommendedTopics; let i = index"
-            class="w-full text-sm text-gray-900 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white relative">
+          <div
+            *ngFor="let topic of recommendedTopics; let i = index"
+            class="w-full text-sm text-gray-900 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white relative"
+          >
             <div
-              class="flex items-center justify-between w-full px-4 py-3 text-left border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
-              <span (click)="redirectToGoogleScholar(topic)" class=" relative w-8/12 cursor-pointer text-container">{{ i
-                + 1 }}. {{ topic.topic_name }}</span>
+              class="flex items-center justify-between w-full px-4 py-3 text-left border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white"
+            >
+              <span
+                (click)="redirectToGoogleScholar(topic)"
+                class="relative w-8/12 cursor-pointer text-container"
+                >{{ i + 1 }}. {{ topic.topic_name }}</span
+              >
               <div class="relative w-1/4" *ngIf="showSliders">
-                <input [(ngModel)]="rangeValues[i]" type="range"
+                <input
+                  [(ngModel)]="rangeValues[i]"
+                  type="range"
                   class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                  (mousedown)="showLabels(i)" (mouseup)="hideLabels(i); sendUserExpertise(i)"
-                  (input)="onSliderChange(i, $event)" [style.background]="getGradient(rangeValues[i])">
-                <span class="absolute -left-5 -top-3 text-xs text-primary_tailwind" [class.opacity-0]="!showLabel[i]"
-                  [class.opacity-100]="showLabel[i]">Junior</span>
-                <span class="absolute -right-5 -top-3 text-xs text-primary_tailwind" [class.opacity-0]="!showLabel[i]"
-                  [class.opacity-100]="showLabel[i]">Expert</span>
+                  (mousedown)="showLabels(i)"
+                  (mouseup)="hideLabels(i); sendUserExpertise(i)"
+                  (input)="onSliderChange(i, $event)"
+                  [style.background]="getGradient(rangeValues[i])"
+                />
+                <span
+                  class="absolute -left-5 -top-3 text-xs text-primary_tailwind"
+                  [class.opacity-0]="!showLabel[i]"
+                  [class.opacity-100]="showLabel[i]"
+                  >Junior</span
+                >
+                <span
+                  class="absolute -right-5 -top-3 text-xs text-primary_tailwind"
+                  [class.opacity-0]="!showLabel[i]"
+                  [class.opacity-100]="showLabel[i]"
+                  >Expert</span
+                >
               </div>
               <div class="relative">
-
-                <div class="absolute inset-0 flex items-center justify-center" *ngIf="enableCombinedSearch"
-                  style="left: 68%; transform: translateX(-50%); width: auto; max-width: 100px;">
-                  <input type="checkbox" [(ngModel)]="combinedChecksState[i]"
-                    class="w-4 h-4 text-primary_tailwind bg-gray-300 rounded border-gray-300 focus:ring-primary_tailwind dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <div
+                  class="absolute inset-0 flex items-center justify-center"
+                  *ngIf="enableCombinedSearch"
+                  style="left: 68%; transform: translateX(-50%); width: auto; max-width: 100px"
+                >
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="combinedChecksState[i]"
+                    class="w-4 h-4 text-primary_tailwind bg-gray-300 rounded border-gray-300 focus:ring-primary_tailwind dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
                 </div>
-
               </div>
             </div>
           </div>
-          <div *ngIf="showAddTopicForm"
-            class="w-full px-4 py-2 font-medium text-left rtl:text-right bg-gray-100 rounded-b-lg dark:bg-gray-600 dark:text-gray-400">
+          <div
+            *ngIf="showAddTopicForm"
+            class="w-full px-4 py-2 font-medium text-left rtl:text-right bg-gray-100 rounded-b-lg dark:bg-gray-600 dark:text-gray-400"
+          >
             <form (ngSubmit)="addTopic()" class="max-w-sm mx-auto">
-              <label for="new-topic-input" class="block text-sm font-medium text-gray-600 dark:text-white">I want to add
-                a new topic</label>
+              <label
+                for="new-topic-input"
+                class="block text-sm font-medium text-gray-600 dark:text-white"
+                >I want to add a new topic</label
+              >
               <div class="relative flex items-center">
-                <input [(ngModel)]="newTopic" name="newTopic" type="text" id="new-topic-input"
+                <input
+                  [(ngModel)]="newTopic"
+                  name="newTopic"
+                  type="text"
+                  id="new-topic-input"
                   aria-describedby="add a new topic that you would like to investigate"
                   class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Ex: Sports prediction" required />
-                <button type="submit"
-                  class="absolute right-2 bg-primary_tailwind text-white font-medium rounded-lg text-sm px-1.5 py-1 m-1 flex items-center">
-                  <svg fill="currentColor" width="18px" height="18px" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg" class="icon line-color">
-                    <line x1="7" y1="12" x2="11" y2="12"
-                      style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
-                    </line>
+                  placeholder="Ex: Sports prediction"
+                  required
+                />
+                <button
+                  type="submit"
+                  class="absolute right-2 bg-primary_tailwind text-white font-medium rounded-lg text-sm px-1.5 py-1 m-1 flex items-center"
+                >
+                  <svg
+                    fill="currentColor"
+                    width="18px"
+                    height="18px"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="icon line-color"
+                  >
+                    <line
+                      x1="7"
+                      y1="12"
+                      x2="11"
+                      y2="12"
+                      style="
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                        stroke-width: 2;
+                      "
+                    ></line>
                     <path
                       d="M5.44,4.15l14.65,7a1,1,0,0,1,0,1.8l-14.65,7A1,1,0,0,1,4.10,18.54l2.72-6.13a1.06,1.06,0,0,0,0-.82L4.10,5.46A1,1,0,0,1,5.44,4.15Z"
-                      style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
-                    </path>
+                      style="
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                        stroke-width: 2;
+                      "
+                    ></path>
                   </svg>
                 </button>
               </div>
@@ -252,52 +469,92 @@
   </div>
 
   <!-- Error message -->
-  <div *ngIf="showError" id="error-message"
+  <div
+    *ngIf="showError"
+    id="error-message"
     class="flex items-center p-3.5 mb-4 mt-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
-    role="alert">
-    <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor" viewBox="0 0 20 20">
+    role="alert"
+  >
+    <svg
+      class="flex-shrink-0 inline w-4 h-4 me-3"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+    >
       <path
-        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
+      />
     </svg>
     <span class="sr-only">Info</span>
     <div class="ms-3 text-sm font-medium">
       {{ errorMessage }}
     </div>
-    <button type="button"
+    <button
+      type="button"
       class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
-      (click)="showError = false" aria-label="Close">
+      (click)="showError = false"
+      aria-label="Close"
+    >
       <span class="sr-only">Close</span>
-      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+      <svg
+        class="w-3 h-3"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 14 14"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+        />
       </svg>
     </button>
   </div>
 
   <!-- Modal Confirm you finished this phase -->
-  <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
+  >
     <div class="bg-white rounded-lg shadow-lg p-6 w-80 dark:bg-gray-800">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold dark:text-white">Confirm Completion</h3>
-        <button (click)="closeModal()"
-          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <button
+          (click)="closeModal()"
+          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
           &times;
         </button>
       </div>
-      <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure you have completed Phase One?</p>
+      <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+        Are you sure you have completed Phase One?
+      </p>
       <div class="flex justify-end space-x-4">
-        <button (click)="cancelPhaseCompletion()"
-          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
-        <button (click)="confirmPhaseCompletion()"
-          class="px-4 py-2 bg-primary_tailwind text-white rounded hover:bg-primary_tailwind-dark">Confirm</button>
+        <button
+          (click)="cancelPhaseCompletion()"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="confirmPhaseCompletion()"
+          class="px-4 py-2 bg-primary_tailwind text-white rounded hover:bg-primary_tailwind-dark"
+        >
+          Confirm
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- En caso de retroceder con el boton del navegador se renderizaria este componente -->
-<p *ngIf="userPhase !== 0" class=" font-semibold mb-4">You already finished this phase, reload page 😉</p>
+<p *ngIf="userPhase !== 0" class="font-semibold mb-4">
+  You already finished this phase, reload page 😉
+</p>
 
 <!-- Modal para seleccionar o actualizar postura -->
 <!-- <div>
@@ -306,16 +563,35 @@
     [debateTitle]="debateTitle"></app-select-posture>
 </div> -->
 <div>
-  <app-select-posture [isModalOpen]="isModalOpenPosture" [debateIdInput]="activeDebateId" [groupIdInput]="groupId"
-    [debateTitle]="debateTitle" (closeModal)="closePostureModal($event)" (postureSelected)="onPostureSaved($event)"
-    (openChat)="handleOpenChat()"> <!-- Escuchamos el evento openChat -->
+  <app-select-posture
+    [isModalOpen]="isModalOpenPosture"
+    [debateIdInput]="activeDebateId"
+    [groupIdInput]="groupId"
+    [debateTitle]="debateTitle"
+    (closeModal)="closePostureModal($event)"
+    (postureSelected)="onPostureSaved($event)"
+    (openChat)="handleOpenChat()"
+  >
+    <!-- Escuchamos el evento openChat -->
   </app-select-posture>
 </div>
 
 <div>
-  <app-discussion *ngIf="isModalOpenChat" Solo muestra el modal si isModalOpenChat es true
-    [isModalOpen]="isModalOpenChat" [debateIdInput]="activeDebateId" [groupIdInput]="groupId"
-    (closeChat)="handleCloseChat()"> Escuchamos el evento para cerrar el chat
+  <app-discussion
+    *ngIf="isModalOpenChat"
+    Solo
+    muestra
+    el
+    modal
+    si
+    isModalOpenChat
+    es
+    true
+    [isModalOpen]="isModalOpenChat"
+    [debateIdInput]="activeDebateId"
+    [groupIdInput]="groupId"
+    (closeChat)="handleCloseChat()"
+  >
+    Escuchamos el evento para cerrar el chat
   </app-discussion>
-
 </div>

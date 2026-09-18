@@ -21,7 +21,7 @@
   justify-content: center;
   padding: 1rem;
   z-index: 200000 !important;
-  
+
   /* Anular animaciones heredadas */
   transform: none !important;
   animation: modalFadeIn 0.2s ease !important;
@@ -29,8 +29,12 @@
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Contenedor del modal */
@@ -44,7 +48,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  
+
   /* Anular animaciones heredadas y usar propias */
   transform: scale(0.95) translateY(20px) !important;
   opacity: 0;
@@ -129,7 +133,9 @@
   line-height: 1.5;
   resize: vertical;
   min-height: 120px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   font-family: inherit;
 }
 
@@ -165,7 +171,9 @@
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .tag-input:focus {
@@ -340,21 +348,21 @@
   .post-editor-overlay {
     padding: 0.5rem;
   }
-  
+
   .post-editor-modal {
     max-height: 95vh;
   }
-  
+
   .post-editor-header,
   .post-editor-content,
   .post-editor-footer {
     padding: 1rem;
   }
-  
+
   .tag-input-container {
     flex-direction: column;
   }
-  
+
   .tag-add-btn {
     align-self: flex-start;
   }

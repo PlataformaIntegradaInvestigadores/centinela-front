@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Comment, CreateCommentData, CommentsResponse } from '../entities/feed.interface';
+import { Comment, CreateCommentData } from '../entities/feed.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CommentService {
   private readonly baseUrl = `${environment.apiSocial}/v1`;
@@ -16,8 +16,8 @@ export class CommentService {
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
   }
 
@@ -26,14 +26,15 @@ export class CommentService {
    */
   getPostComments(postId: string): Observable<Comment[]> {
     const headers = this.getHeaders();
-    return this.http.get<Comment[]>(`${this.baseUrl}/posts/${postId}/comments/`, { headers })
-      .pipe(
-        map(comments => comments.map(comment => ({
+    return this.http.get<Comment[]>(`${this.baseUrl}/posts/${postId}/comments/`, { headers }).pipe(
+      map((comments) =>
+        comments.map((comment) => ({
           ...comment,
           created_at: new Date(comment.created_at),
-          updated_at: new Date(comment.updated_at)
-        })))
-      );
+          updated_at: new Date(comment.updated_at),
+        })),
+      ),
+    );
   }
 
   /**
@@ -41,13 +42,14 @@ export class CommentService {
    */
   createComment(postId: string, commentData: CreateCommentData): Observable<Comment> {
     const headers = this.getHeaders();
-    return this.http.post<Comment>(`${this.baseUrl}/posts/${postId}/comments/`, commentData, { headers })
+    return this.http
+      .post<Comment>(`${this.baseUrl}/posts/${postId}/comments/`, commentData, { headers })
       .pipe(
-        map(comment => ({
+        map((comment) => ({
           ...comment,
           created_at: new Date(comment.created_at),
-          updated_at: new Date(comment.updated_at)
-        }))
+          updated_at: new Date(comment.updated_at),
+        })),
       );
   }
 
@@ -56,13 +58,16 @@ export class CommentService {
    */
   getCommentReplies(commentId: string): Observable<Comment[]> {
     const headers = this.getHeaders();
-    return this.http.get<Comment[]>(`${this.baseUrl}/comments/${commentId}/replies/`, { headers })
+    return this.http
+      .get<Comment[]>(`${this.baseUrl}/comments/${commentId}/replies/`, { headers })
       .pipe(
-        map(comments => comments.map(comment => ({
-          ...comment,
-          created_at: new Date(comment.created_at),
-          updated_at: new Date(comment.updated_at)
-        })))
+        map((comments) =>
+          comments.map((comment) => ({
+            ...comment,
+            created_at: new Date(comment.created_at),
+            updated_at: new Date(comment.updated_at),
+          })),
+        ),
       );
   }
 
@@ -71,13 +76,14 @@ export class CommentService {
    */
   updateComment(commentId: string, content: string): Observable<Comment> {
     const headers = this.getHeaders();
-    return this.http.patch<Comment>(`${this.baseUrl}/comments/${commentId}/`, { content }, { headers })
+    return this.http
+      .patch<Comment>(`${this.baseUrl}/comments/${commentId}/`, { content }, { headers })
       .pipe(
-        map(comment => ({
+        map((comment) => ({
           ...comment,
           created_at: new Date(comment.created_at),
-          updated_at: new Date(comment.updated_at)
-        }))
+          updated_at: new Date(comment.updated_at),
+        })),
       );
   }
 
@@ -94,6 +100,10 @@ export class CommentService {
    */
   toggleCommentLike(commentId: string): Observable<{ liked: boolean; likes_count: number }> {
     const headers = this.getHeaders();
-    return this.http.post<{ liked: boolean; likes_count: number }>(`${this.baseUrl}/comments/${commentId}/like/`, {}, { headers });
+    return this.http.post<{ liked: boolean; likes_count: number }>(
+      `${this.baseUrl}/comments/${commentId}/like/`,
+      {},
+      { headers },
+    );
   }
 }

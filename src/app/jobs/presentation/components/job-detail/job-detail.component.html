@@ -2,104 +2,140 @@
   <div *ngIf="!job" class="p-8 text-center">
     <div class="text-gray-400 mb-4">
       <svg class="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v2a2 2 0 01-2 2H10a2 2 0 01-2-2V6m8 0H8">
-        </path>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v2a2 2 0 01-2 2H10a2 2 0 01-2-2V6m8 0H8"
+        ></path>
       </svg>
     </div>
-    <h3 class="text-lg font-medium text-gray-900 mb-2">Selecciona un trabajo</h3>
-    <p class="text-gray-600">Haz clic en cualquier trabajo de la lista para ver los detalles completos.</p>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">Select a job</h3>
+    <p class="text-gray-600">Click on any job in the list to see the full details.</p>
   </div>
 
   <div *ngIf="job" class="p-6">
-    <!-- Header del trabajo -->
+    <!-- Job header -->
     <div class="border-b pb-6 mb-6">
       <div class="flex justify-between items-start">
         <div>
           <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ job.title }}</h1>
-          <p class="text-lg text-gray-700 mb-1">{{ job.company_info.company_name || 'Empresa no disponible' }}</p>
+          <p class="text-lg text-gray-700 mb-1">
+            {{ job.company_info.company_name || 'Company not available' }}
+          </p>
           <p class="text-gray-600 mb-3">{{ job.location }}</p>
 
           <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-              [class]="job ? getJobTypeClasses(job.job_type) : ''">
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+              [class]="job ? getJobTypeClasses(job.job_type) : ''"
+            >
               {{ job.job_type_display }}
             </span>
-            <span *ngIf="job.is_remote"
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-              🏠 Trabajo Remoto
+            <span
+              *ngIf="job.is_remote"
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+            >
+              🏠 Remote Work
             </span>
           </div>
 
           <p class="text-xl font-bold text-green-600">{{ job ? getFormattedSalary(job) : '' }}</p>
         </div>
 
-        <button *ngIf="isResearcher && canApplyToJob()" (click)="openApplicationModal()"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200">
-          Aplicar Ahora
+        <button
+          *ngIf="isResearcher && canApplyToJob()"
+          (click)="openApplicationModal()"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200"
+        >
+          Apply Now
         </button>
 
-        <!-- Botón cuando ya postuló -->
-        <button *ngIf="isResearcher && job.has_applied" disabled
-          class="bg-green-100 text-green-800 font-medium py-2 px-6 rounded-lg border border-green-300 cursor-not-allowed flex items-center gap-2">
+        <!-- Button when already applied -->
+        <button
+          *ngIf="isResearcher && job.has_applied"
+          disabled
+          class="bg-green-100 text-green-800 font-medium py-2 px-6 rounded-lg border border-green-300 cursor-not-allowed flex items-center gap-2"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
           </svg>
-          Ya Postulado
+          Already Applied
         </button>
 
-        <!-- Botón cuando no puede postularse (trabajo inactivo) -->
-        <button *ngIf="isResearcher && !canApplyToJob() && !job.has_applied" disabled
-          class="bg-gray-100 text-gray-500 font-medium py-2 px-6 rounded-lg cursor-not-allowed">
-          No Disponible
+        <!-- Button when cannot apply (inactive job) -->
+        <button
+          *ngIf="isResearcher && !canApplyToJob() && !job.has_applied"
+          disabled
+          class="bg-gray-100 text-gray-500 font-medium py-2 px-6 rounded-lg cursor-not-allowed"
+        >
+          Not Available
         </button>
 
-        <!-- Botones para empresas -->
+        <!-- Buttons for companies -->
         <div *ngIf="showCompanyActions" class="flex gap-2">
-          <button (click)="onEditJob()"
-            class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2">
+          <button
+            (click)="onEditJob()"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
+          >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
             </svg>
-            Editar
+            Edit
           </button>
-          <button (click)="onDeleteJob()"
-            class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2">
+          <button
+            (click)="onDeleteJob()"
+            class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
+          >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
             </svg>
-            Eliminar
+            Delete
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Contenido del trabajo -->
+    <!-- Job content -->
     <div class="space-y-6">
-      <!-- Descripción -->
+      <!-- Description -->
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Descripción del Puesto</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Job Description</h3>
         <p class="text-gray-700 leading-relaxed">{{ job.description }}</p>
       </div>
 
-      <!-- Requisitos -->
+      <!-- Requirements -->
       <div *ngIf="getRequirementsArray(job.requirements).length > 0">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Requisitos</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Requirements</h3>
         <ul class="space-y-2">
-          <li *ngFor="let requirement of getRequirementsArray(job.requirements)" class="flex items-start">
+          <li
+            *ngFor="let requirement of getRequirementsArray(job.requirements)"
+            class="flex items-start"
+          >
             <span class="text-green-500 mr-2 mt-1">✓</span>
             <span class="text-gray-700">{{ requirement }}</span>
           </li>
         </ul>
       </div>
 
-      <!-- Beneficios -->
+      <!-- Benefits -->
       <div *ngIf="getBenefitsArray(job.benefits).length > 0">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Beneficios</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Benefits</h3>
         <ul class="space-y-2">
           <li *ngFor="let benefit of getBenefitsArray(job.benefits)" class="flex items-start">
             <span class="text-blue-500 mr-2 mt-1">★</span>
@@ -108,50 +144,69 @@
         </ul>
       </div>
 
-      <!-- Información adicional -->
+      <!-- Additional information -->
       <div class="bg-gray-50 rounded-lg p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-3">Información del Proceso</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Process Information</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="font-medium text-gray-700">Fecha de publicación:</span>
-            <p class="text-gray-600">{{ job.created_at | date:'dd/MM/yyyy' }}</p>
+            <span class="font-medium text-gray-700">Posted on:</span>
+            <p class="text-gray-600">{{ job.created_at | date: 'dd/MM/yyyy' }}</p>
           </div>
           <div>
-            <span class="font-medium text-gray-700">Fecha límite:</span>
-            <p class="text-gray-600">{{ job.application_deadline | date:'dd/MM/yyyy' }}</p>
+            <span class="font-medium text-gray-700">Deadline:</span>
+            <p class="text-gray-600">{{ job.application_deadline | date: 'dd/MM/yyyy' }}</p>
           </div>
           <div class="md:col-span-2">
-            <span class="font-medium text-gray-700">Empresa:</span>
-            <p class="text-gray-600">{{ job.company_info.company_name || 'Empresa no disponible' }}</p>
+            <span class="font-medium text-gray-700">Company:</span>
+            <p class="text-gray-600">
+              {{ job.company_info.company_name || 'Company not available' }}
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- Estado de postulación del usuario -->
-      <div *ngIf="isResearcher && job.has_applied && getUserApplicationStatus()"
-        class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+      <!-- User's application status -->
+      <div
+        *ngIf="isResearcher && job.has_applied && getUserApplicationStatus()"
+        class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400"
+      >
         <div class="flex items-center">
-          <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          <svg
+            class="w-5 h-5 text-blue-400 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
           </svg>
           <span class="text-sm font-medium text-blue-800">
-            Estado de tu postulación: {{ getUserApplicationStatus() }}
+            Your application status: {{ getUserApplicationStatus() }}
           </span>
         </div>
         <p class="text-xs text-blue-600 mt-1">
-          Postulado el {{ job.user_application?.applied_at | date:'dd/MM/yyyy HH:mm' }}
+          Applied on {{ job.user_application?.applied_at | date: 'dd/MM/yyyy HH:mm' }}
         </p>
       </div>
 
-      <!-- ✅ REEMPLAZA TODA LA SECCIÓN DE APLICACIONES CON ESTO -->
-      <!-- Postulaciones para empresas -->
-      <div *ngIf="isCompany && job" class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200">
+      <!-- Applications for companies -->
+      <div
+        *ngIf="isCompany && job"
+        class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200"
+      >
         <div class="px-6 py-4 border-b border-gray-200">
           <h3 class="text-lg font-semibold text-gray-900">
-            Postulaciones para "{{ job.title }}"
-            <span *ngIf="!applicationsLoading && jobApplications.length > 0" class="text-sm text-gray-500">
-              ({{ jobApplications.length }} {{ jobApplications.length === 1 ? 'postulación' : 'postulaciones' }})
+            Applications for "{{ job.title }}"
+            <span
+              *ngIf="!applicationsLoading && jobApplications.length > 0"
+              class="text-sm text-gray-500"
+            >
+              ({{ jobApplications.length }}
+              {{ jobApplications.length === 1 ? 'application' : 'applications' }})
             </span>
           </h3>
         </div>
@@ -159,98 +214,124 @@
         <!-- Loading state -->
         <div *ngIf="applicationsLoading" class="flex justify-center py-12">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span class="ml-3 text-gray-600">Cargando postulaciones...</span>
+          <span class="ml-3 text-gray-600">Loading applications...</span>
         </div>
 
-        <!-- Lista de aplicaciones -->
-        <div *ngIf="!applicationsLoading && jobApplications.length > 0" class="divide-y divide-gray-200">
+        <!-- Applications list -->
+        <div
+          *ngIf="!applicationsLoading && jobApplications.length > 0"
+          class="divide-y divide-gray-200"
+        >
           <div *ngFor="let application of jobApplications" class="p-6">
             <div class="flex items-start justify-between">
-              <!-- Información del candidato -->
+              <!-- Candidate information -->
               <div class="flex-1">
                 <div class="flex items-center mb-4">
-                  <img *ngIf="application.user_info?.profile_picture"
+                  <img
+                    *ngIf="application.user_info?.profile_picture"
                     [src]="getFullFileUrl(application.user_info?.profile_picture || '')"
-                    [alt]="application.user_info?.full_name || 'Usuario'"
-                    class="w-12 h-12 rounded-full object-cover mr-4">
-                  <div *ngIf="!application.user_info?.profile_picture"
-                    class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-4">
+                    [alt]="application.user_info?.full_name || 'User'"
+                    class="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div
+                    *ngIf="!application.user_info?.profile_picture"
+                    class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-4"
+                  >
                     <span class="text-gray-600 font-medium text-lg">
-                      {{ (application.user_info?.first_name || 'U').charAt(0) }}{{ (application.user_info?.last_name ||
-                      'N').charAt(0) }}
+                      {{ (application.user_info?.first_name || 'U').charAt(0)
+                      }}{{ (application.user_info?.last_name || 'N').charAt(0) }}
                     </span>
                   </div>
                   <div>
-                    <h4 class="font-semibold text-gray-900 text-lg">{{ application.user_info?.full_name || 'Usuario' }}
+                    <h4 class="font-semibold text-gray-900 text-lg">
+                      {{ application.user_info?.full_name || 'User' }}
                     </h4>
                     <p class="text-sm text-gray-600">{{ application.user_info?.username || '' }}</p>
                     <p class="text-xs text-gray-500">
-                      Aplicó el {{ application.applied_at | date:'dd/MM/yyyy HH:mm' }}
+                      Applied on {{ application.applied_at | date: 'dd/MM/yyyy HH:mm' }}
                     </p>
                   </div>
                 </div>
 
-                <!-- Carta de presentación -->
+                <!-- Cover letter -->
                 <div *ngIf="application.cover_letter" class="mb-4">
-                  <h5 class="text-sm font-medium text-gray-700 mb-2">Carta de presentación:</h5>
+                  <h5 class="text-sm font-medium text-gray-700 mb-2">Cover letter:</h5>
                   <div class="bg-gray-50 p-3 rounded-lg">
                     <p class="text-sm text-gray-700">{{ application.cover_letter }}</p>
                   </div>
                 </div>
 
-                <!-- Notas del reclutador -->
+                <!-- Recruiter notes -->
                 <div *ngIf="application.notes" class="mb-4">
-                  <h5 class="text-sm font-medium text-gray-700 mb-2">Notas internas:</h5>
+                  <h5 class="text-sm font-medium text-gray-700 mb-2">Internal notes:</h5>
                   <div class="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
                     <p class="text-sm text-gray-700">{{ application.notes }}</p>
                   </div>
                 </div>
 
-                <!-- Acciones y estado -->
+                <!-- Actions and status -->
                 <div class="flex items-center gap-4 flex-wrap">
-                  <!-- Estado actual -->
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" [ngClass]="{
-              'bg-yellow-100 text-yellow-800': application.status === 'pending',
-              'bg-blue-100 text-blue-800': application.status === 'reviewing',
-              'bg-purple-100 text-purple-800': application.status === 'interviewed',
-              'bg-green-100 text-green-800': application.status === 'accepted',
-              'bg-red-100 text-red-800': application.status === 'rejected',
-              'bg-gray-100 text-gray-800': application.status === 'withdrawn'
-            }">
+                  <!-- Current status -->
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                    [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': application.status === 'pending',
+                      'bg-blue-100 text-blue-800': application.status === 'reviewing',
+                      'bg-purple-100 text-purple-800': application.status === 'interviewed',
+                      'bg-green-100 text-green-800': application.status === 'accepted',
+                      'bg-red-100 text-red-800': application.status === 'rejected',
+                      'bg-gray-100 text-gray-800': application.status === 'withdrawn',
+                    }"
+                  >
                     {{ application.status_display }}
                   </span>
 
-                  <!-- Botón de CV -->
-                  <a *ngIf="hasValidResumeFile(application)" [href]="getFullFileUrl(application.resume_file || '')"
+                  <!-- Resume button -->
+                  <a
+                    *ngIf="hasValidResumeFile(application)"
+                    [href]="getFullFileUrl(application.resume_file || '')"
                     target="_blank"
-                    class="inline-flex items-center px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm">
+                    class="inline-flex items-center px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
+                  >
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                      </path>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
                     </svg>
-                    Descargar CV
+                    Download Resume
                   </a>
 
-                  <span *ngIf="!hasValidResumeFile(application)"
-                    class="inline-flex items-center px-4 py-2 text-sm bg-gray-100 text-gray-500 rounded-lg">
+                  <span
+                    *ngIf="!hasValidResumeFile(application)"
+                    class="inline-flex items-center px-4 py-2 text-sm bg-gray-100 text-gray-500 rounded-lg"
+                  >
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                      </path>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
                     </svg>
-                    Sin CV adjunto
+                    No resume attached
                   </span>
 
-                  <!-- Selector de estado -->
+                  <!-- Status selector -->
                   <div class="flex items-center gap-2">
-                    <label class="text-sm font-medium text-gray-700">Cambiar estado:</label>
-                    <select (change)="onStatusChange($event, application.id)" [value]="application.status"
-                      class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                      <option value="pending">Pendiente</option>
-                      <option value="reviewing">En revisión</option>
-                      <option value="interviewed">Entrevistado</option>
-                      <option value="accepted">Aceptado</option>
-                      <option value="rejected">Cancelado</option>
+                    <label class="text-sm font-medium text-gray-700">Change status:</label>
+                    <select
+                      (change)="onStatusChange($event, application.id)"
+                      [value]="application.status"
+                      class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="reviewing">Under review</option>
+                      <option value="interviewed">Interviewed</option>
+                      <option value="accepted">Accepted</option>
+                      <option value="rejected">Cancelled</option>
                     </select>
                   </div>
                 </div>
@@ -259,32 +340,46 @@
           </div>
         </div>
 
-        <!-- Mensaje cuando no hay postulaciones -->
+        <!-- Message when there are no applications -->
         <div *ngIf="!applicationsLoading && jobApplications.length === 0" class="text-center py-12">
-          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-            </path>
+          <svg
+            class="w-16 h-16 text-gray-400 mx-auto mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            ></path>
           </svg>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No hay postulaciones aún</h3>
-          <p class="text-gray-600">
-            Cuando alguien se postule a este trabajo, aparecerán aquí.
-          </p>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
+          <p class="text-gray-600">When someone applies to this job, they will appear here.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal de aplicación -->
-<div *ngIf="showApplicationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<!-- Application modal -->
+<div
+  *ngIf="showApplicationModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-screen overflow-y-auto">
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-medium text-gray-900">Postular al trabajo</h3>
+        <h3 class="text-lg font-medium text-gray-900">Apply to job</h3>
         <button (click)="closeApplicationModal()" class="text-gray-400 hover:text-gray-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
           </svg>
         </button>
       </div>
@@ -298,31 +393,48 @@
 
       <div>
         <label for="coverLetter" class="block text-sm font-medium text-gray-700 mb-2">
-          Carta de presentación
+          Cover letter
         </label>
-        <textarea id="coverLetter" [(ngModel)]="applicationData.cover_letter" name="coverLetter" rows="4"
+        <textarea
+          id="coverLetter"
+          [(ngModel)]="applicationData.cover_letter"
+          name="coverLetter"
+          rows="4"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Explica por qué eres el candidato ideal para este puesto..."></textarea>
+          placeholder="Explain why you're the ideal candidate for this position..."
+        ></textarea>
       </div>
 
       <div>
         <label for="resumeFile" class="block text-sm font-medium text-gray-700 mb-2">
-          CV (PDF, obligatorio) *
+          Resume (PDF, required) *
         </label>
-        <input id="resumeFile" type="file" accept=".pdf" required (change)="onFileSelected($event)"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-        <p class="text-xs text-gray-500 mt-1">Solo archivos PDF. Requerido para postular.</p>
+        <input
+          id="resumeFile"
+          type="file"
+          accept=".pdf"
+          required
+          (change)="onFileSelected($event)"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <p class="text-xs text-gray-500 mt-1">PDF files only. Required to apply.</p>
       </div>
 
       <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-        <button type="button" (click)="closeApplicationModal()"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-          Cancelar
+        <button
+          type="button"
+          (click)="closeApplicationModal()"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+        >
+          Cancel
         </button>
-        <button type="submit" [disabled]="isSubmitting || !canSubmitApplication()"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-          <span *ngIf="isSubmitting">Enviando...</span>
-          <span *ngIf="!isSubmitting">Postular</span>
+        <button
+          type="submit"
+          [disabled]="isSubmitting || !canSubmitApplication()"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <span *ngIf="isSubmitting">Submitting...</span>
+          <span *ngIf="!isSubmitting">Apply</span>
         </button>
       </div>
     </form>

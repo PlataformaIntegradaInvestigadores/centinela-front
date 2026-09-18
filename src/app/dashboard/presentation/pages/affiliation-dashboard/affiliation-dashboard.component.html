@@ -1,19 +1,36 @@
-<h1 class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900">Affiliation Search</h1>
-<app-search-bar (entity)="onSearchEntity($event)" code="affiliation" ph="Enter an affiliation name"></app-search-bar>
+<h1
+  class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900"
+>
+  Affiliation Search
+</h1>
+<app-search-bar
+  (entity)="onSearchEntity($event)"
+  code="affiliation"
+  ph="Enter an affiliation name"
+></app-search-bar>
 <app-dashboard-loader *ngIf="!isCharged()"></app-dashboard-loader>
 <div class="flex justify-center items-center p-3">
   <div class="gap-y-3" *ngIf="isCharged()">
     <div class="flex flex-col justify-center items-center xl:gap-x-5">
-      <h1 class="flex justify-center items-center hidden md:block">{{affiliation}} Statistics</h1>
-      <h2 class="flex justify-center items-center block md:hidden">{{affiliation}} Statistics</h2>
+      <h1 class="flex justify-center items-center hidden md:block">{{ affiliation }} Statistics</h1>
+      <h2 class="flex justify-center items-center block md:hidden">{{ affiliation }} Statistics</h2>
       <div class="flex flex-col xl:flex-row justify-between mb-2">
-        <div class="flex flex-col sm:flex-row xl:flex-col xl:ml-4 gap-y-2 gap-x-5 xl:justify-between pb-3">
-          <div class="border-2 border-blue-900 rounded-md xl:mb-2 ">
-            <h3 class="flex bg-blue-900 text-white p-2 xl:p-1 items-center justify-center">Statistics</h3>
+        <div
+          class="flex flex-col sm:flex-row xl:flex-col xl:ml-4 gap-y-2 gap-x-5 xl:justify-between pb-3"
+        >
+          <div class="border-2 border-blue-900 rounded-md xl:mb-2">
+            <h3 class="flex bg-blue-900 text-white p-2 xl:p-1 items-center justify-center">
+              Statistics
+            </h3>
             <div class="flex sm:flex-col pb-2 xl:pb-0 justify-center items-center md:p-2 gap-y-2">
               <div>
                 <label class="mr-3" *ngFor="let option of options" (change)="updateData(year)">
-                  <input type="radio" name="grupoOpciones" [(ngModel)]="selectedOption" [value]="option">
+                  <input
+                    type="radio"
+                    name="grupoOpciones"
+                    [(ngModel)]="selectedOption"
+                    [value]="option"
+                  />
                   {{ option }}
                 </label>
               </div>
@@ -22,14 +39,15 @@
               </select>
             </div>
           </div>
-          <div class=" flex flex-col flex-grow justify-center border-2 border-blue-900 rounded-md">
+          <div class="flex flex-col flex-grow justify-center border-2 border-blue-900 rounded-md">
             <h3 class="flex bg-blue-900 text-white p-2 justify-center items-center">
-              Summary {{selectedOption | lowercase}} {{year}}</h3>
+              Summary {{ selectedOption | lowercase }} {{ year }}
+            </h3>
             <div class="flex items-center justify-center gap-x-8 flex-wrap xl:flex-col flex-grow">
               <div class="flex flex-col items-center justify-center xl:mb-4">
                 <div class="flex justify-center">
-                  <mat-icon style="font-size: 40px; width: 50px; height: 50px;">article</mat-icon>
-                  <dt class="md:mb-2 text-3xl md:text-4xl text-center  pr-5">
+                  <mat-icon style="font-size: 40px; width: 50px; height: 50px">article</mat-icon>
+                  <dt class="md:mb-2 text-3xl md:text-4xl text-center pr-5">
                     <span [countUp]="articles"></span>
                   </dt>
                 </div>
@@ -37,7 +55,7 @@
               </div>
               <div class="flex flex-col items-center justify-center pb-1">
                 <div class="flex justify-center">
-                  <mat-icon style="font-size: 40px; width: 50px; height: 50px;">school</mat-icon>
+                  <mat-icon style="font-size: 40px; width: 50px; height: 50px">school</mat-icon>
                   <dt class="mb-2 text-3xl md:text-4xl pr-5">
                     <span [countUp]="topics"></span>
                   </dt>
@@ -49,48 +67,77 @@
         </div>
 
         <div class="flex pb-3 xl:px-3">
-
           <div class="border-2 border-blue-900 max-h-[390px] rounded-md">
-            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start " *ngIf="year.toString()==='2000'">
-              Articles contribution's in  {{ year }}</h3>
-            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start " *ngIf="selectedOption==='In'">
-              Articles contribution's in
-              Ecuador {{selectedOption|lowercase}}  {{ year }}</h3>
-            <h3 class="flex bg-blue-900 text-white p-1 justify-start items-start "
-                *ngIf="selectedOption==='Until' && year.toString()!==yearOptions[0].toString()">Articles contribution
-              evolution in
-              Ecuador from {{yearOptions[0]}} {{selectedOption|lowercase}}  {{ year }}</h3>
-            <app-evolution-line-chart [multi]="lineChartAffiliation" [width]="1000" [affiliation]="true"
-                                      [height]="400" (selectedYear)="updateData($event)"></app-evolution-line-chart>
+            <h3
+              class="flex bg-blue-900 text-white p-1 justify-start items-start"
+              *ngIf="year.toString() === '2000'"
+            >
+              Articles contribution's in {{ year }}
+            </h3>
+            <h3
+              class="flex bg-blue-900 text-white p-1 justify-start items-start"
+              *ngIf="selectedOption === 'In'"
+            >
+              Articles contribution's in Ecuador {{ selectedOption | lowercase }} {{ year }}
+            </h3>
+            <h3
+              class="flex bg-blue-900 text-white p-1 justify-start items-start"
+              *ngIf="selectedOption === 'Until' && year.toString() !== yearOptions[0].toString()"
+            >
+              Articles contribution evolution in Ecuador from {{ yearOptions[0] }}
+              {{ selectedOption | lowercase }} {{ year }}
+            </h3>
+            <app-evolution-line-chart
+              [multi]="lineChartAffiliation"
+              [width]="1000"
+              [affiliation]="true"
+              [height]="400"
+              (selectedYear)="updateData($event)"
+            ></app-evolution-line-chart>
           </div>
         </div>
       </div>
       <div class="md:px-3 w-full pb-3">
-        <div class="border-blue-900 border-2 rounded-md flex flex-col justify-center items-center "
-             *ngIf="treeMapInfo">
-          <h3 class="text-white flex text-center w-full bg-blue-900 p-1 items-center justify-center">Most investigated
-            knowledge
-            areas {{selectedOption | lowercase}} {{year}}</h3>
-          <app-tree-map-chart [single]="treeMapInfo" [width]="1180" [affiliation]="true"
-                              [height]="450" (selectedTopic)="onSearchTopic($event)"></app-tree-map-chart>
+        <div
+          class="border-blue-900 border-2 rounded-md flex flex-col justify-center items-center"
+          *ngIf="treeMapInfo"
+        >
+          <h3
+            class="text-white flex text-center w-full bg-blue-900 p-1 items-center justify-center"
+          >
+            Most investigated knowledge areas {{ selectedOption | lowercase }} {{ year }}
+          </h3>
+          <app-tree-map-chart
+            [single]="treeMapInfo"
+            [width]="1180"
+            [affiliation]="true"
+            [height]="450"
+            (selectedTopic)="onSearchTopic($event)"
+          ></app-tree-map-chart>
         </div>
       </div>
     </div>
     <div class="flex justify-center items-center">
       <div class="flex flex-col justify-center border-2 border-blue-900 rounded-2">
-        <h3 class="bg-blue-900 text-white flex justify-center items-center">More Statistics about:</h3>
+        <h3 class="bg-blue-900 text-white flex justify-center items-center">
+          More Statistics about:
+        </h3>
         <div class="flex gap-x-5 px-5 pb-2">
           <div class="flex items-center justify-center gap-x-4">
             <div class="flex flex-col items-center justify-center" (click)="navigateGeneral()">
-              <div class="flex justify-center items-center" routerLink="affiliations" style="cursor: pointer;">
-                <mat-icon style="font-size: 40px; width: 50px; height: 50px;">public</mat-icon>
+              <div
+                class="flex justify-center items-center"
+                routerLink="affiliations"
+                style="cursor: pointer"
+              >
+                <mat-icon style="font-size: 40px; width: 50px; height: 50px">public</mat-icon>
               </div>
               <dd class="font-light">General</dd>
             </div>
 
             <div class="flex flex-col items-center justify-center" (click)="navigateTopic()">
-              <div class="flex justify-center items-center" style="cursor: pointer;">
-                <mat-icon style="font-size: 40px; width: 50px; height: 50px;">school</mat-icon>
+              <div class="flex justify-center items-center" style="cursor: pointer">
+                <mat-icon style="font-size: 40px; width: 50px; height: 50px">school</mat-icon>
               </div>
               <dd class="font-light">Knowledge Areas</dd>
             </div>

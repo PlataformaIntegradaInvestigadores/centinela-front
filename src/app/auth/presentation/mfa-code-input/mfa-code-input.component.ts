@@ -9,9 +9,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => MfaCodeInputComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class MfaCodeInputComponent implements ControlValueAccessor {
   @ViewChildren('digitInput') digitInputs!: QueryList<ElementRef<HTMLInputElement>>;
@@ -134,7 +134,9 @@ export class MfaCodeInputComponent implements ControlValueAccessor {
   }
 
   private applyCode(code: string, startIndex: number): void {
-    const digits = this.onlyDigits(code).slice(0, 6 - startIndex).split('');
+    const digits = this.onlyDigits(code)
+      .slice(0, 6 - startIndex)
+      .split('');
     digits.forEach((digit, offset) => {
       this.digits[startIndex + offset] = digit;
     });

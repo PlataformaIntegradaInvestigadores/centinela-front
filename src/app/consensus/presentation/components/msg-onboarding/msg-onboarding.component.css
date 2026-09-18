@@ -1,14 +1,15 @@
 #btn-close-onboarding {
-    background-color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  #btn-close-onboarding:hover {
-    background-color: #1E3C8B; 
-    color: white;
-  }
-  
-  #btn-close-onboarding:hover svg {
-    fill: white;
-  }
-  
+  background-color: white;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+#btn-close-onboarding:hover {
+  background-color: #1e3c8b;
+  color: white;
+}
+
+#btn-close-onboarding:hover svg {
+  fill: white;
+}

@@ -44,11 +44,13 @@ feeds/
 ## Componentes Exportados
 
 ### 1. PostCreatorComponent
+
 **Selector:** `app-post-creator`
 
 Componente para crear nuevas publicaciones con soporte para archivos, texto y opciones adicionales.
 
 **Inputs:**
+
 - `placeholder: string` - Texto placeholder para el textarea
 - `buttonText: string` - Texto del botón de publicar
 - `showOptions: boolean` - Mostrar opciones adicionales (foto, link, encuesta)
@@ -57,9 +59,11 @@ Componente para crear nuevas publicaciones con soporte para archivos, texto y op
 - `isLoading: boolean` - Estado de carga
 
 **Outputs:**
+
 - `postSubmitted: EventEmitter<PostCreatorData>` - Emite cuando se envía un post
 
 **Ejemplo de uso:**
+
 ```html
 <app-post-creator
   [placeholder]="'¿Qué estás pensando?'"
@@ -67,16 +71,19 @@ Componente para crear nuevas publicaciones con soporte para archivos, texto y op
   [userAvatar]="user.avatar"
   [userName]="user.name"
   [isLoading]="isSubmitting"
-  (postSubmitted)="onPostCreated($event)">
+  (postSubmitted)="onPostCreated($event)"
+>
 </app-post-creator>
 ```
 
 ### 2. PostListComponent
+
 **Selector:** `app-post-list`
 
 Componente para mostrar una lista de publicaciones con estado de carga y mensaje de lista vacía.
 
 **Inputs:**
+
 - `posts: FeedPost[]` - Array de publicaciones
 - `isLoading: boolean` - Estado de carga
 - `emptyMessage: string` - Mensaje cuando no hay posts
@@ -84,12 +91,14 @@ Componente para mostrar una lista de publicaciones con estado de carga y mensaje
 - `currentUserId: string | null` - ID del usuario actual
 
 **Outputs:**
+
 - `toggleLike: EventEmitter<FeedPost>` - Like/Unlike en un post
 - `deletePost: EventEmitter<string>` - Eliminar post
 - `sharePost: EventEmitter<FeedPost>` - Compartir post
 - `viewProfile: EventEmitter<string>` - Ver perfil del autor
 
 **Ejemplo de uso:**
+
 ```html
 <app-post-list
   [posts]="posts"
@@ -100,16 +109,19 @@ Componente para mostrar una lista de publicaciones con estado de carga y mensaje
   (toggleLike)="onToggleLike($event)"
   (deletePost)="onDeletePost($event)"
   (sharePost)="onSharePost($event)"
-  (viewProfile)="onViewProfile($event)">
+  (viewProfile)="onViewProfile($event)"
+>
 </app-post-list>
 ```
 
 ### 3. FeedPostComponent
+
 **Selector:** `app-feed-post`
 
 Componente individual para mostrar un post con todas sus interacciones.
 
 **Inputs:**
+
 - `post: FeedPost` - Datos del post
 - `showActions: boolean` - Mostrar acciones
 - `showComments: boolean` - Mostrar sección de comentarios
@@ -118,12 +130,14 @@ Componente individual para mostrar un post con todas sus interacciones.
 - `currentUserId: string | null` - ID del usuario actual
 
 **Outputs:**
+
 - `toggleLike: EventEmitter<FeedPost>`
 - `deletePost: EventEmitter<string>`
 - `sharePost: EventEmitter<FeedPost>`
 - `viewProfile: EventEmitter<string>`
 
 ### 4. PostCommentsComponent
+
 **Selector:** `app-post-comments`
 
 Componente para manejar comentarios de un post.
@@ -131,20 +145,22 @@ Componente para manejar comentarios de un post.
 ## Cómo Usar el Módulo
 
 ### 1. Importar el módulo
+
 ```typescript
 import { FeedsModule } from '../feeds/feeds.module';
 
 @NgModule({
   imports: [
     // ... otros módulos
-    FeedsModule
+    FeedsModule,
   ],
   // ...
 })
-export class MiModulo { }
+export class MiModulo {}
 ```
 
 ### 2. Usar los componentes
+
 Los componentes están disponibles automáticamente una vez importado el módulo.
 
 ## Ventajas de esta Arquitectura
@@ -158,6 +174,7 @@ Los componentes están disponibles automáticamente una vez importado el módulo
 ## Migración desde Profile
 
 El módulo de profile ahora usa los componentes de feeds:
+
 - ✅ Eliminado `post-creator` de shared
 - ✅ Eliminado componentes duplicados en profile
 - ✅ Profile usa `PostCreatorComponent` y `PostListComponent` de feeds

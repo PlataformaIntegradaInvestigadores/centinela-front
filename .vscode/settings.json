@@ -1,31 +1,31 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#4a649d",
-        "activityBar.background": "#4a649d",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#572937",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "commandCenter.border": "#e7e7e799",
-        "sash.hoverBorder": "#4a649d",
-        "statusBar.background": "#3a4e7a",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#4a649d",
-        "statusBarItem.remoteBackground": "#3a4e7a",
-        "statusBarItem.remoteForeground": "#e7e7e7",
-        "titleBar.activeBackground": "#3a4e7a",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#3a4e7a99",
-        "titleBar.inactiveForeground": "#e7e7e799"
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#4a649d",
+    "activityBar.background": "#4a649d",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#572937",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#4a649d",
+    "statusBar.background": "#3a4e7a",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#4a649d",
+    "statusBarItem.remoteBackground": "#3a4e7a",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#3a4e7a",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#3a4e7a99",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#3a4e7a",
+  "angular-schematics.schematicsDefaultOptions": {
+    "angular-component": {
+      "skipChangeDetectionOnPush": true
     },
-    "peacock.color": "#3a4e7a",
-    "angular-schematics.schematicsDefaultOptions": {
-        "angular-component": {
-            "skipChangeDetectionOnPush": true
-        },
-        "angular-*": {
-            "externalTemplate": true,
-            "inlineStyle": true
-        }
+    "angular-*": {
+      "externalTemplate": true,
+      "inlineStyle": true
     }
+  }
 }

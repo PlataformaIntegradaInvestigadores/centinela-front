@@ -1,24 +1,24 @@
 <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="flex flex-col space-y-5">
   <div>
     <h3 class="text-xl font-bold text-gray-800 mb-2">Multifactor authentication</h3>
-    <p class="text-sm text-gray-600">
-      Enter the 6-digit code from your authenticator app.
-    </p>
+    <p class="text-sm text-gray-600">Enter the 6-digit code from your authenticator app.</p>
   </div>
 
   <div class="flex flex-col space-y-1">
     <label class="px-2 text-sm font-semibold text-gray-500">Verification code</label>
-    <app-mfa-code-input
-      formControlName="code"
-    ></app-mfa-code-input>
+    <app-mfa-code-input formControlName="code"></app-mfa-code-input>
     <p
       class="text-center text-xs"
       [class.text-gray-500]="!challengeExpired"
-      [class.text-red-600]="challengeExpired">
+      [class.text-red-600]="challengeExpired"
+    >
       <span *ngIf="!challengeExpired">Challenge expires in {{ formattedRemainingTime }}.</span>
       <span *ngIf="challengeExpired">Challenge expired. Please restart login.</span>
     </p>
-    <div *ngIf="verifyForm.get('code')?.errors && verifyForm.get('code')?.touched" class="text-red-500 text-sm">
+    <div
+      *ngIf="verifyForm.get('code')?.errors && verifyForm.get('code')?.touched"
+      class="text-red-500 text-sm"
+    >
       Enter a 6-digit numeric code.
     </div>
   </div>
@@ -26,7 +26,8 @@
   <button
     type="submit"
     [disabled]="isSubmitting || challengeExpired"
-    class="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+    class="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+  >
     {{ isSubmitting ? 'Verifying...' : 'Verify' }}
   </button>
 
@@ -36,7 +37,11 @@
     </ul>
   </div>
 
-  <button type="button" class="text-sm text-blue-600 hover:underline self-start" (click)="back.emit()">
+  <button
+    type="button"
+    class="text-sm text-blue-600 hover:underline self-start"
+    (click)="back.emit()"
+  >
     Back to login
   </button>
 </form>

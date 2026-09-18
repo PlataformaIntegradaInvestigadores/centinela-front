@@ -3,7 +3,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 @Component({
   selector: 'confirm-delete-modal',
   templateUrl: './confirm-delete-modal.component.html',
-  styleUrls: ['./confirm-delete-modal.component.css']
+  styleUrls: ['./confirm-delete-modal.component.css'],
 })
 export class ConfirmDeleteModalComponent {
   @Output() confirm = new EventEmitter<void>();

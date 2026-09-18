@@ -1,198 +1,268 @@
 <app-header></app-header>
 <div class="min-h-screen bg-gray-50" *ngIf="company">
-    <!-- Cover Image -->
-    <div class="relative">
-        <div class="h-48 bg-gradient-to-r from-blue-600 to-purple-600 rounded-b-lg">
-            <!-- Cover image placeholder, no está en el modelo del backend -->
-        </div>
+  <!-- Cover Image -->
+  <div class="relative">
+    <div class="h-48 bg-gradient-to-r from-blue-600 to-purple-600 rounded-b-lg">
+      <!-- Cover image placeholder, no está en el modelo del backend -->
+    </div>
 
-        <!-- Edit Profile Button (solo mostrar si es el dueño de la empresa) -->
-        <div class="absolute top-4 right-4" *ngIf="isCompanyOwner()">
-            <button (click)="openEditModal()"
-                class="bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                    </path>
+    <!-- Edit Profile Button (solo mostrar si es el dueño de la empresa) -->
+    <div class="absolute top-4 right-4" *ngIf="isCompanyOwner()">
+      <button
+        (click)="openEditModal()"
+        class="bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center gap-2"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+          ></path>
+        </svg>
+        Editar Perfil
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Left Column - Company Info -->
+      <div class="lg:w-1/3">
+        <!-- Company Card -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+          <div class="p-6 text-center">
+            <div class="mx-auto w-32 h-32 mb-4">
+              <img
+                [src]="company.logo || 'assets/default-company-logo.png'"
+                [alt]="company.company_name + ' logo'"
+                class="w-full h-full object-cover rounded-full border-4 border-white shadow-lg"
+              />
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+              {{ company.company_name }}
+              <span *ngIf="company.is_verified" class="text-blue-500" title="Empresa Verificada">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  ></path>
                 </svg>
-                Editar Perfil
-            </button>
-        </div>
-    </div>
+              </span>
+            </h1>
+            <p class="text-gray-600 mb-3">{{ company.industry_display || company.industry }}</p>
+            <p class="text-gray-500 flex items-center justify-center gap-1" *ngIf="company.address">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              {{ company.address }}
+            </p>
+          </div>
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
-        <div class="flex flex-col lg:flex-row gap-6">
-
-            <!-- Left Column - Company Info -->
-            <div class="lg:w-1/3">
-                <!-- Company Card -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                    <div class="p-6 text-center">
-                        <div class="mx-auto w-32 h-32 mb-4">
-                            <img [src]="company.logo || 'assets/default-company-logo.png'"
-                                [alt]="company.company_name + ' logo'"
-                                class="w-full h-full object-cover rounded-full border-4 border-white shadow-lg">
-                        </div>
-                        <h1 class="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                            {{ company.company_name }}
-                            <span *ngIf="company.is_verified" class="text-blue-500" title="Empresa Verificada">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </span>
-                        </h1>
-                        <p class="text-gray-600 mb-3">{{ company.industry_display || company.industry }}</p>
-                        <p class="text-gray-500 flex items-center justify-center gap-1" *ngIf="company.address">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            {{ company.address }}
-                        </p>
-                    </div>
-
-                    <!-- Company Stats -->
-                    <div class="border-t px-6 py-4">
-                        <div class="grid grid-cols-2 gap-4 text-center">
-                            <div *ngIf="company.founded_year">
-                                <p class="text-2xl font-bold text-blue-600">{{ company.founded_year }}</p>
-                                <p class="text-sm text-gray-600">Fundada</p>
-                            </div>
-                            <div *ngIf="company.employee_count">
-                                <p class="text-2xl font-bold text-green-600">{{ company.employee_count }}</p>
-                                <p class="text-sm text-gray-600">Empleados</p>
-                            </div>
-                            <div *ngIf="!company.founded_year && !company.employee_count">
-                                <p class="text-2xl font-bold text-purple-600">{{ company.date_joined | date:'yyyy' }}
-                                </p>
-                                <p class="text-sm text-gray-600">En la plataforma</p>
-                            </div>
-                            <div *ngIf="company.is_verified"
-                                [class.col-span-2]="!company.founded_year && !company.employee_count">
-                                <p class="text-2xl font-bold text-green-600">✓</p>
-                                <p class="text-sm text-gray-600">Verificada</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div class="border-t px-6 py-4">
-                        <h3 class="font-semibold text-gray-900 mb-3">Información de Contacto</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                <span class="text-gray-700">{{ company.username }}</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm" *ngIf="company.phone">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                    </path>
-                                </svg>
-                                <span class="text-gray-700">{{ company.phone }}</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm"
-                                *ngIf="company.website && company.website.trim()">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9m0 9c-5 0-9-4-9-9s4-9 9-9">
-                                    </path>
-                                </svg>
-                                <a [href]="company.website" target="_blank" class="text-blue-600 hover:text-blue-800">
-                                    {{ company.website }}
-                                </a>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h-1V4H9v3H8zM7 9h10a1 1 0 011 1v10a1 1 0 01-1 1H7a1 1 0 01-1-1V10a1 1 0 011-1z">
-                                    </path>
-                                </svg>
-                                <span class="text-gray-700">{{ company.industry_display || company.industry }}</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">
-                                    </path>
-                                </svg>
-                                <span class="text-gray-700">Miembro desde {{ company.date_joined | date:'MMMM yyyy'
-                                    }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <!-- Company Stats -->
+          <div class="border-t px-6 py-4">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div *ngIf="company.founded_year">
+                <p class="text-2xl font-bold text-blue-600">{{ company.founded_year }}</p>
+                <p class="text-sm text-gray-600">Fundada</p>
+              </div>
+              <div *ngIf="company.employee_count">
+                <p class="text-2xl font-bold text-green-600">{{ company.employee_count }}</p>
+                <p class="text-sm text-gray-600">Empleados</p>
+              </div>
+              <div *ngIf="!company.founded_year && !company.employee_count">
+                <p class="text-2xl font-bold text-purple-600">
+                  {{ company.date_joined | date: 'yyyy' }}
+                </p>
+                <p class="text-sm text-gray-600">En la plataforma</p>
+              </div>
+              <div
+                *ngIf="company.is_verified"
+                [class.col-span-2]="!company.founded_year && !company.employee_count"
+              >
+                <p class="text-2xl font-bold text-green-600">✓</p>
+                <p class="text-sm text-gray-600">Verificada</p>
+              </div>
             </div>
+          </div>
 
-            <!-- Right Column - Content -->
-            <div class="lg:w-2/3">
-
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-
-                    <!-- Navigation Tabs -->
-                    <div class="border-b border-gray-200">
-                        <nav class="flex">
-                            <button (click)="setActiveTab('about')" [class.border-blue-500]="activeTab === 'about'"
-                                [class.text-blue-600]="activeTab === 'about'"
-                                [class.border-transparent]="activeTab !== 'about'"
-                                [class.text-gray-500]="activeTab !== 'about'"
-                                class="flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Acerca de la Empresa
-                            </button>
-                        </nav>
-                    </div>
-
-                    <!-- Tab Content -->
-                    <div class="p-6">
-
-                        <!-- About Tab -->
-                        <div *ngIf="activeTab === 'about'" class="space-y-6">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">¿Quiénes Somos?</h3>
-                                <p class="text-gray-700 leading-relaxed">{{ company.description }}</p>
-                            </div>
-
-                            <!-- Solo mostrar información adicional si está disponible -->
-                            <div *ngIf="company.industry_display">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Industria</h3>
-                                <p class="text-gray-700 leading-relaxed">{{ company.industry_display }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <!-- Contact Info -->
+          <div class="border-t px-6 py-4">
+            <h3 class="font-semibold text-gray-900 mb-3">Información de Contacto</h3>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                <span class="text-gray-700">{{ company.username }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm" *ngIf="company.phone">
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  ></path>
+                </svg>
+                <span class="text-gray-700">{{ company.phone }}</span>
+              </div>
+              <div
+                class="flex items-center gap-2 text-sm"
+                *ngIf="company.website && company.website.trim()"
+              >
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9m0 9c-5 0-9-4-9-9s4-9 9-9"
+                  ></path>
+                </svg>
+                <a
+                  [href]="company.website"
+                  target="_blank"
+                  class="text-blue-600 hover:text-blue-800"
+                >
+                  {{ company.website }}
+                </a>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h-1V4H9v3H8zM7 9h10a1 1 0 011 1v10a1 1 0 01-1 1H7a1 1 0 01-1-1V10a1 1 0 011-1z"
+                  ></path>
+                </svg>
+                <span class="text-gray-700">{{
+                  company.industry_display || company.industry
+                }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <svg
+                  class="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span class="text-gray-700"
+                  >Miembro desde {{ company.date_joined | date: 'MMMM yyyy' }}</span
+                >
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Right Column - Content -->
+      <div class="lg:w-2/3">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <!-- Navigation Tabs -->
+          <div class="border-b border-gray-200">
+            <nav class="flex">
+              <button
+                (click)="setActiveTab('about')"
+                [class.border-blue-500]="activeTab === 'about'"
+                [class.text-blue-600]="activeTab === 'about'"
+                [class.border-transparent]="activeTab !== 'about'"
+                [class.text-gray-500]="activeTab !== 'about'"
+                class="flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                Acerca de la Empresa
+              </button>
+            </nav>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="p-6">
+            <!-- About Tab -->
+            <div *ngIf="activeTab === 'about'" class="space-y-6">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">¿Quiénes Somos?</h3>
+                <p class="text-gray-700 leading-relaxed">{{ company.description }}</p>
+              </div>
+
+              <!-- Solo mostrar información adicional si está disponible -->
+              <div *ngIf="company.industry_display">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Industria</h3>
+                <p class="text-gray-700 leading-relaxed">{{ company.industry_display }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Loading State -->
 <div *ngIf="loading" class="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p class="text-gray-600">Cargando perfil de empresa...</p>
-    </div>
+  <div class="text-center">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+    <p class="text-gray-600">Cargando perfil de empresa...</p>
+  </div>
 </div>
 
 <!-- Edit Profile Modal -->
-<app-edit-company-profile-modal [company]="company" [isVisible]="showEditModal" (onClose)="closeEditModal()"
-    (onSave)="onProfileUpdated($event)">
+<app-edit-company-profile-modal
+  [company]="company"
+  [isVisible]="showEditModal"
+  (closeModal)="closeEditModal()"
+  (saveCompany)="onProfileUpdated($event)"
+>
 </app-edit-company-profile-modal>

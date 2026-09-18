@@ -5,11 +5,11 @@ export interface Article {
   publication_date?: string;
   author_count?: number;
   affiliation_count?: number;
-  authors?: any[];
-  affiliations?: any[];
+  authors?: { scopus_id: string; name: string }[];
+  affiliations?: string[];
   topics?: string[];
-  relevance?: number;  // Added for LLM search
-  citations: number
+  relevance?: number; // Added for LLM search
+  citations: number;
 }
 
 export interface ArticleResult {
@@ -19,7 +19,7 @@ export interface ArticleResult {
   author_count?: number;
   affiliation_count?: number;
   publication_date?: string;
-  relevance?: number;  // Added for LLM search
+  relevance?: number; // Added for LLM search
 }
 
 export interface PaginationArticleResult {
@@ -27,14 +27,16 @@ export interface PaginationArticleResult {
   total: number;
   total_results?: number;
   years?: Array<number | string>;
-  timing?: {    // Added for LLM search timing info
+  timing?: {
+    // Added for LLM search timing info
     translation_time?: number;
     keybert_time?: number;
     bm25_time?: number;
     dense_time?: number;
     total_time?: number;
   };
-  query_info?: {  // Added for LLM search metadata
+  query_info?: {
+    // Added for LLM search metadata
     original_query?: string;
     enhanced_query?: string;
     extracted_keywords?: string[];

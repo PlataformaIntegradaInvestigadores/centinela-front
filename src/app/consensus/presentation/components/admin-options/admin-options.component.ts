@@ -9,13 +9,13 @@ import { TopicService } from 'src/app/consensus/domain/services/TopicDataService
   templateUrl: './admin-options.component.html',
   styleUrls: ['./admin-options.component.css'],
   standalone: true,
-  imports: [MatExpansionModule, CommonModule]
+  imports: [MatExpansionModule, CommonModule],
 })
 export class AdminOptionsComponent implements OnInit {
   panelOpenState: boolean;
   showModal: boolean = false;
   @Input() userId: string | null = null;
-  @Input() idOwnerGroup: string = "";
+  @Input() idOwnerGroup: string = '';
   @Input() groupId: string | null = null;
   private authenticatedUserId: string | null = null;
   showOptions: boolean = false;
@@ -49,9 +49,9 @@ export class AdminOptionsComponent implements OnInit {
     this.closeModal();
     this.topicService.changeUserPhase(this.groupId!, 0).subscribe(
       () => {},
-      error => {
-        console.error('Error: ',error);
-      }
+      (error) => {
+        console.error('Error: ', error);
+      },
     );
   }
 

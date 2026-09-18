@@ -11,24 +11,26 @@ import {
   UserType,
   LoginResponse,
   MfaChallengeResponse,
-  MfaSetupResponse
+  MfaSetupResponse,
 } from '../entities/interfaces';
 import { User as Users } from 'src/app/group/presentation/user.interface';
 import { jwtDecode } from 'jwt-decode';
 import { CompanyAuthService } from './company-auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = environment.apiIdentity;
   private tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
-  private userTypeSubject: BehaviorSubject<UserType | null> = new BehaviorSubject<UserType | null>(null);
+  private userTypeSubject: BehaviorSubject<UserType | null> = new BehaviorSubject<UserType | null>(
+    null,
+  );
   private tokenRefreshSubject: Subject<void> = new Subject<void>();
 
   constructor(
     private http: HttpClient,
-    private companyAuthService: CompanyAuthService
+    private companyAuthService: CompanyAuthService,
   ) {
     const token = localStorage.getItem('accessToken');
     const userType = localStorage.getItem('userType') as UserType;
@@ -46,9 +48,7 @@ export class AuthService {
    * @returns Un Observable que emite la respuesta del registro.
    */
   register(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register/`, user).pipe(
-      catchError(this.handleError)
-    );
+    return this.http.post(`${this.apiUrl}/register/`, user).pipe(catchError(this.handleError));
   }
 
   /**
@@ -68,17 +68,19 @@ export class AuthService {
    */
   login(credentials: LoginCredentials, userType: UserType = 'user'): Observable<LoginResponse> {
     const endpoint = userType === 'company' ? '/companies/token/' : '/token/';
-    
-    return this.http.post<LoginResponse>(`${this.apiUrl}${endpoint}`, credentials, { withCredentials: true }).pipe(
-      tap(response => {
-        if (this.isFinalAuthResponse(response)) {
-          this.setSession(response, userType);
-          // Notificar al monitor de tokens que reinicie el monitoreo
-          this.notifyTokenRefresh();
-        }
-      }),
-      catchError(this.handleError)
-    );
+
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}${endpoint}`, credentials, { withCredentials: true })
+      .pipe(
+        tap((response) => {
+          if (this.isFinalAuthResponse(response)) {
+            this.setSession(response, userType);
+            // Notificar al monitor de tokens que reinicie el monitoreo
+            this.notifyTokenRefresh();
+          }
+        }),
+        catchError(this.handleError),
+      );
   }
 
   isMfaChallengeResponse(response: LoginResponse): response is MfaChallengeResponse {
@@ -89,7 +91,7 @@ export class AuthService {
    * @returns El tipo de usuario o null.
    */
   getUserType(): UserType | null {
-    return this.userTypeSubject.value || localStorage.getItem('userType') as UserType;
+    return this.userTypeSubject.value || (localStorage.getItem('userType') as UserType);
   }
 
   /**
@@ -115,7 +117,7 @@ export class AuthService {
     return this.getUserType() === 'user';
   }
 
-/* todo utilizar outhservice is loging acces*/
+  /* todo utilizar outhservice is loging acces*/
   getToken(): Observable<string | null> {
     const token = this.tokenSubject.value;
     if (token) {
@@ -130,13 +132,13 @@ export class AuthService {
   }
 
   setupMfa(challenge: string): Observable<MfaSetupResponse> {
-    return this.http.post<MfaSetupResponse>(
-      `${this.apiUrl}/auth/mfa/setup/`,
-      { mfa_challenge: challenge },
-      { withCredentials: true }
-    ).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<MfaSetupResponse>(
+        `${this.apiUrl}/auth/mfa/setup/`,
+        { mfa_challenge: challenge },
+        { withCredentials: true },
+      )
+      .pipe(catchError(this.handleError));
   }
 
   confirmMfa(challenge: string, code: string): Observable<AuthResponse> {
@@ -160,42 +162,44 @@ export class AuthService {
    * @returns Un Observable que emite la nueva respuesta del token de acceso.
    */
   private refreshAccessToken(): Observable<AuthResponse> {
-    const refreshToken = this.getUserType() === 'company' ? localStorage.getItem('refreshToken') : null;
+    const refreshToken =
+      this.getUserType() === 'company' ? localStorage.getItem('refreshToken') : null;
     const body = refreshToken ? { refresh: refreshToken } : {};
-    return this.http.post<AuthResponse>(`${this.apiUrl}/token/refresh/`, body, { withCredentials: true }).pipe(
-      tap(response => {
-        localStorage.setItem('accessToken', response.access);
-        if (this.getUserType() === 'company' && response.refresh) {
-          localStorage.setItem('refreshToken', response.refresh);
-        } else {
-          localStorage.removeItem('refreshToken');
-        }
-        this.tokenSubject.next(response.access);
-        this.notifyTokenRefresh();
-      }),
-      catchError((error: HttpErrorResponse) => {
-        this.clearLocalSession();
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/token/refresh/`, body, { withCredentials: true })
+      .pipe(
+        tap((response) => {
+          localStorage.setItem('accessToken', response.access);
+          if (this.getUserType() === 'company' && response.refresh) {
+            localStorage.setItem('refreshToken', response.refresh);
+          } else {
+            localStorage.removeItem('refreshToken');
+          }
+          this.tokenSubject.next(response.access);
+          this.notifyTokenRefresh();
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.clearLocalSession();
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
-    * Actualiza la información del usuario.
-    * @param formData - Los datos del formulario a actualizar.
-    * @returns Un Observable que emite la respuesta de la actualización.
-    */
+   * Actualiza la información del usuario.
+   * @param formData - Los datos del formulario a actualizar.
+   * @returns Un Observable que emite la respuesta de la actualización.
+   */
   updateUser(formData: FormData): Observable<any> {
     console.log(formData);
     const userId = this.getUserId();
     if (!userId) {
       return throwError(() => new Error('User ID not found'));
     }
-    return this.http.put(`${this.apiUrl}/users/${userId}/update/`, formData).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .put(`${this.apiUrl}/users/${userId}/update/`, formData)
+      .pipe(catchError(this.handleError));
   }
-
 
   /**
    * Obtiene una lista de usuarios.
@@ -208,11 +212,10 @@ export class AuthService {
     return this.http.get<Users[]>(`${this.apiUrl}/users/`).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 || error.status === 403) {
-          this.clearLocalSession();
           return of([]);
         }
         return this.handleError(error);
-      })
+      }),
     );
   }
 
@@ -248,14 +251,15 @@ export class AuthService {
       if (error.status === 400 && error.error.errors) {
         errorMessages = [];
         for (const key in error.error.errors) {
-          if (error.error.errors.hasOwnProperty(key)) {
+          if (Object.prototype.hasOwnProperty.call(error.error.errors, key)) {
             errorMessages.push(`${error.error.errors[key].join(', ')}`);
           }
         }
       } else {
         errorMessages = [`Server-side error: ${error.error.detail || error.message}`];
       }
-    }    return throwError(() => new Error(errorMessages.join('\n')));
+    }
+    return throwError(() => new Error(errorMessages.join('\n')));
   }
 
   /**
@@ -271,16 +275,16 @@ export class AuthService {
       localStorage.removeItem('refreshToken');
     }
     localStorage.setItem('userType', userType);
-    
+
     // Decodificar token para obtener IDs
     const decodedToken = jwtDecode(authResult.access) as any;
-    
+
     if (userType === 'user') {
       localStorage.setItem('userId', authResult.user_id || decodedToken.user_id);
     } else if (userType === 'company') {
       localStorage.setItem('companyId', authResult.company_id || decodedToken.company_id);
     }
-    
+
     this.tokenSubject.next(authResult.access);
     this.userTypeSubject.next(userType);
   }
@@ -289,10 +293,11 @@ export class AuthService {
    * Cierra la sesión del usuario eliminando los tokens del almacenamiento local.
    */
   logout(): void {
-    const refreshToken = this.getUserType() === 'company' ? localStorage.getItem('refreshToken') : null;
+    const refreshToken =
+      this.getUserType() === 'company' ? localStorage.getItem('refreshToken') : null;
     const body = refreshToken ? { refresh: refreshToken } : {};
     this.http.post(`${this.apiUrl}/logout/`, body, { withCredentials: true }).subscribe({
-      error: () => {}
+      error: () => {},
     });
     this.clearLocalSession();
   }
@@ -308,7 +313,7 @@ export class AuthService {
     }
     this.tokenSubject.next(null);
     this.userTypeSubject.next(null);
-    
+
     // Notificar al monitor que detenga el monitoreo
     this.notifyLogout();
   }
@@ -330,7 +335,7 @@ export class AuthService {
     if (!token) {
       return false;
     }
-    
+
     return !this.isTokenExpired(token);
   }
 
@@ -359,7 +364,7 @@ export class AuthService {
     if (!token) {
       return 0;
     }
-    
+
     try {
       const decodedToken = jwtDecode(token) as any;
       const currentTime = Math.floor(Date.now() / 1000);
@@ -397,17 +402,19 @@ export class AuthService {
   }
 
   private completeMfa(endpoint: string, challenge: string, code: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}${endpoint}`,
-      { mfa_challenge: challenge, code },
-      { withCredentials: true }
-    ).pipe(
-      tap(response => {
-        this.setSession(response, 'user');
-        this.notifyTokenRefresh();
-      }),
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<AuthResponse>(
+        `${this.apiUrl}${endpoint}`,
+        { mfa_challenge: challenge, code },
+        { withCredentials: true },
+      )
+      .pipe(
+        tap((response) => {
+          this.setSession(response, response.user_type || 'user');
+          this.notifyTokenRefresh();
+        }),
+        catchError(this.handleError),
+      );
   }
 
   private isFinalAuthResponse(response: LoginResponse): response is AuthResponse {

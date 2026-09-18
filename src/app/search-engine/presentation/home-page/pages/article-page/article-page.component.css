@@ -1,14 +1,13 @@
-*{
+* {
   box-sizing: border-box;
 }
 
-
-.color-text{
-  background-color: #FF7F50;
-  color: #F7EEDD;
+.color-text {
+  background-color: #ff7f50;
+  color: #f7eedd;
 }
 
-.color-text:hover{
-  background-color: #FF6347;
-  color: #F7EEDD;
+.color-text:hover {
+  background-color: #ff6347;
+  color: #f7eedd;
 }

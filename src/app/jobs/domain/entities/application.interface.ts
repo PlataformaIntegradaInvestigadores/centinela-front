@@ -44,13 +44,8 @@ export interface ApplicationUpdate {
   resume_file?: File;
 }
 
-export type ApplicationStatus = 
-  | 'pending' 
-  | 'reviewing' 
-  | 'interviewed' 
-  | 'accepted' 
-  | 'rejected' 
-  | 'withdrawn';
+export type ApplicationStatus =
+  'pending' | 'reviewing' | 'interviewed' | 'accepted' | 'rejected' | 'withdrawn';
 
 export interface ApplicationFilter {
   job_id?: number;

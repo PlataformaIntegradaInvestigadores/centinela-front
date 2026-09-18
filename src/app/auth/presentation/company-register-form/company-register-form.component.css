@@ -313,7 +313,7 @@
   line-height: 1.5;
 }
 
-.checkbox-container input[type="checkbox"] {
+.checkbox-container input[type='checkbox'] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -337,7 +337,7 @@
 }
 
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
   left: 0.25rem;
@@ -455,8 +455,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -537,4 +541,3 @@
   outline: 2px solid #1e3c8b;
   outline-offset: 2px;
 }
-

@@ -5,18 +5,17 @@ import { Summary } from '../entities/sumary.interface';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; // Add this line
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SummaryService {
   rootURL: string = environment.apiSearch;
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getSummary() :Observable<Summary>{
+  getSummary(): Observable<Summary> {
     return this.http.get<Summary>(`${this.rootURL}/v1/summary/`).pipe(
       map((response: Summary) => {
         return response;
-      })
+      }),
     );
   }
-
 }

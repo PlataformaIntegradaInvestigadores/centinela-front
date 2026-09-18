@@ -1,12 +1,24 @@
 <!-- information.component.html -->
-<app-about-me-profile [userInfo]="userInfo" [isOwnProfile]="user?.isOwnProfile" (saveAboutMe)="saveAboutMe($event)"
-  (toggleEdit)="toggleEdit()">
+<app-about-me-profile
+  [userInfo]="userInfo"
+  [isOwnProfile]="user?.isOwnProfile"
+  (saveAboutMe)="saveAboutMe($event)"
+  (toggleEdit)="toggleEdit()"
+>
 </app-about-me-profile>
 
-<app-disciplines [disciplines]="disciplines" [isOwnProfile]="user?.isOwnProfile"
-  (saveDisciplines)="saveDisciplines($event)" (toggleEdit)="toggleEdit()">
+<app-disciplines
+  [disciplines]="disciplines"
+  [isOwnProfile]="user?.isOwnProfile"
+  (saveDisciplines)="saveDisciplines($event)"
+  (toggleEdit)="toggleEdit()"
+>
 </app-disciplines>
 
-<app-contact-info [contactInfo]="contactInfo" [isOwnProfile]="user?.isOwnProfile"
-  (saveContactInfo)="saveContactInfo($event)" (toggleEdit)="toggleEdit()">
+<app-contact-info
+  [contactInfo]="contactInfo"
+  [isOwnProfile]="user?.isOwnProfile"
+  (saveContactInfo)="saveContactInfo($event)"
+  (toggleEdit)="toggleEdit()"
+>
 </app-contact-info>

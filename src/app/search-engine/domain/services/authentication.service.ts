@@ -1,21 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { catchError, map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  rootURL:string = environment.apiSearch;
-  constructor(private httpClient: HttpClient) {
-   }
+  rootURL: string = environment.apiSearch;
+  constructor(private httpClient: HttpClient) {}
 
-  login(username: string, password: string) :Observable<any> {
-    return this.httpClient.post(`${this.rootURL}/v1/auth/login/`, { username, password })
-    .pipe(
+  login(username: string, password: string): Observable<any> {
+    return this.httpClient.post(`${this.rootURL}/v1/auth/login/`, { username, password }).pipe(
       map((response) => {
-        return response
-      })
-    )
+        return response;
+      }),
+    );
   }
 
   isAuthenticated() {

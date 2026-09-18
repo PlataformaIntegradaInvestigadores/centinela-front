@@ -4,29 +4,49 @@
     <app-header [showInformation]="true"></app-header>
   </div>
   <main class="flex-1 flex flex-col">
-  <div class="bg-gray-50">
-    <div *ngIf="returnToResultsUrl" class="container mx-auto max-w-screen-xl px-4 pt-6">
-      <button
-        type="button"
-        (click)="backToResults()"
-        class="inline-flex items-center gap-3 rounded text-base font-bold text-gray-500 transition-colors hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
-        aria-label="Back to author search results">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Back to results
-      </button>
+    <div class="bg-gray-50">
+      <div *ngIf="returnToResultsUrl" class="container mx-auto max-w-screen-xl px-4 pt-6">
+        <button
+          type="button"
+          (click)="backToResults()"
+          class="inline-flex items-center gap-3 rounded text-base font-bold text-gray-500 transition-colors hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+          aria-label="Back to author search results"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
+          Back to results
+        </button>
+      </div>
+      <app-profile-data
+        [user]="user!"
+        [authorCentinela]="authorCentinela"
+        [isOwnProfile]="isOwnProfile"
+      ></app-profile-data>
     </div>
-    <app-profile-data [user]="user!" [authorCentinela]="authorCentinela" [isOwnProfile]="isOwnProfile"></app-profile-data>
-  </div>
-  <div class="bg-slate-200 border-y border-gray-200 scroll-mt-20" #tabsTop>
-    <app-data-nav [user]="user" [isOwnProfile]="isOwnProfile"  [authorCentinela]="authorCentinela"></app-data-nav>
-  </div>
-  <div class="bg-gray-100 flex-1">
-    <div class="container mx-auto max-w-screen-xl px-3 pt-4 pb-8">
-      <router-outlet ></router-outlet>
+    <div class="bg-slate-200 border-y border-gray-200 scroll-mt-20" #tabsTop>
+      <app-data-nav
+        [user]="user"
+        [isOwnProfile]="isOwnProfile"
+        [authorCentinela]="authorCentinela"
+      ></app-data-nav>
     </div>
-  </div>
+    <div class="bg-gray-100 flex-1">
+      <div class="container mx-auto max-w-screen-xl px-3 pt-4 pb-8">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   </main>
   <app-footer></app-footer>
 </div>
@@ -36,6 +56,7 @@
   *ngIf="editModalVisible && postToEdit"
   [post]="postToEdit"
   [showModal]="editModalVisible"
-  (close)="closeEditModal()"
-  (save)="saveEditPost($event)">
+  (closeEditor)="closeEditModal()"
+  (save)="saveEditPost($event)"
+>
 </app-post-editor>

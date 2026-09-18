@@ -13,9 +13,8 @@ describe('AuthorSearchComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [AuthorSearchComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule]
-    ,
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(AuthorSearchComponent);
     component = fixture.componentInstance;

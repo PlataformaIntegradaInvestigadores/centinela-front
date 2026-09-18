@@ -30,14 +30,18 @@
       </div>
       <div class="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
         <p class="text-xs uppercase text-gray-400">Degradacion de utilidad</p>
-        <p class="text-xl font-bold text-gray-800">&le; {{ data.meta.thresholds.util_max_drop * 100 }}%</p>
+        <p class="text-xl font-bold text-gray-800">
+          &le; {{ data.meta.thresholds.util_max_drop * 100 }}%
+        </p>
         <p class="text-xs text-gray-400">respecto a la linea base</p>
       </div>
     </div>
 
     <!-- SHAP: origen del sesgo institucional -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-1">Origen del sesgo: importancia de variables (SHAP)</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-1">
+        Origen del sesgo: importancia de variables (SHAP)
+      </h2>
       <p class="text-sm text-gray-500 mb-3">
         El sesgo institucional es indirecto: lo domina <b>publication_count</b>, no la afiliacion.
       </p>
@@ -51,13 +55,16 @@
         [showYAxisLabel]="false"
         xAxisLabel="% de importancia"
         [showDataLabel]="true"
-        [roundDomains]="true">
+        [roundDomains]="true"
+      >
       </ngx-charts-bar-horizontal>
     </section>
 
     <!-- Linea base (S5) -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-3">Linea base de equidad (diagnostico inicial)</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">
+        Linea base de equidad (diagnostico inicial)
+      </h2>
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
           <thead>
@@ -86,7 +93,9 @@
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div class="bg-white rounded-xl shadow p-5">
         <h3 class="font-semibold text-gray-800 mb-1">Modelo predictivo: DI antes/despues</h3>
-        <p class="text-xs text-gray-400 mb-2">Ajuste de umbrales (alpha={{ data.model_mitigation.alpha_optimo }})</p>
+        <p class="text-xs text-gray-400 mb-2">
+          Ajuste de umbrales (alpha={{ data.model_mitigation.alpha_optimo }})
+        </p>
         <ngx-charts-bar-vertical
           [view]="[360, 240]"
           [results]="antesDespuesModelo"
@@ -94,12 +103,17 @@
           [xAxis]="true"
           [yAxis]="true"
           [showDataLabel]="true"
-          [roundDomains]="true">
+          [roundDomains]="true"
+        >
         </ngx-charts-bar-vertical>
       </div>
       <div class="bg-white rounded-xl shadow p-5">
-        <h3 class="font-semibold text-gray-800 mb-1">Motor de busqueda: diversidad antes/despues</h3>
-        <p class="text-xs text-gray-400 mb-2">xQUAD (lambda={{ data.search_mitigation.lambda_optimo }}); # areas en top-50</p>
+        <h3 class="font-semibold text-gray-800 mb-1">
+          Motor de busqueda: diversidad antes/despues
+        </h3>
+        <p class="text-xs text-gray-400 mb-2">
+          xQUAD (lambda={{ data.search_mitigation.lambda_optimo }}); # areas en top-50
+        </p>
         <ngx-charts-bar-vertical
           [view]="[360, 240]"
           [results]="antesDespuesBuscador"
@@ -107,14 +121,17 @@
           [xAxis]="true"
           [yAxis]="true"
           [showDataLabel]="true"
-          [roundDomains]="true">
+          [roundDomains]="true"
+        >
         </ngx-charts-bar-vertical>
       </div>
     </section>
 
     <!-- Sensibilidad alpha (modelo predictivo) -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-1">Sensibilidad del modelo al parametro &alpha;</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-1">
+        Sensibilidad del modelo al parametro &alpha;
+      </h2>
       <p class="text-sm text-gray-500 mb-4">
         Mueva el control para recorrer el compromiso equidad-utilidad y ver el punto de operacion.
       </p>
@@ -136,7 +153,8 @@
             [referenceLines]="diRef"
             [showRefLines]="true"
             [showRefLabels]="true"
-            [roundDomains]="true">
+            [roundDomains]="true"
+          >
           </ngx-charts-line-chart>
           <ngx-charts-line-chart
             class="block mt-2"
@@ -152,16 +170,25 @@
             [referenceLines]="utilRef5"
             [showRefLines]="true"
             [showRefLabels]="true"
-            [roundDomains]="true">
+            [roundDomains]="true"
+          >
           </ngx-charts-line-chart>
         </div>
 
         <!-- Panel del punto seleccionado (control interactivo) -->
         <div class="bg-gray-50 rounded-lg p-4 border">
           <label class="text-sm font-medium text-gray-700">
-            alpha = <span class="text-indigo-600 font-bold">{{ alphaPoint?.alpha | number: '1.1-1' }}</span>
+            alpha =
+            <span class="text-indigo-600 font-bold">{{ alphaPoint?.alpha | number: '1.1-1' }}</span>
           </label>
-          <input type="range" min="0" max="10" step="1" [(ngModel)]="alphaIdx" class="w-full mt-2" />
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="1"
+            [(ngModel)]="alphaIdx"
+            class="w-full mt-2"
+          />
 
           <div class="mt-3 space-y-2 text-sm">
             <div class="flex justify-between">
@@ -192,7 +219,8 @@
             </div>
           </div>
           <p class="text-xs text-gray-400 mt-3">
-            Ventana de equidad: alpha &isin; [0,3 ; 0,6]. Ningun alpha cumple equidad y utilidad a la vez.
+            Ventana de equidad: alpha &isin; [0,3 ; 0,6]. Ningun alpha cumple equidad y utilidad a
+            la vez.
           </p>
         </div>
       </div>
@@ -200,7 +228,9 @@
 
     <!-- Sensibilidad lambda (motor de busqueda) -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-1">Sensibilidad del buscador al parametro &lambda;</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-1">
+        Sensibilidad del buscador al parametro &lambda;
+      </h2>
       <p class="text-sm text-gray-500 mb-4">
         Compromiso entre diversidad tematica y relevancia (NDCG).
       </p>
@@ -217,7 +247,8 @@
             [showYAxisLabel]="true"
             xAxisLabel="lambda"
             yAxisLabel="# areas"
-            [roundDomains]="true">
+            [roundDomains]="true"
+          >
           </ngx-charts-line-chart>
           <ngx-charts-line-chart
             class="block mt-2"
@@ -233,15 +264,26 @@
             [referenceLines]="utilRef5"
             [showRefLines]="true"
             [showRefLabels]="true"
-            [roundDomains]="true">
+            [roundDomains]="true"
+          >
           </ngx-charts-line-chart>
         </div>
 
         <div class="bg-gray-50 rounded-lg p-4 border">
           <label class="text-sm font-medium text-gray-700">
-            lambda = <span class="text-indigo-600 font-bold">{{ lambdaPoint?.lambda | number: '1.1-1' }}</span>
+            lambda =
+            <span class="text-indigo-600 font-bold">{{
+              lambdaPoint?.lambda | number: '1.1-1'
+            }}</span>
           </label>
-          <input type="range" min="0" max="10" step="1" [(ngModel)]="lambdaIdx" class="w-full mt-2" />
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="1"
+            [(ngModel)]="lambdaIdx"
+            class="w-full mt-2"
+          />
 
           <div class="mt-3 space-y-2 text-sm">
             <div class="flex justify-between">
@@ -276,8 +318,12 @@
 
     <!-- xQUAD por consulta -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-1">Diversidad por consulta: BM25 vs xQUAD</h2>
-      <p class="text-sm text-gray-500 mb-3"># de areas unicas en el top-50 (mayor es mas diverso).</p>
+      <h2 class="text-lg font-semibold text-gray-800 mb-1">
+        Diversidad por consulta: BM25 vs xQUAD
+      </h2>
+      <p class="text-sm text-gray-500 mb-3">
+        # de areas unicas en el top-50 (mayor es mas diverso).
+      </p>
       <ngx-charts-bar-vertical-2d
         [view]="[760, 300]"
         [results]="queryData"
@@ -287,13 +333,16 @@
         [legend]="true"
         legendTitle="Metodo"
         [showDataLabel]="true"
-        [roundDomains]="true">
+        [roundDomains]="true"
+      >
       </ngx-charts-bar-vertical-2d>
     </section>
 
     <!-- Veredicto contra umbrales (H2 - S10) -->
     <section class="bg-white rounded-xl shadow p-5 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-3">Veredicto frente a los umbrales de aceptacion</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">
+        Veredicto frente a los umbrales de aceptacion
+      </h2>
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
           <thead>
@@ -303,8 +352,11 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of data.verdict" class="border-b last:border-0">
-              <td *ngFor="let c of verdictCols" class="py-2 pr-4"
-                  [ngClass]="c === 'Veredicto' ? estadoClass(r[c] + '') : 'text-gray-700'">
+              <td
+                *ngFor="let c of verdictCols"
+                class="py-2 pr-4"
+                [ngClass]="c === 'Veredicto' ? estadoClass(r[c] + '') : 'text-gray-700'"
+              >
                 {{ r[c] }}
               </td>
             </tr>
@@ -317,17 +369,33 @@
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-white rounded-xl shadow p-5 border-t-4 border-indigo-500">
         <h3 class="font-semibold text-gray-800">Modelo predictivo</h3>
-        <p class="text-sm text-indigo-600 font-medium mb-2">{{ data.selection.modelo_predictivo.parametro }}</p>
-        <p class="text-sm text-gray-600"><b>Equidad:</b> {{ data.selection.modelo_predictivo.equidad }}</p>
-        <p class="text-sm text-gray-600"><b>Utilidad:</b> {{ data.selection.modelo_predictivo.utilidad }}</p>
-        <p class="text-sm text-gray-600"><b>Decision:</b> {{ data.selection.modelo_predictivo.decision }}</p>
+        <p class="text-sm text-indigo-600 font-medium mb-2">
+          {{ data.selection.modelo_predictivo.parametro }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Equidad:</b> {{ data.selection.modelo_predictivo.equidad }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Utilidad:</b> {{ data.selection.modelo_predictivo.utilidad }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Decision:</b> {{ data.selection.modelo_predictivo.decision }}
+        </p>
       </div>
       <div class="bg-white rounded-xl shadow p-5 border-t-4 border-indigo-500">
         <h3 class="font-semibold text-gray-800">Motor de busqueda</h3>
-        <p class="text-sm text-indigo-600 font-medium mb-2">{{ data.selection.motor_busqueda.parametro }}</p>
-        <p class="text-sm text-gray-600"><b>Equidad:</b> {{ data.selection.motor_busqueda.equidad }}</p>
-        <p class="text-sm text-gray-600"><b>Utilidad:</b> {{ data.selection.motor_busqueda.utilidad }}</p>
-        <p class="text-sm text-gray-600"><b>Decision:</b> {{ data.selection.motor_busqueda.decision }}</p>
+        <p class="text-sm text-indigo-600 font-medium mb-2">
+          {{ data.selection.motor_busqueda.parametro }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Equidad:</b> {{ data.selection.motor_busqueda.equidad }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Utilidad:</b> {{ data.selection.motor_busqueda.utilidad }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <b>Decision:</b> {{ data.selection.motor_busqueda.decision }}
+        </p>
       </div>
     </section>
 

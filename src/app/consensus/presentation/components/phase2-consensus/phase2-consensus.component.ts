@@ -1,5 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragPlaceholder,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { CommonModule, NgFor } from '@angular/common';
 import { RecommendedTopic } from 'src/app/consensus/domain/entities/topic.interface';
 import { TopicService } from 'src/app/consensus/domain/services/TopicDataService.service';
@@ -16,16 +22,14 @@ import { WebSocketService } from 'src/app/consensus/domain/services/WebSocketSer
   standalone: true,
   imports: [CdkDropList, NgFor, CdkDrag, CdkDragPlaceholder, CommonModule],
 })
-
 export class Phase2ConsensusComponent implements OnInit, OnDestroy {
-
   recommendedTopics: RecommendedTopic[] = [];
   groupId: string = '';
   activeConnections: number = 0;
   private socketSubscription?: Subscription;
   private newTopicSubscription?: Subscription;
   private notificationsSubscription?: Subscription;
-  finalOrderedTopics: { id: number, topic_name: string, tags: string[] }[] = [];
+  finalOrderedTopics: { id: number; topic_name: string; tags: string[] }[] = [];
   hasFinalOrderedTopics: boolean = false;
 
   showModalPhaseTwo: boolean = false;
@@ -38,11 +42,11 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthService,
     private webSocket1Service: WebSocketService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.groupId = params.get('groupId') || '';
       this.loadFinalOrderedTopics();
       if (!this.hasFinalOrderedTopics) {
@@ -59,12 +63,12 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
 
   checkUserPhase(): void {
     this.topicService.getUserCurrentPhase(this.groupId).subscribe(
-      response => {
+      (response) => {
         this.userPhase = response.phase;
       },
-      error => {
+      (error) => {
         console.error('Error fetching user phase:', error);
-      }
+      },
     );
   }
 
@@ -73,7 +77,7 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
 
     this.topicService.getRecommendedTopicsByGroup(this.groupId).subscribe(
       (topics) => {
-        this.recommendedTopics = topics.map(topic => {
+        this.recommendedTopics = topics.map((topic) => {
           const savedTags = localStorage.getItem(`topic_${topic.id}_tags`);
           return { ...topic, tags: savedTags ? JSON.parse(savedTags) : [] };
         });
@@ -81,7 +85,7 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.error('Error loading recommended topics:', error);
-      }
+      },
     );
   }
 
@@ -89,7 +93,7 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
     if (!this.groupId) return;
 
     this.topicService.getFinalsTopicsByGroup(this.groupId).subscribe(
-      (response: any) => {
+      (response: { data: RecommendedTopic[] }) => {
         if (response.data.length !== 0) {
           this.hasFinalOrderedTopics = true;
           this.recommendedTopics = response.data;
@@ -98,14 +102,13 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.error('Error loading final ordered topics:', error);
-      }
+      },
     );
   }
 
   drop(event: CdkDragDrop<RecommendedTopic[]>): void {
     if (event.previousIndex !== event.currentIndex) {
       const previousTopic = this.recommendedTopics[event.previousIndex];
-      const newTopic = this.recommendedTopics[event.currentIndex];
 
       //console.log(`Topic moved: "${previousTopic.topic_name}" from position ${event.previousIndex + 1} to ${event.currentIndex + 1}`);
 
@@ -117,7 +120,11 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
   }
 
   updateFinalOrderedTopics(): void {
-    this.finalOrderedTopics = this.recommendedTopics.map(topic => ({ id: topic.id, topic_name: topic.topic_name, tags: topic.tags ?? [] }));
+    this.finalOrderedTopics = this.recommendedTopics.map((topic) => ({
+      id: topic.id,
+      topic_name: topic.topic_name,
+      tags: topic.tags ?? [],
+    }));
   }
 
   toggleTag(topic: RecommendedTopic, tag: string): void {
@@ -130,45 +137,57 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
     }
 
     if (positiveTags.includes(tag)) {
-      topic.tags = topic.tags.filter(t => !negativeTags.includes(t));
+      topic.tags = topic.tags.filter((t) => !negativeTags.includes(t));
     } else if (negativeTags.includes(tag)) {
-      topic.tags = topic.tags.filter(t => !positiveTags.includes(t));
+      topic.tags = topic.tags.filter((t) => !positiveTags.includes(t));
     }
 
     if (topic.tags.includes(tag)) {
-      topic.tags = topic.tags.filter(t => t !== tag);
+      topic.tags = topic.tags.filter((t) => t !== tag);
     } else {
       topic.tags.push(tag);
     }
 
     if (tag === 'Novel' && topic.tags.includes('Obsolete')) {
-      topic.tags = topic.tags.filter(t => t !== 'Obsolete');
+      topic.tags = topic.tags.filter((t) => t !== 'Obsolete');
     } else if (tag === 'Obsolete' && topic.tags.includes('Novel')) {
-      topic.tags = topic.tags.filter(t => t !== 'Novel');
+      topic.tags = topic.tags.filter((t) => t !== 'Novel');
     }
 
     // Guardar estado en localStorage
     localStorage.setItem(`topic_${topic.id}_tags`, JSON.stringify(topic.tags));
 
     if (tag === 'Novel') {
-      this.recommendedTopics = this.recommendedTopics.filter(t => t.id !== topic.id);
+      this.recommendedTopics = this.recommendedTopics.filter((t) => t.id !== topic.id);
       this.recommendedTopics.unshift(topic);
     } else if (tag === 'Obsolete') {
-      this.recommendedTopics = this.recommendedTopics.filter(t => t.id !== topic.id);
+      this.recommendedTopics = this.recommendedTopics.filter((t) => t.id !== topic.id);
       this.recommendedTopics.push(topic);
     }
 
     this.updateFinalOrderedTopics();
 
     if (this.groupId && userId) {
-      this.topicService.notifyTopicTagChange(this.groupId, userId, topic.id, tag).subscribe(  );
+      this.topicService.notifyTopicTagChange(this.groupId, userId, topic.id, tag).subscribe();
     }
   }
 
-  sendTopicMovedNotification(topic: RecommendedTopic, previousIndex: number, currentIndex: number): void {
+  sendTopicMovedNotification(
+    topic: RecommendedTopic,
+    previousIndex: number,
+    currentIndex: number,
+  ): void {
     if (this.groupId) {
       const userId = this.authService.getUserId();
-      this.topicService.notifyTopicReorder(this.groupId, userId || "", topic.id.toString(), previousIndex + 1, currentIndex + 1).subscribe();
+      this.topicService
+        .notifyTopicReorder(
+          this.groupId,
+          userId || '',
+          topic.id.toString(),
+          previousIndex + 1,
+          currentIndex + 1,
+        )
+        .subscribe();
     }
   }
 
@@ -187,11 +206,11 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
       const finalTopicOrders = this.finalOrderedTopics.map((topic, index) => ({
         idTopic: topic.id,
         posFinal: totalTopics - index,
-        label: topic.tags.join(', ')
+        label: topic.tags.join(', '),
       }));
 
       this.topicService.saveFinalTopicOrder(this.groupId, userId, finalTopicOrders).subscribe(
-        response => {
+        () => {
           const phaseKey = `phase_${this.groupId}`;
           localStorage.setItem(phaseKey, '2');
 
@@ -203,13 +222,12 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
           this.router.navigateByUrl(newUrl);
           this.closeModalPhaseTwo();
         },
-        error => {
+        (error) => {
           console.error('Error saving final topic order:', error);
-        }
+        },
       );
     }
   }
-
 
   clearLocalStorage(): void {
     for (let i = 0; i < localStorage.length; i++) {
@@ -219,7 +237,6 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
   cancelPhaseTwoCompletion(): void {
     this.closeModalPhaseTwo();
@@ -232,24 +249,20 @@ export class Phase2ConsensusComponent implements OnInit, OnDestroy {
       const socket = this.webSocketService.connect(this.groupId);
 
       this.socketSubscription = socket.subscribe(
-        message => {
-
+        (message) => {
           if (message.message.type === 'connection_count') {
             this.activeConnections = message.message.active_connections;
           }
         },
-        err => console.error(`WebSocket error for group ${this.groupId}:`, err),
+        (err) => console.error(`WebSocket error for group ${this.groupId}:`, err),
       );
 
-      this.newTopicSubscription = this.webSocketService.topicReceived.subscribe(
-        msg => {
-          this.updateFinalOrderedTopics();
-        }
-      );
+      this.newTopicSubscription = this.webSocketService.topicReceived.subscribe(() => {
+        this.updateFinalOrderedTopics();
+      });
 
       this.notificationsSubscription = this.webSocketService.notificationReceived.subscribe(
-        msg => {
-        }
+        () => {},
       );
     }
   }

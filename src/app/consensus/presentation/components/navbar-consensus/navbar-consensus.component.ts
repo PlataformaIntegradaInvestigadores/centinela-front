@@ -8,7 +8,7 @@ import { TopicService } from 'src/app/consensus/domain/services/TopicDataService
 @Component({
   selector: 'navbar-consensus',
   templateUrl: './navbar-consensus.component.html',
-  styleUrls: ['./navbar-consensus.component.css']
+  styleUrls: ['./navbar-consensus.component.css'],
 })
 export class NavbarConsensusComponent implements OnInit, OnDestroy {
   currentPhase: number = 0;
@@ -19,9 +19,9 @@ export class NavbarConsensusComponent implements OnInit, OnDestroy {
   @Input() isDecisionPhase: boolean = false;
   @Input() isPhaseTwo: boolean = false;
   @Input() userId: string | null = null;
-  @Input() idOwnerGroup: string = "";
+  @Input() idOwnerGroup: string = '';
   private authenticatedUserId: string | null = null;
-  showRepeatButton: boolean = false;  // Controla la visibilidad del botón
+  showRepeatButton: boolean = false; // Controla la visibilidad del botón
 
   constructor(
     private phaseStateService: PhaseStateService,
@@ -29,10 +29,9 @@ export class NavbarConsensusComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private topicService: TopicService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     if (this.isPhaseTwo) {
       this.phaseStateService.setPhase(1, this.groupId!);
     }
@@ -52,7 +51,7 @@ export class NavbarConsensusComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.phaseSubscription = this.phaseStateService.phase$.subscribe(phase => {
+    this.phaseSubscription = this.phaseStateService.phase$.subscribe((phase) => {
       this.currentPhase = phase;
     });
 
@@ -86,15 +85,17 @@ export class NavbarConsensusComponent implements OnInit, OnDestroy {
     this.closeModal();
     this.topicService.changeUserPhase(this.groupId!, 1).subscribe(
       () => {},
-      error => {
+      (error) => {
         console.error('Error:', error);
-      }
+      },
     );
   }
 
   updateComponentVisibility(): void {
     const url = this.router.url;
-    this.isDecisionPhase = url.includes(`/profile/${this.userId}/my-groups/${this.groupId}/consensus/decision`);
+    this.isDecisionPhase = url.includes(
+      `/profile/${this.userId}/my-groups/${this.groupId}/consensus/decision`,
+    );
   }
 
   updateShowRepeatButton(): void {

@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Numeric } from 'd3';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { UserPosture } from 'src/app/consensus/domain/entities/user-posture.interface';
 import { DebateStatisticsService } from 'src/app/consensus/domain/services/debate-statistics.service';
@@ -7,27 +6,25 @@ import { DebateService } from 'src/app/consensus/domain/services/debate.service'
 import { ConsensusService } from 'src/app/consensus/domain/services/GetGroupDataService.service';
 import { UserPostureService } from 'src/app/consensus/domain/services/user-posture.service';
 
-
 @Component({
   selector: 'app-select-posture',
   templateUrl: './select-posture.component.html',
-  styleUrls: ['./select-posture.component.css']
+  styleUrls: ['./select-posture.component.css'],
 })
-export class SelectPostureComponent implements OnInit {
+export class SelectPostureComponent {
   @Input() isModalOpen: boolean = false; // Controla la visibilidad del modal
-  
+
   @Output() closeModal = new EventEmitter<void>();
   @Output() postureSelected = new EventEmitter<UserPosture>();
   @Output() openChat = new EventEmitter<void>();
   @Input() debateTitle: string = '';
-  
+
   groupId: string = '';
   debateId!: number | null; // ID del debate
 
   @Input() set debateIdInput(value: number | null) {
     this.debateId = value;
     this.checkDebateId();
-    
   }
   @Input() set groupIdInput(value: string | null) {
     this.groupId = value ?? '';
@@ -56,12 +53,8 @@ export class SelectPostureComponent implements OnInit {
     private authService: AuthService,
     private debateService: DebateService,
     private debateStatisticsService: DebateStatisticsService,
-    private consensusService: ConsensusService
+    private consensusService: ConsensusService,
   ) {}
-
-  ngOnInit(): void {
-    
-  }
 
   checkDebateId(): void {
     console.log('Debate ID:', this.debateId);
@@ -73,7 +66,6 @@ export class SelectPostureComponent implements OnInit {
     } else {
       console.error('Faltan valores para debateId o groupId');
     }
-
   }
 
   checkAdminStatus(): void {
@@ -81,7 +73,7 @@ export class SelectPostureComponent implements OnInit {
       console.error('Group ID no definido');
       return;
     }
-  
+
     this.consensusService.getGroupById(this.groupId).subscribe({
       next: (group) => {
         const userId = this.authService.getUserId();
@@ -95,21 +87,20 @@ export class SelectPostureComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error obteniendo datos del grupo:', err);
-      }
+      },
     });
   }
-  
 
   onAction(): void {
     this.debateService.triggerValidateDebateStatus();
   }
-  
+
   closeDebate(): void {
     if (!this.debateId) {
       console.error('El debateId no está definido.');
       return;
     }
-  
+
     this.debateService.closeDebate(this.groupId, this.debateId).subscribe({
       next: (debate) => {
         console.log('Debate cerrado:', debate);
@@ -121,7 +112,6 @@ export class SelectPostureComponent implements OnInit {
       },
     });
   }
-  
 
   checkExistingPosture(): void {
     if (this.debateId) {
@@ -176,13 +166,15 @@ export class SelectPostureComponent implements OnInit {
     };
 
     if (this.existingPostureId) {
-      this.postureService.updateUserPosture(this.existingPostureId, { posture: this.selectedPosture }).subscribe({
-        next: (response) => {
-          this.postureSelected.emit(response);
-          this.showDiscussionPrompt = true; // Mostrar modal después de registrar postura
-        },
-        error: (error) => console.error('Error updating posture:', error),
-      });
+      this.postureService
+        .updateUserPosture(this.existingPostureId, { posture: this.selectedPosture })
+        .subscribe({
+          next: (response) => {
+            this.postureSelected.emit(response);
+            this.showDiscussionPrompt = true; // Mostrar modal después de registrar postura
+          },
+          error: (error) => console.error('Error updating posture:', error),
+        });
     } else {
       this.postureService.createUserPosture(data).subscribe({
         next: (response) => {
@@ -211,23 +203,20 @@ export class SelectPostureComponent implements OnInit {
   //   });
   // }
 
-
-
   closeDiscussionPrompt(): void {
     this.showDiscussionPrompt = false; // Cerrar modal sin unirse
   }
-
 
   updatePosture(): void {
     if (!this.existingPostureId) {
       console.error('No hay una postura existente para actualizar.');
       return;
     }
-  
+
     const updatedPosture = {
       posture: this.selectedPosture as 'agree' | 'disagree', // La postura seleccionada
     };
-  
+
     this.postureService.updateUserPosture(this.existingPostureId, updatedPosture).subscribe({
       next: (response) => {
         console.log('Postura actualizada con éxito:', response);
@@ -251,12 +240,12 @@ export class SelectPostureComponent implements OnInit {
     console.log('Abriendo chat...');
     console.log('Debate ID:', this.debateId);
     console.log('Group ID:', this.groupId);
-  
+
     if (!this.debateId || !this.groupId) {
       console.error('Faltan valores para debateId o groupId. No se puede abrir el chat.');
       return;
     }
-  
+
     this.openChat.emit(); // Emite el evento al padre
     console.log('Evento openChat emitido desde SelectPostureComponent.');
     this.showDiscussionPrompt = false; // Cierra el modal de invitación
@@ -264,13 +253,13 @@ export class SelectPostureComponent implements OnInit {
 
   // setPosture(posture: 'agree' | 'disagree'): void {
   //   this.selectedPosture = posture;
-  
+
   //   const data: UserPosture = {
   //     user: this.authService.getUserId() || '', // Obtén el ID del usuario autenticado
   //     debate: this.debateId || 0, // ID del debate actual
   //     posture: this.selectedPosture as 'agree' | 'disagree', // Asegúrate de que el valor sea del tipo correcto
   //   };
-  
+
   //   if (this.existingPostureId) {
   //     // Si ya existe una postura, se actualiza
   //     this.postureService.updateUserPosture(this.existingPostureId, { posture: this.selectedPosture as 'agree' | 'disagree' }).subscribe({
@@ -298,32 +287,34 @@ export class SelectPostureComponent implements OnInit {
 
   setPosture(posture: 'agree' | 'disagree' | 'neutral'): void {
     this.selectedPosture = posture;
-  
+
     const data: UserPosture = {
       user: this.authService.getUserId() || '', // Asegura que siempre haya un valor
       debate: this.debateId || 0,
       posture: this.selectedPosture,
     };
-  
+
     if (this.existingPostureId) {
       // Actualizar postura existente
-      this.postureService.updateUserPosture(this.existingPostureId, { posture: this.selectedPosture }).subscribe({
-        next: (response) => {
-          console.log('Postura actualizada:', response);
-          this.existingPosture = { 
-            ...(this.existingPosture || {}), 
-            posture: this.selectedPosture, 
-            user: data.user, 
-            debate: data.debate,
-          }; // Actualiza la postura localmente
-          this.postureSelected.emit(response); // Notifica al componente padre
-          console.log('Postura actualizada:', response);
-          this.triggerSendDebateId();
-        },
-        error: (error) => {
-          console.error('Error actualizando postura:', error);
-        },
-      });
+      this.postureService
+        .updateUserPosture(this.existingPostureId, { posture: this.selectedPosture })
+        .subscribe({
+          next: (response) => {
+            console.log('Postura actualizada:', response);
+            this.existingPosture = {
+              ...(this.existingPosture || {}),
+              posture: this.selectedPosture,
+              user: data.user,
+              debate: data.debate,
+            }; // Actualiza la postura localmente
+            this.postureSelected.emit(response); // Notifica al componente padre
+            console.log('Postura actualizada:', response);
+            this.triggerSendDebateId();
+          },
+          error: (error) => {
+            console.error('Error actualizando postura:', error);
+          },
+        });
     } else {
       // Crear nueva postura
       this.postureService.createUserPosture(data).subscribe({
@@ -347,6 +338,4 @@ export class SelectPostureComponent implements OnInit {
       console.error('Debate ID is null and cannot be sent.');
     }
   }
-  
-  
 }

@@ -1,9 +1,14 @@
-h1, h2, h3, h4, h5, h6 {
-    font-family: Arial, sans-serif !important;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Arial, sans-serif !important;
 }
 
-.svgs{
-    display: inline-block; 
-    vertical-align: middle;
-    margin-right: 0.5rem;
+.svgs {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
 }

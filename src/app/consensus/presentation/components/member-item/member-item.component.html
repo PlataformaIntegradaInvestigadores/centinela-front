@@ -1,22 +1,31 @@
 <li class="py-3 sm:py-4 pr-4 pl-2">
-    <div class="flex items-center">
-        <div class="flex-shrink-0">
-            <a [routerLink]="['/profile/', member?.id, 'about-me']">
-                <img class="w-9 h-9 rounded-full bg-black" [src]="member?.profile_picture || '../../../../../assets/profile.png'" alt="{{ member?.first_name || 'User' }} image">
-            </a>
-        </div>
-        <div class="flex-1 min-w-0 ms-3">
-            <a [routerLink]="['/profile/', member?.id, 'about-me']" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                <div class="truncate">
-                    {{ member?.first_name }} {{ member?.last_name }}
-                </div>
-            </a>
-            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                {{ member?.institution || 'No institution registered' }}
-            </p>
-            <hr>
-        </div>
-        <btn-mail [member]="member"></btn-mail>
-        <member-delete-btn [member]="member" *ngIf="showDeleteButton" (memberDeleted)="onMemberDeleted($event)"></member-delete-btn>
+  <div class="flex items-center">
+    <div class="flex-shrink-0">
+      <a [routerLink]="['/profile/', member?.id, 'about-me']">
+        <img
+          class="w-9 h-9 rounded-full bg-black"
+          [src]="member?.profile_picture || '../../../../../assets/profile.png'"
+          alt="{{ member?.first_name || 'User' }} image"
+        />
+      </a>
     </div>
+    <div class="flex-1 min-w-0 ms-3">
+      <a
+        [routerLink]="['/profile/', member?.id, 'about-me']"
+        class="block text-sm font-medium text-gray-900 truncate dark:text-white"
+      >
+        <div class="truncate">{{ member?.first_name }} {{ member?.last_name }}</div>
+      </a>
+      <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+        {{ member?.institution || 'No institution registered' }}
+      </p>
+      <hr />
+    </div>
+    <btn-mail [member]="member"></btn-mail>
+    <member-delete-btn
+      [member]="member"
+      *ngIf="showDeleteButton"
+      (memberDeleted)="onMemberDeleted($event)"
+    ></member-delete-btn>
+  </div>
 </li>

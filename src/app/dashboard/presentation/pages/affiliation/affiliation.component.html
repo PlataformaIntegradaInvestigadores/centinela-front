@@ -1,28 +1,44 @@
-<h1 class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900">Affiliation Search</h1>
-<app-search-bar (entity)="onSearchEntity($event)" code="affiliation" ph="Enter an affiliation name"></app-search-bar>
+<h1
+  class="mx-auto my-6 w-[calc(100%-2rem)] max-w-7xl border-l-4 border-red-700 pl-4 text-left text-3xl font-extrabold text-gray-900"
+>
+  Affiliation Search
+</h1>
+<app-search-bar
+  (entity)="onSearchEntity($event)"
+  code="affiliation"
+  ph="Enter an affiliation name"
+></app-search-bar>
 <app-dashboard-loader *ngIf="!isCharged()"></app-dashboard-loader>
-<div class="flex flex-col justify-center items-center p-3" *ngIf="affiliations.length>0">
+<div class="flex flex-col justify-center items-center p-3" *ngIf="affiliations.length > 0">
   <div class="flex flex-col rounded-md border-2 mb-3 border-blue-900">
-    <h2 class="bg-blue-900 text-white flex justify-center items-center">Affiliations with most articles in
-      Ecuador</h2>
-    <app-bar-chart [single]="affiliations" [width]="1400" [height]="500" [affiliation]="true"
-                   (selectedAffiliation)="getId($event)"></app-bar-chart>
+    <h2 class="bg-blue-900 text-white flex justify-center items-center">
+      Affiliations with most articles in Ecuador
+    </h2>
+    <app-bar-chart
+      [single]="affiliations"
+      [width]="1400"
+      [height]="500"
+      [affiliation]="true"
+      (selectedAffiliation)="getId($event)"
+    ></app-bar-chart>
   </div>
   <div class="flex justify-center items-center">
     <div class="flex flex-col justify-center border-2 border-blue-900 rounded-2">
-      <h3 class="bg-blue-900 text-white flex justify-center items-center">More Statistics about:</h3>
+      <h3 class="bg-blue-900 text-white flex justify-center items-center">
+        More Statistics about:
+      </h3>
       <div class="flex gap-x-5 px-5 pb-2">
         <div class="flex items-center justify-center gap-x-4">
           <div class="flex flex-col items-center justify-center" (click)="navigateGeneral()">
-            <div class="flex justify-center items-center" style="cursor: pointer;">
-              <mat-icon style="font-size: 40px; width: 50px; height: 50px;">public</mat-icon>
+            <div class="flex justify-center items-center" style="cursor: pointer">
+              <mat-icon style="font-size: 40px; width: 50px; height: 50px">public</mat-icon>
             </div>
             <dd class="font-light">General</dd>
           </div>
 
           <div class="flex flex-col items-center justify-center" (click)="navigateTopic()">
-            <div class="flex justify-center items-center" style="cursor: pointer;">
-              <mat-icon style="font-size: 40px; width: 50px; height: 50px;">school</mat-icon>
+            <div class="flex justify-center items-center" style="cursor: pointer">
+              <mat-icon style="font-size: 40px; width: 50px; height: 50px">school</mat-icon>
             </div>
             <dd class="font-light">Knowledge Areas</dd>
           </div>

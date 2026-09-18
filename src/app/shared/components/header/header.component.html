@@ -2,37 +2,59 @@
   <div class="container mx-auto max-w-screen-xl">
     <div class="flex items-center justify-between p-4">
       <!-- Logo Section -->
-      <a href="/home" class="flex items-center space-x-3 group">
-        <img src="/assets/logo.svg"
+      <a routerLink="/home" class="flex items-center space-x-3 group">
+        <img
+          src="/assets/logo.svg"
           class="h-10 md:h-12 bg-white/10 backdrop-blur-sm rounded-full p-1.5 transition-all duration-300 group-hover:scale-105 group-hover:bg-white/20"
-          alt="Centinela Logo" />
+          alt="Centinela Logo"
+        />
         <span
-          class="text-xl md:text-3xl font-light text-white tracking-wide transition-colors group-hover:text-blue-100">
+          class="text-xl md:text-3xl font-light text-white tracking-wide transition-colors group-hover:text-blue-100"
+        >
           Centinela
         </span>
-      </a> <!-- Mobile Menu Button -->
-      <button (click)="toggleNav()"
-        class="md:hidden text-white p-2.5 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/30">
+      </a>
+      <!-- Mobile Menu Button -->
+      <button
+        (click)="toggleNav()"
+        class="md:hidden text-white p-2.5 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/30"
+      >
         <fa-icon [icon]="navOpen ? faTimes : faBars" class="w-6 h-6"></fa-icon>
       </button>
     </div>
   </div>
 </nav>
-<nav [ngClass]="{'hidden': !navOpen, 'block': navOpen, 'md:flex': true}"
-  class="bg-white/95 backdrop-blur-md border-t border-white/20 shadow-sm" style="z-index: 1000; position: relative;">
+<nav
+  [ngClass]="{ hidden: !navOpen, block: navOpen, 'md:flex': true }"
+  class="bg-white/95 backdrop-blur-md border-t border-white/20 shadow-sm"
+  style="z-index: 1000; position: relative"
+>
   <div class="container mx-auto max-w-screen-xl px-4 py-3">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-
+    <div
+      class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
+    >
       <!-- Left Navigation Items -->
-      <div class="flex flex-col md:flex-row md:items-center md:space-x-1"> <!-- Home -->
+      <div class="flex flex-col md:flex-row md:items-center md:space-x-1">
+        <!-- Home -->
         <div class="nav-item">
-          <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+          <a
+            routerLink="/home"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link"
+          >
             <fa-icon [icon]="faHome" class="nav-icon"></fa-icon>
             <span>Home</span>
           </a>
-        </div>        <!-- Feeds (New) - Solo para investigadores -->
+        </div>
+        <!-- Feeds (New) - Solo para investigadores -->
         <div class="nav-item" *ngIf="!showLogin && isUser()">
-          <a routerLink="/feeds" routerLinkActive="active" class="nav-link" (click)="navigateToFeeds()">
+          <a
+            routerLink="/feeds"
+            routerLinkActive="active"
+            class="nav-link"
+            (click)="navigateToFeeds()"
+          >
             <fa-icon [icon]="faRss" class="nav-icon"></fa-icon>
             <span>Feeds</span>
           </a>
@@ -44,7 +66,8 @@
             <fa-icon [icon]="faBriefcase" class="nav-icon"></fa-icon>
             <span>Jobs</span>
           </a>
-        </div> <!-- Analytics -->
+        </div>
+        <!-- Analytics -->
         <div class="nav-item" *ngIf="showInformation">
           <a routerLink="/home/analitica" routerLinkActive="active" class="nav-link">
             <fa-icon [icon]="faChartBar" class="nav-icon"></fa-icon>
@@ -52,31 +75,49 @@
           </a>
         </div>
         <!-- Group Recommendations-->
-        <div class="nav-item">
-          <a routerLink="./recommendations" routerLinkActive="active" class="nav-link">
+        <div class="nav-item" *ngIf="!showLogin && isUser()">
+          <a routerLink="/home/recommendations" routerLinkActive="active" class="nav-link">
             <fa-icon [icon]="faUsers" class="nav-icon"></fa-icon>
             <span>Group Recommendations</span>
           </a>
         </div>
         <!-- About -->
-        <div class="nav-item" *ngIf="showInformation">
+        <div class="nav-item" *ngIf="showInformation && !isCompany()">
           <a routerLink="/home/about-us/getting-started" routerLinkActive="active" class="nav-link">
             <fa-icon [icon]="faInfoCircle" class="nav-icon"></fa-icon>
             <span>About</span>
           </a>
         </div>
-      </div> <!-- Search Bar (Center) -->
-      <div class="search-container order-first md:order-none" (clickOutside)="closeSearch()" *ngIf="!showInformation">
+      </div>
+      <!-- Search Bar (Center) -->
+      <div
+        class="search-container order-first md:order-none"
+        (clickOutside)="closeSearch()"
+        *ngIf="!showInformation && (showLogin || isUser())"
+      >
         <div class="search-wrapper">
-          <input type="text" [(ngModel)]="searchQuery" (focus)="openSearch()" (input)="filterUsers()"
-            placeholder="Search researchers..." class="search-input"> <fa-icon *ngIf="!searchQuery" [icon]="faSearch"
-            class="search-icon"></fa-icon>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (focus)="openSearch()"
+            (input)="filterUsers()"
+            placeholder="Search researchers..."
+            class="search-input"
+          />
+          <fa-icon *ngIf="!searchQuery" [icon]="faSearch" class="search-icon"></fa-icon>
 
           <!-- Search Results Dropdown -->
-          <div *ngIf="searchOpen && searchQuery && filteredUsers.length > 0" class="search-dropdown">
+          <div
+            *ngIf="searchOpen && searchQuery && filteredUsers.length > 0"
+            class="search-dropdown"
+          >
             <div *ngFor="let user of filteredUsers" class="search-result-item">
-              <a [href]="generateUserGroupUrl(user.id)" target="_blank" class="search-result-link"
-                (click)="closeSearch()">
+              <a
+                [href]="generateUserGroupUrl(user.id)"
+                target="_blank"
+                class="search-result-link"
+                (click)="closeSearch()"
+              >
                 <div class="user-avatar">
                   {{ user.first_name.charAt(0) }}{{ user.last_name.charAt(0) }}
                 </div>
@@ -91,39 +132,51 @@
       </div>
 
       <!-- Right Navigation Items -->
-      <div class="flex flex-col md:flex-row md:items-center md:space-x-3" [ngClass]="{'md:ml-auto': showInformation}">
+      <div
+        class="flex flex-col md:flex-row md:items-center md:space-x-3"
+        [ngClass]="{ 'md:ml-auto': showInformation }"
+      >
         <!-- User Dropdown -->
         <div class="nav-item relative" *ngIf="!showLogin">
-          <button class="nav-link-user-button" 
-                  (click)="toggleUserMenu()" 
-                  [class.active]="userMenuOpen"
-                  [attr.aria-expanded]="userMenuOpen"
-                  [attr.aria-haspopup]="true"
-                  aria-label="User menu">
+          <button
+            class="nav-link-user-button"
+            (click)="toggleUserMenu()"
+            [class.active]="userMenuOpen"
+            [attr.aria-expanded]="userMenuOpen"
+            [attr.aria-haspopup]="true"
+            aria-label="User menu"
+          >
             <div class="user-info-display">
               <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
               <span class="user-type-text">{{ getUserType() }}</span>
             </div>
-            <fa-icon [icon]="faChevronDown" class="chevron-icon" 
-                     [class.rotate-180]="userMenuOpen"></fa-icon>
+            <fa-icon
+              [icon]="faChevronDown"
+              class="chevron-icon"
+              [class.rotate-180]="userMenuOpen"
+            ></fa-icon>
           </button>
-          
+
           <!-- Dropdown Menu -->
           <div *ngIf="userMenuOpen" class="dropdown-menu" role="menu">
-            <a class="dropdown-item" 
-               (click)="profile(); userMenuOpen = false"
-               role="menuitem"
-               tabindex="0">
+            <a
+              class="dropdown-item"
+              (click)="profile(); userMenuOpen = false"
+              role="menuitem"
+              tabindex="0"
+            >
               <div class="dropdown-item-content">
                 <fa-icon [icon]="faUser" class="dropdown-icon"></fa-icon>
                 <span class="dropdown-text">View Profile</span>
               </div>
             </a>
             <div class="dropdown-separator"></div>
-            <button class="dropdown-item logout-item" 
-                    (click)="logout(); userMenuOpen = false"
-                    role="menuitem"
-                    tabindex="0">
+            <button
+              class="dropdown-item logout-item"
+              (click)="logout(); userMenuOpen = false"
+              role="menuitem"
+              tabindex="0"
+            >
               <div class="dropdown-item-content">
                 <fa-icon [icon]="faSignOutAlt" class="dropdown-icon logout-icon"></fa-icon>
                 <span class="dropdown-text">Logout</span>
@@ -133,12 +186,8 @@
         </div>
 
         <div class="nav-item auth-buttons" *ngIf="showLogin">
-          <button class="btn-secondary" (click)="openRegister()">
-            Sign Up
-          </button>
-          <button class="btn-primary" (click)="openLogin()">
-            Log In
-          </button>
+          <button class="btn-secondary" (click)="openRegister()">Sign Up</button>
+          <button class="btn-primary" (click)="openLogin()">Log In</button>
         </div>
       </div>
     </div>

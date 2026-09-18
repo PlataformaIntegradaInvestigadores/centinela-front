@@ -1,12 +1,14 @@
 <!-- Post Component - Usando componentes modulares de feeds -->
 <div class="space-y-6" *ngIf="user">
-  
   <!-- Mensajes de estado -->
   <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
     {{ error }}
   </div>
-  
-  <div *ngIf="success" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+
+  <div
+    *ngIf="success"
+    class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg"
+  >
     {{ success }}
   </div>
 
@@ -19,7 +21,8 @@
       [userAvatar]="user.profile_picture || '/assets/profile.png'"
       [userName]="user.first_name + ' ' + user.last_name"
       [isLoading]="isSubmittingPost"
-      (postSubmitted)="onPostSubmitted($event)">
+      (postSubmitted)="onPostSubmitted($event)"
+    >
     </app-post-creator>
   </div>
 
@@ -34,6 +37,7 @@
     (deletePost)="onDeletePost($event)"
     (sharePost)="onSharePost($event)"
     (viewProfile)="onViewProfile($event)"
-    (editPost)="onEditPost($event.postId)">
+    (editPost)="onEditPost($event.postId)"
+  >
   </app-post-list>
 </div>

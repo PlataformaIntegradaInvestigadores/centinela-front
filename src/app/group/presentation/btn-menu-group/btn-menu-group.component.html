@@ -1,44 +1,92 @@
-<div class="wrapper" >  <!-- Clic en cualquier lugar aquí cerrará el menú -->
-  <div class="relative" (click)="$event.stopPropagation()"> <!-- Previene propagación para mantener abierto el menú -->
-      <button (click)="toggleMenu(); $event.stopPropagation()" class="btn-menu" [class.active]="menuOpen">
-        <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" height="25px" viewBox="0 0 512 512"
-          enable-background="new 0 0 512 512" xml:space="preserve">
-          <g>
-            <path d="M256,0C114.609,0,0,114.609,0,256s114.609,256,256,256s256-114.609,256-256S397.391,0,256,0z M256,472
-              c-119.297,0-216-96.703-216-216S136.703,40,256,40s216,96.703,216,216S375.297,472,256,472z" />
-            <path d="M351.938,224C334.266,224,320,238.297,320,255.969S334.266,288,351.938,288C369.672,288,384,273.641,384,255.969
-              S369.672,224,351.938,224z" />
-            <path d="M255.938,224C238.266,224,224,238.297,224,255.969S238.266,288,255.938,288C273.672,288,288,273.641,288,255.969
-              S273.672,224,255.938,224z" />
-            <path d="M160,224c-17.688,0-32,14.297-32,31.969S142.312,288,160,288c17.656,0,32-14.359,32-32.031S177.656,224,160,224z" />
-          </g>
+<div class="wrapper">
+  <!-- Clic en cualquier lugar aquí cerrará el menú -->
+  <div class="relative" (click)="$event.stopPropagation()">
+    <!-- Previene propagación para mantener abierto el menú -->
+    <button
+      (click)="toggleMenu(); $event.stopPropagation()"
+      class="btn-menu"
+      [class.active]="menuOpen"
+    >
+      <svg
+        fill="#000000"
+        version="1.1"
+        id="Layer_1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        width="25px"
+        height="25px"
+        viewBox="0 0 512 512"
+        enable-background="new 0 0 512 512"
+        xml:space="preserve"
+      >
+        <g>
+          <path
+            d="M256,0C114.609,0,0,114.609,0,256s114.609,256,256,256s256-114.609,256-256S397.391,0,256,0z M256,472
+              c-119.297,0-216-96.703-216-216S136.703,40,256,40s216,96.703,216,216S375.297,472,256,472z"
+          />
+          <path
+            d="M351.938,224C334.266,224,320,238.297,320,255.969S334.266,288,351.938,288C369.672,288,384,273.641,384,255.969
+              S369.672,224,351.938,224z"
+          />
+          <path
+            d="M255.938,224C238.266,224,224,238.297,224,255.969S238.266,288,255.938,288C273.672,288,288,273.641,288,255.969
+              S273.672,224,255.938,224z"
+          />
+          <path
+            d="M160,224c-17.688,0-32,14.297-32,31.969S142.312,288,160,288c17.656,0,32-14.359,32-32.031S177.656,224,160,224z"
+          />
+        </g>
+      </svg>
+    </button>
+    <div *ngIf="menuOpen" class="menu">
+      <button *ngIf="isOwner" (click)="deleteGroup(); $event.stopPropagation()">
+        <svg
+          class="mr-1"
+          width="20px"
+          height="20px"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"
+            fill="#475569"
+          />
         </svg>
+        Delete group
       </button>
-      <div *ngIf="menuOpen" class="menu">
-        <button *ngIf="isOwner" (click)="deleteGroup(); $event.stopPropagation()"> 
-          <svg class="mr-1" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z" fill="#475569"/>
-          </svg>
-          Delete group</button>
-        <!-- Delete btn -->
-        <button *ngIf="!isOwner" (click)="leaveGroup(); $event.stopPropagation()">
-          <svg class="svg-leave" width="30px" height="30px" viewBox="0 0 25 25" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.5 15V19.5H5.5V5.5H16.5V10M10 12.5H22.5" stroke="#121923" stroke-width="1.2" />
-            <path d="M20 10L22.5 12.5L20 15" stroke="#121923" stroke-width="1.2" />
-          </svg>
-          Leave group
-        </button>
-      </div>
+      <!-- Delete btn -->
+      <button *ngIf="!isOwner" (click)="leaveGroup(); $event.stopPropagation()">
+        <svg
+          class="svg-leave"
+          width="30px"
+          height="30px"
+          viewBox="0 0 25 25"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16.5 15V19.5H5.5V5.5H16.5V10M10 12.5H22.5"
+            stroke="#121923"
+            stroke-width="1.2"
+          />
+          <path d="M20 10L22.5 12.5L20 15" stroke="#121923" stroke-width="1.2" />
+        </svg>
+        Leave group
+      </button>
+    </div>
   </div>
 </div>
-<confirm-leave-modal *ngIf="showConfirmLeaveModal"
-                     (confirm)="onConfirmLeave()"
-                     (cancel)="onCancelLeave()">
+<confirm-leave-modal
+  *ngIf="showConfirmLeaveModal"
+  (confirm)="onConfirmLeave()"
+  (cancel)="onCancelLeave()"
+>
 </confirm-leave-modal>
 
-<confirm-delete-modal *ngIf="showDeleteGroupModal"
-                     (confirm)="onConfirmDelete()"
-                     (cancel)="onCancelDelete()">
+<confirm-delete-modal
+  *ngIf="showDeleteGroupModal"
+  (confirm)="onConfirmDelete()"
+  (cancel)="onCancelDelete()"
+>
 </confirm-delete-modal>

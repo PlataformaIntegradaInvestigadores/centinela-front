@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../domain/services/auth.service';
 import { ErrorService } from '../../domain/services/error.service';
@@ -8,12 +9,12 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
-  styleUrls: ['./login-form.component.css']
+  styleUrls: ['./login-form.component.css'],
 })
 export class LoginFormComponent implements OnInit {
   @Output() loginSuccess = new EventEmitter<void>();
   @Input() userType: UserType = 'user';
-  
+
   loginForm: FormGroup;
   errorMessages: string[] = [];
   isLoading: boolean = false;
@@ -29,11 +30,11 @@ export class LoginFormComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private errorService: ErrorService
+    private errorService: ErrorService,
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
@@ -51,13 +52,13 @@ export class LoginFormComponent implements OnInit {
     if (this.loginForm.valid && !this.isLoading) {
       this.isLoading = true;
       this.errorMessages = [];
-      
+
       const formData = this.loginForm.value;
-      
+
       // Enviar contraseña en texto plano - el backend se encarga del hasheo
       const loginData: LoginCredentials = {
         username: formData.username,
-        password: formData.password
+        password: formData.password,
       };
 
       this.authService.login(loginData, this.userType).subscribe({
@@ -78,7 +79,7 @@ export class LoginFormComponent implements OnInit {
         error: (error) => {
           this.isLoading = false;
           this.processErrors(error);
-        }
+        },
       });
     } else {
       this.errorMessages = ['Please fill in all required fields correctly.'];
@@ -102,20 +103,21 @@ export class LoginFormComponent implements OnInit {
   /**
    * Procesa los errores de la respuesta de la API y actualiza los mensajes de error.
    */
-  private processErrors(errors: any): void {
+  private processErrors(errors: HttpErrorResponse): void {
     this.failedCredentialAttempts += 1;
     this.errorMessages = this.errorService.processErrors(errors);
     if (this.failedCredentialAttempts >= this.credentialWarningThreshold) {
       this.errorMessages = [
         ...this.errorMessages,
-        'Too many failed attempts may temporarily block sign-in. Wait a few minutes before trying again.'
+        'Too many failed attempts may temporarily block sign-in. Wait a few minutes before trying again.',
       ];
     }
     console.error('Error logging in', this.errorMessages);
   }
 
   private completeLogin(): void {
-    const userId = this.userType === 'company' ? this.authService.getCompanyId() : this.authService.getUserId();
+    const userId =
+      this.userType === 'company' ? this.authService.getCompanyId() : this.authService.getUserId();
     if (userId) {
       this.loginSuccess.emit();
       // Pequeño delay para que el modal se cierre antes de navegar

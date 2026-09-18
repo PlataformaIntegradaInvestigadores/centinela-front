@@ -1,13 +1,12 @@
 <div class="container mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-
-  <!-- Encabezado -->
+  <!-- Header -->
   <div class="page-header">
     <div>
-      <p class="page-eyebrow">Sistema GRS</p>
-      <h1 class="page-title">Recomendaciones grupales</h1>
+      <p class="page-eyebrow">GRS System</p>
+      <h1 class="page-title">Group Recommendations</h1>
       <p class="page-description">
-        Explora grupos persistentes de investigadores y los tópicos
-        recomendados por el modelo híbrido de Centinela.
+        Explore persistent groups of researchers and the topics recommended by Centinela's hybrid
+        model.
       </p>
     </div>
 
@@ -17,41 +16,38 @@
       (click)="reloadData()"
       [disabled]="loadingGroups || loadingMetrics"
     >
-      Actualizar datos
+      Refresh data
     </button>
   </div>
 
-  <!-- Métricas -->
+  <!-- Metrics -->
   <section class="section-card">
     <div class="section-heading">
       <div>
-        <h2>Métricas generales</h2>
-        <p>Resumen del comportamiento del modelo GRS.</p>
+        <h2>General metrics</h2>
+        <p>Summary of the GRS model's behavior.</p>
       </div>
     </div>
 
     <div *ngIf="loadingMetrics" class="status-container">
       <div class="spinner-border" role="status"></div>
-      <span>Calculando métricas...</span>
+      <span>Calculating metrics...</span>
     </div>
 
     <div *ngIf="metricsError && !loadingMetrics" class="error-message">
       {{ metricsError }}
     </div>
 
-    <div
-      *ngIf="metrics && !loadingMetrics"
-      class="metrics-grid"
-    >
+    <div *ngIf="metrics && !loadingMetrics" class="metrics-grid">
       <article class="metric-card">
-        <span class="metric-label">Grupos persistentes</span>
+        <span class="metric-label">Persistent groups</span>
         <strong class="metric-value">
           {{ metrics.groups_persistent | number }}
         </strong>
       </article>
 
       <article class="metric-card">
-        <span class="metric-label">Tópicos únicos</span>
+        <span class="metric-label">Unique topics</span>
         <strong class="metric-value">
           {{ metrics.topics_unique | number }}
         </strong>
@@ -59,41 +55,35 @@
 
       <article class="metric-card">
         <span class="metric-label">Novelty rate</span>
-        <strong class="metric-value">
-          {{ metrics.novelty_rate | number: '1.0-1' }}%
-        </strong>
+        <strong class="metric-value"> {{ metrics.novelty_rate | number: '1.0-1' }}% </strong>
       </article>
 
       <article class="metric-card">
         <span class="metric-label">Coverage</span>
-        <strong class="metric-value">
-          {{ metrics.coverage | number: '1.0-2' }}%
-        </strong>
+        <strong class="metric-value"> {{ metrics.coverage | number: '1.0-2' }}% </strong>
       </article>
 
       <article class="metric-card">
-        <span class="metric-label">Diversidad</span>
-        <strong class="metric-value">
-          {{ metrics.diversity | number: '1.0-2' }}%
-        </strong>
+        <span class="metric-label">Diversity</span>
+        <strong class="metric-value"> {{ metrics.diversity | number: '1.0-2' }}% </strong>
       </article>
 
       <article class="metric-card">
-        <span class="metric-label">Score promedio</span>
+        <span class="metric-label">Average score</span>
         <strong class="metric-value">
           {{ metrics.avg_score | number: '1.3-3' }}
         </strong>
       </article>
 
       <article class="metric-card">
-        <span class="metric-label">Equidad entre grupos (Gini)</span>
+        <span class="metric-label">Fairness across groups (Gini)</span>
         <strong class="metric-value">
           {{ metrics.fairness_gini | number: '1.3-3' }}
         </strong>
       </article>
 
       <article class="metric-card">
-        <span class="metric-label">Brecha por tamaño de grupo</span>
+        <span class="metric-label">Gap by group size</span>
         <strong class="metric-value">
           {{ metrics.fairness_score_gap_by_group_size | number: '1.3-3' }}
         </strong>
@@ -101,84 +91,68 @@
     </div>
   </section>
 
-  <!-- Contenido principal -->
+  <!-- Main content -->
   <div class="content-grid">
-
-    <!-- Lista de grupos -->
+    <!-- Groups list -->
     <section class="section-card groups-section">
       <div class="section-heading">
         <div>
-          <h2>Grupos de investigadores</h2>
-          <p>
-            Selecciona un grupo para consultar sus recomendaciones.
-          </p>
+          <h2>Researcher groups</h2>
+          <p>Select a group to view its recommendations.</p>
         </div>
 
-        <span class="counter-badge">
-          {{ groups.length }} grupos
-        </span>
+        <span class="counter-badge"> {{ groups.length }} groups </span>
       </div>
 
       <div *ngIf="loadingGroups" class="status-container">
         <div class="spinner-border" role="status"></div>
-        <span>Cargando grupos...</span>
+        <span>Loading groups...</span>
       </div>
 
       <div *ngIf="groupsError && !loadingGroups" class="error-message">
         {{ groupsError }}
       </div>
 
-      <div
-        *ngIf="!loadingGroups && !groupsError && groups.length === 0"
-        class="empty-state"
-      >
-        No existen grupos disponibles.
+      <div *ngIf="!loadingGroups && !groupsError && groups.length === 0" class="empty-state">
+        No groups available.
       </div>
 
-      <div
-        *ngIf="!loadingGroups && groups.length > 0"
-        class="groups-list"
-      >
+      <div *ngIf="!loadingGroups && groups.length > 0" class="groups-list">
         <button
           type="button"
           *ngFor="
             let group of groups
-              | paginate: {
-                  itemsPerPage: itemsPerPage,
-                  currentPage: currentPage
-                };
+              | paginate
+                : {
+                    itemsPerPage: itemsPerPage,
+                    currentPage: currentPage,
+                  };
             trackBy: trackGroupById
           "
           class="group-item"
-          [class.group-item-active]="
-            selectedGroup?.group_id === group.group_id
-          "
+          [class.group-item-active]="selectedGroup?.group_id === group.group_id"
           (click)="selectGroup(group)"
         >
           <div class="group-item-header">
-            <span class="group-id">
-              Grupo {{ group.group_id }}
-            </span>
+            <span class="group-id"> Group {{ group.group_id }} </span>
 
-            <span class="recommendation-count">
-              {{ group.count }} recomendaciones
-            </span>
+            <span class="recommendation-count"> {{ group.count }} recommendations </span>
           </div>
 
           <div class="group-item-details">
             <span>
               {{ group.n_members }}
-              {{ group.n_members === 1 ? 'integrante' : 'integrantes' }}
+              {{ group.n_members === 1 ? 'member' : 'members' }}
             </span>
 
             <span>
               {{ group.papers_total }}
-              {{ group.papers_total === 1 ? 'publicación' : 'publicaciones' }}
+              {{ group.papers_total === 1 ? 'publication' : 'publications' }}
             </span>
           </div>
 
           <p class="members-list">
-            Autores:
+            Authors:
             {{ group.members.join(', ') }}
           </p>
         </button>
@@ -187,59 +161,45 @@
       <pagination-controls
         *ngIf="groups.length > itemsPerPage"
         (pageChange)="currentPage = $event"
-        previousLabel="Anterior"
-        nextLabel="Siguiente"
+        previousLabel="Previous"
+        nextLabel="Next"
         class="pagination-container"
       >
       </pagination-controls>
     </section>
 
-    <!-- Recomendaciones -->
+    <!-- Recommendations -->
     <section class="section-card recommendations-section">
       <div class="section-heading">
         <div>
-          <h2>Recomendaciones</h2>
+          <h2>Recommendations</h2>
 
           <p *ngIf="selectedGroup">
-            Grupo {{ selectedGroup.group_id }} ·
-            {{ selectedGroup.n_members }} integrantes
+            Group {{ selectedGroup.group_id }} · {{ selectedGroup.n_members }} members
           </p>
 
-          <p *ngIf="!selectedGroup">
-            Selecciona un grupo para visualizar sus tópicos.
-          </p>
+          <p *ngIf="!selectedGroup">Select a group to view its topics.</p>
         </div>
       </div>
 
       <div *ngIf="loadingGroupDetail" class="status-container">
         <div class="spinner-border" role="status"></div>
-        <span>Generando recomendaciones...</span>
+        <span>Generating recommendations...</span>
       </div>
 
-      <div
-        *ngIf="groupDetailError && !loadingGroupDetail"
-        class="error-message"
-      >
+      <div *ngIf="groupDetailError && !loadingGroupDetail" class="error-message">
         {{ groupDetailError }}
       </div>
 
       <div
-        *ngIf="
-          !loadingGroupDetail &&
-          selectedGroup &&
-          selectedGroup.recommendations.length === 0
-        "
+        *ngIf="!loadingGroupDetail && selectedGroup && selectedGroup.recommendations.length === 0"
         class="empty-state"
       >
-        Este grupo no tiene recomendaciones disponibles.
+        This group has no recommendations available.
       </div>
 
       <div
-        *ngIf="
-          selectedGroup &&
-          !loadingGroupDetail &&
-          selectedGroup.recommendations.length > 0
-        "
+        *ngIf="selectedGroup && !loadingGroupDetail && selectedGroup.recommendations.length > 0"
         class="recommendations-list"
       >
         <article
@@ -250,9 +210,7 @@
           class="recommendation-card"
         >
           <div class="recommendation-header">
-            <span class="rank-badge">
-              #{{ recommendation.rank }}
-            </span>
+            <span class="rank-badge"> #{{ recommendation.rank }} </span>
 
             <h3>{{ recommendation.topic }}</h3>
           </div>
@@ -266,24 +224,21 @@
             </div>
 
             <div class="score-item">
-              <span>Relevancia</span>
+              <span>Relevance</span>
               <strong>
                 {{ recommendation.relevance | number: '1.3-3' }}
               </strong>
             </div>
 
             <div class="score-item">
-              <span>Señal colaborativa</span>
+              <span>Collaborative signal</span>
               <strong>
-                {{
-                  recommendation.collaborative_signal
-                    | number: '1.3-3'
-                }}
+                {{ recommendation.collaborative_signal | number: '1.3-3' }}
               </strong>
             </div>
 
             <div class="score-item">
-              <span>Novedad</span>
+              <span>Novelty</span>
               <strong>
                 {{ recommendation.novelty | number: '1.0-1' }}
               </strong>
@@ -292,6 +247,5 @@
         </article>
       </div>
     </section>
-
   </div>
 </div>

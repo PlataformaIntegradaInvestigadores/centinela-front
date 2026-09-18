@@ -4,7 +4,6 @@ import { Application } from 'src/app/jobs/domain/entities/application.interface'
 import { JobsService } from 'src/app/jobs/domain/services/job.service';
 import { ApplicationService } from 'src/app/jobs/domain/services/application.service';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-jobs',
@@ -38,7 +37,7 @@ export class JobsComponent implements OnInit {
     salary_min: undefined,
     salary_max: undefined,
     is_remote: false,
-    application_deadline: ''
+    application_deadline: '',
   };
   showDeleteConfirm = false;
   jobToDelete: Job | null = null;
@@ -46,19 +45,16 @@ export class JobsComponent implements OnInit {
   constructor(
     private jobsService: JobsService,
     private applicationService: ApplicationService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.checkUserType();
   }
 
   private checkUserType(): void {
-    const userId = this.authService.getUserId();
-    const companyId = this.authService.getCompanyId();
-
-    this.isCompany = !!companyId;
-    this.isResearcher = !!userId && !companyId;
+    this.isCompany = this.authService.isCompany();
+    this.isResearcher = this.authService.isUser();
 
     if (this.isCompany) {
       this.activeTab = 'my-jobs';
@@ -82,7 +78,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading recommendations:', error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -99,7 +95,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading trending jobs:', error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -116,7 +112,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading company jobs:', error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -130,7 +126,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading applications:', error);
         this.applicationsLoading = false;
-      }
+      },
     });
   }
 
@@ -157,7 +153,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading job applications:', error);
         this.applicationsLoading = false;
-      }
+      },
     });
   }
 
@@ -174,7 +170,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error loading all job applications:', error);
         this.applicationsLoading = false;
-      }
+      },
     });
   }
 
@@ -182,57 +178,55 @@ export class JobsComponent implements OnInit {
    * Actualizar el estado de una aplicación (vista empresa)
    */
   updateApplicationStatus(applicationId: number, status: string, notes?: string): void {
-    this.applicationService.updateApplication(applicationId, {
-      status: status as any,
-      notes: notes
-    }).subscribe({
-      next: (updatedApplication: Application) => {
-        // Actualizar la aplicación en la lista
-        const index = this.jobApplications.findIndex(app => app.id === applicationId);
-        if (index !== -1) {
-          this.jobApplications[index] = updatedApplication;
-        }
-      },
-      error: (error: any) => {
-        console.error('Error updating application status:', error);
-      }
-    });
+    this.applicationService
+      .updateApplication(applicationId, {
+        status: status as any,
+        notes: notes,
+      })
+      .subscribe({
+        next: (updatedApplication: Application) => {
+          // Actualizar la aplicación en la lista
+          const index = this.jobApplications.findIndex((app) => app.id === applicationId);
+          if (index !== -1) {
+            this.jobApplications[index] = updatedApplication;
+          }
+        },
+        error: (error: any) => {
+          console.error('Error updating application status:', error);
+        },
+      });
   }
 
   /**
    * Actualizar el estado de una aplicación usando el endpoint específico de empresa
    */
   updateApplicationStatusCompany(applicationId: number, status: string, notes?: string): void {
-    const updateData = {
-      application_id: applicationId,
-      status: status,
-      notes: notes || ''
-    };
-
     // Usar el endpoint específico para empresas
     this.applicationService.getCompanyApplications().subscribe({
       next: () => {
         // Hacer PUT request para actualizar
-        this.applicationService.updateApplication(applicationId, {
-          status: status as any,
-          notes: notes
-        }).subscribe({
-          next: (updatedApplication: Application) => {
-            // Actualizar la aplicación en la lista
-            const index = this.jobApplications.findIndex(app => app.id === applicationId);
-            if (index !== -1) {
-              this.jobApplications[index] = updatedApplication;
-            }
-          },
-          error: (error: any) => {
-            console.error('Error updating application status:', error);
-            alert('Error al actualizar el estado de la postulación');
-          }
-        });
+        this.applicationService
+          .updateApplication(applicationId, {
+            status: status as any,
+            notes: notes,
+          })
+          .subscribe({
+            next: (updatedApplication: Application) => {
+              // Actualizar la aplicación en la lista
+              const index = this.jobApplications.findIndex((app) => app.id === applicationId);
+              if (index !== -1) {
+                this.jobApplications[index] = updatedApplication;
+              }
+            },
+            error: (error: any) => {
+              console.error('Error updating application status:', error);
+              alert('Error updating the application status');
+            },
+          });
       },
       error: (error: any) => {
         console.error('Error accessing company applications:', error);
-      }
+      },
     });
   }
 
@@ -256,14 +250,14 @@ export class JobsComponent implements OnInit {
         next: (updatedJob: Job) => {
           this.selectedJob = updatedJob;
           // También actualizar el trabajo en la lista
-          const jobIndex = this.jobs.findIndex(j => j.id === updatedJob.id);
+          const jobIndex = this.jobs.findIndex((j) => j.id === updatedJob.id);
           if (jobIndex !== -1) {
             this.jobs[jobIndex] = updatedJob;
           }
         },
         error: (error: any) => {
           console.error('Error refreshing job after application:', error);
-        }
+        },
       });
     }
 
@@ -276,21 +270,22 @@ export class JobsComponent implements OnInit {
   /**
    * Manejar cuando se actualiza el estado de una postulación (vista empresa)
    */
-  onApplicationStatusUpdated(event: { applicationId: number, status: string }): void {
+  onApplicationStatusUpdated(event: { applicationId: number; status: string }): void {
     // Solo actualizar el estado en la vista local sin recargar todo
     // Esto evita que desaparezcan las aplicaciones
 
     // Actualizar en jobApplications (vista detallada de aplicaciones)
-    const appIndex = this.jobApplications.findIndex(app => app.id === event.applicationId);
+    const appIndex = this.jobApplications.findIndex((app) => app.id === event.applicationId);
     if (appIndex !== -1) {
       this.jobApplications[appIndex].status = event.status as any;
-      this.jobApplications[appIndex].status_display =
-        this.getStatusDisplayName(event.status);
+      this.jobApplications[appIndex].status_display = this.getStatusDisplayName(event.status);
     }
 
     // Actualizar en las recent_applications del trabajo seleccionado
     if (this.selectedJob && this.selectedJob.recent_applications) {
-      const recentIndex = this.selectedJob.recent_applications.findIndex(app => app.id === event.applicationId);
+      const recentIndex = this.selectedJob.recent_applications.findIndex(
+        (app) => app.id === event.applicationId,
+      );
       if (recentIndex !== -1) {
         this.selectedJob.recent_applications[recentIndex].status = event.status as any;
         this.selectedJob.recent_applications[recentIndex].status_display =
@@ -307,12 +302,12 @@ export class JobsComponent implements OnInit {
    */
   private getStatusDisplayName(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'pending': 'Pendiente',
-      'reviewing': 'En revisión',
-      'interviewed': 'Entrevistado',
-      'accepted': 'Aceptado',
-      'rejected': 'Cancelado',
-      'withdrawn': 'Retirado'
+      pending: 'Pending',
+      reviewing: 'Under review',
+      interviewed: 'Interviewed',
+      accepted: 'Accepted',
+      rejected: 'Cancelled',
+      withdrawn: 'Withdrawn',
     };
     return statusMap[status] || status;
   }
@@ -341,21 +336,25 @@ export class JobsComponent implements OnInit {
   saveNotes(): void {
     if (!this.selectedApplication) return;
 
-    this.applicationService.updateApplication(this.selectedApplication.id, {
-      notes: this.notesText
-    }).subscribe({
-      next: (updatedApplication: Application) => {
-        // Actualizar la aplicación en la lista
-        const index = this.jobApplications.findIndex(app => app.id === this.selectedApplication!.id);
-        if (index !== -1) {
-          this.jobApplications[index] = updatedApplication;
-        }
-        this.closeNotesModal();
-      },
-      error: (error: any) => {
-        console.error('Error updating application notes:', error);
-      }
-    });
+    this.applicationService
+      .updateApplication(this.selectedApplication.id, {
+        notes: this.notesText,
+      })
+      .subscribe({
+        next: (updatedApplication: Application) => {
+          // Actualizar la aplicación en la lista
+          const index = this.jobApplications.findIndex(
+            (app) => app.id === this.selectedApplication!.id,
+          );
+          if (index !== -1) {
+            this.jobApplications[index] = updatedApplication;
+          }
+          this.closeNotesModal();
+        },
+        error: (error: any) => {
+          console.error('Error updating application notes:', error);
+        },
+      });
   }
 
   // CRUD Operations for Jobs
@@ -376,7 +375,7 @@ export class JobsComponent implements OnInit {
       salary_min: undefined,
       salary_max: undefined,
       is_remote: false,
-      application_deadline: ''
+      application_deadline: '',
     };
     this.showJobModal = true;
   }
@@ -397,7 +396,9 @@ export class JobsComponent implements OnInit {
       salary_min: job.salary_min,
       salary_max: job.salary_max,
       is_remote: job.is_remote,
-      application_deadline: job.application_deadline ? new Date(job.application_deadline).toISOString().split('T')[0] : ''
+      application_deadline: job.application_deadline
+        ? new Date(job.application_deadline).toISOString().split('T')[0]
+        : '',
     };
     this.showJobModal = true;
   }
@@ -419,7 +420,7 @@ export class JobsComponent implements OnInit {
       salary_min: undefined,
       salary_max: undefined,
       is_remote: false,
-      application_deadline: ''
+      application_deadline: '',
     };
   }
 
@@ -438,7 +439,7 @@ export class JobsComponent implements OnInit {
       // Actualizar trabajo existente
       this.jobsService.updateJob(this.selectedJob.id!, jobData).subscribe({
         next: (updatedJob: Job) => {
-          const index = this.jobs.findIndex(job => job.id === updatedJob.id);
+          const index = this.jobs.findIndex((job) => job.id === updatedJob.id);
           if (index !== -1) {
             this.jobs[index] = updatedJob;
           }
@@ -451,7 +452,7 @@ export class JobsComponent implements OnInit {
         error: (error: any) => {
           console.error('Error updating job:', error);
           alert('Error al actualizar el trabajo. Por favor intenta de nuevo.');
-        }
+        },
       });
     } else {
       // Crear nuevo trabajo
@@ -464,7 +465,7 @@ export class JobsComponent implements OnInit {
         error: (error: any) => {
           console.error('Error creating job:', error);
           alert('Error al crear el trabajo. Por favor intenta de nuevo.');
-        }
+        },
       });
     }
   }
@@ -493,7 +494,7 @@ export class JobsComponent implements OnInit {
 
     this.jobsService.deleteJob(this.jobToDelete.id).subscribe({
       next: () => {
-        this.jobs = this.jobs.filter(job => job.id !== this.jobToDelete!.id);
+        this.jobs = this.jobs.filter((job) => job.id !== this.jobToDelete!.id);
         if (this.selectedJob?.id === this.jobToDelete!.id) {
           this.selectedJob = this.jobs.length > 0 ? this.jobs[0] : null;
         }
@@ -503,7 +504,7 @@ export class JobsComponent implements OnInit {
       error: (error: any) => {
         console.error('Error deleting job:', error);
         alert('Error al eliminar el trabajo. Por favor intenta de nuevo.');
-      }
+      },
     });
   }
 
@@ -542,8 +543,8 @@ export class JobsComponent implements OnInit {
   }
 
   /**
-  * Construye la URL completa del archivo usando la URL base del backend
-  */
+   * Construye la URL completa del archivo usando la URL base del backend
+   */
   getFullFileUrl(relativePath: string): string {
     if (!relativePath) return '';
 
@@ -565,8 +566,8 @@ export class JobsComponent implements OnInit {
   }
 
   /**
- * Manejar edición de trabajo
- */
+   * Manejar edición de trabajo
+   */
   editJob(job: Job): void {
     console.log('Editing job:', job);
     // Aquí puedes implementar la lógica de edición
@@ -584,7 +585,7 @@ export class JobsComponent implements OnInit {
       salary_min: job.salary_min,
       salary_max: job.salary_max,
       is_remote: job.is_remote,
-      application_deadline: job.application_deadline || ''
+      application_deadline: job.application_deadline || '',
     };
 
     this.isEditingJob = true;

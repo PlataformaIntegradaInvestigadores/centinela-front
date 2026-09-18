@@ -6,31 +6,30 @@ import { UserType } from '../../domain/entities/interfaces';
 @Component({
   selector: 'app-auth-modal',
   templateUrl: './auth-modal.component.html',
-  styleUrls: ['./auth-modal.component.css']
+  styleUrls: ['./auth-modal.component.css'],
 })
 export class AuthModalComponent implements OnInit, OnDestroy {
   modalState: AuthModalState = { isOpen: false, type: null, userType: 'user' };
   isLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private authModalService: AuthModalService) {}  ngOnInit(): void {
-    this.authModalService.modalState$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(state => {
-        this.modalState = state;
-        
-        // Prevent body scroll when modal is open
-        if (state.isOpen) {
-          document.body.classList.add('modal-open');
-          document.body.style.overflow = 'hidden';
-          // Reset loading state when modal opens
-          this.isLoading = false;
-        } else {
-          document.body.classList.remove('modal-open');
-          document.body.style.overflow = '';
-        }
-      });
-    
+  constructor(private authModalService: AuthModalService) {}
+  ngOnInit(): void {
+    this.authModalService.modalState$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
+      this.modalState = state;
+
+      // Prevent body scroll when modal is open
+      if (state.isOpen) {
+        document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
+        // Reset loading state when modal opens
+        this.isLoading = false;
+      } else {
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+      }
+    });
+
     // Listen for escape key
     document.addEventListener('keydown', this.handleEscapeKey);
   }
@@ -51,7 +50,7 @@ export class AuthModalComponent implements OnInit, OnDestroy {
     if (event.key === 'Escape' && this.modalState.isOpen) {
       this.closeModal();
     }
-  }
+  };
 
   /**
    * Set loading state

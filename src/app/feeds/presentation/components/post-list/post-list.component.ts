@@ -4,7 +4,7 @@ import { FeedPost } from '../../types/post.types';
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.css']
+  styleUrls: ['./post-list.component.css'],
 })
 export class PostListComponent {
   @Input() posts: FeedPost[] = [];
@@ -13,13 +13,17 @@ export class PostListComponent {
   @Input() showEmptyState: boolean = true;
   @Input() showActions: boolean = true;
   @Input() currentUserId: string | null = null;
-  
+
   @Output() toggleLike = new EventEmitter<FeedPost>();
   @Output() deletePost = new EventEmitter<string>();
   @Output() sharePost = new EventEmitter<FeedPost>();
   @Output() viewProfile = new EventEmitter<string>();
-  @Output() votePoll = new EventEmitter<{pollId: string, optionId: string, isMultipleChoice: boolean}>();
-  @Output() editPost = new EventEmitter<{postId: string, content: string, tags: string[]}>();
+  @Output() votePoll = new EventEmitter<{
+    pollId: string;
+    optionId: string;
+    isMultipleChoice: boolean;
+  }>();
+  @Output() editPost = new EventEmitter<{ postId: string; content: string; tags: string[] }>();
 
   /**
    * Maneja el toggle de like en un post
@@ -52,14 +56,14 @@ export class PostListComponent {
   /**
    * Maneja la edición de un post
    */
-  onEditPost(editData: {postId: string, content: string, tags: string[]}): void {
+  onEditPost(editData: { postId: string; content: string; tags: string[] }): void {
     this.editPost.emit(editData);
   }
 
   /**
    * Maneja la votación en una encuesta
    */
-  onVotePoll(voteData: {pollId: string, optionId: string, isMultipleChoice: boolean}): void {
+  onVotePoll(voteData: { pollId: string; optionId: string; isMultipleChoice: boolean }): void {
     this.votePoll.emit(voteData);
   }
 

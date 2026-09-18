@@ -1,38 +1,48 @@
 <!-- Modal backdrop -->
-<div *ngIf="modalState.isOpen"
+<div
+  *ngIf="modalState.isOpen"
   class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-40"
-  (click)="onBackdropClick($event)">
+  (click)="onBackdropClick($event)"
+>
   <!-- Modal content -->
-  <div class="modal-container relative w-full max-w-5xl max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
-
+  <div
+    class="modal-container relative w-full max-w-5xl max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden"
+  >
     <!-- Close button -->
-    <button type="button"
+    <button
+      type="button"
       class="absolute top-4 right-4 z-20 p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary_tailwind focus:ring-opacity-50"
-      (click)="closeModal()">
+      (click)="closeModal()"
+    >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        ></path>
       </svg>
-    </button> <!-- Modal body -->
+    </button>
+    <!-- Modal body -->
     <div class="flex flex-col lg:flex-row min-h-[600px] max-h-[95vh]">
       <!-- Left side - Branding -->
       <div
-        class="branding-section relative p-8 text-white bg-gradient-to-br from-primary_tailwind to-primary_tailwind/90 lg:w-96 lg:flex-shrink-0 flex flex-col justify-between">
+        class="branding-section relative p-8 text-white bg-gradient-to-br from-primary_tailwind to-primary_tailwind/90 lg:w-96 lg:flex-shrink-0 flex flex-col justify-between"
+      >
         <!-- Background pattern -->
         <div class="absolute inset-0 opacity-10">
           <div
-            class="w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%227%22%20r%3D%222%22/%3E%3Ccircle%20cx%3D%2237%22%20cy%3D%2237%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]">
-          </div>
+            class="w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%227%22%20r%3D%222%22/%3E%3Ccircle%20cx%3D%2237%22%20cy%3D%2237%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"
+          ></div>
         </div>
 
         <div class="relative z-10">
           <!-- Logo and title -->
           <div class="text-center mb-8">
-            <div class="text-4xl lg:text-5xl font-bold tracking-wider mb-4">
-              CENTINELA
-            </div>
+            <div class="text-4xl lg:text-5xl font-bold tracking-wider mb-4">CENTINELA</div>
             <p class="text-white/90 text-base lg:text-lg leading-relaxed max-w-sm mx-auto">
-              Join CENTINELA, the academic social network where you can connect, collaborate, and share knowledge with
-              other students and professionals.
+              Join CENTINELA, the academic social network where you can connect, collaborate, and
+              share knowledge with other students and professionals.
             </p>
           </div>
 
@@ -40,16 +50,28 @@
           <div class="flex flex-col items-center mb-8">
             <span class="text-white/80 text-sm mb-4 font-medium">I am a:</span>
             <div class="flex space-x-3 bg-white/10 p-1.5 rounded-full backdrop-blur-sm">
-              <button type="button"
+              <button
+                type="button"
                 class="user-type-btn px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50"
-                [class]="modalState.userType === 'user' ? 'bg-white text-primary_tailwind shadow-lg' : 'text-white hover:bg-white/20'"
-                (click)="switchUserType('user')">
+                [class]="
+                  modalState.userType === 'user'
+                    ? 'bg-white text-primary_tailwind shadow-lg'
+                    : 'text-white hover:bg-white/20'
+                "
+                (click)="switchUserType('user')"
+              >
                 Researcher
               </button>
-              <button type="button"
+              <button
+                type="button"
                 class="user-type-btn px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50"
-                [class]="modalState.userType === 'company' ? 'bg-white text-primary_tailwind shadow-lg' : 'text-white hover:bg-white/20'"
-                (click)="switchUserType('company')">
+                [class]="
+                  modalState.userType === 'company'
+                    ? 'bg-white text-primary_tailwind shadow-lg'
+                    : 'text-white hover:bg-white/20'
+                "
+                (click)="switchUserType('company')"
+              >
                 Company
               </button>
             </div>
@@ -62,51 +84,59 @@
           <div class="text-center mb-6">
             <ng-container *ngIf="modalState.type === 'login'">
               <p class="text-white/80 text-sm mb-2">Don't have an account?</p>
-              <button type="button"
+              <button
+                type="button"
                 class="auth-switch-btn font-medium text-white hover:text-white/80 transition-colors duration-200 underline decoration-2 underline-offset-4 focus:outline-none focus:ring-2 focus:ring-white/50 rounded px-2 py-1"
-                (click)="switchToRegister()">
+                (click)="switchToRegister()"
+              >
                 Get Started!
               </button>
             </ng-container>
 
             <ng-container *ngIf="modalState.type === 'register'">
               <p class="text-white/80 text-sm mb-2">Already have an account?</p>
-              <button type="button"
+              <button
+                type="button"
                 class="auth-switch-btn font-medium text-white hover:text-white/80 transition-colors duration-200 underline decoration-2 underline-offset-4 focus:outline-none focus:ring-2 focus:ring-white/50 rounded px-2 py-1"
-                (click)="switchToLogin()">
+                (click)="switchToLogin()"
+              >
                 Log in
               </button>
             </ng-container>
           </div>
 
           <p class="text-xs text-center text-white/60 leading-relaxed">
-            Read our <a href="#" class="underline hover:text-white/80 transition-colors duration-200">terms</a> and
-            <a href="#" class="underline hover:text-white/80 transition-colors duration-200">conditions</a>
+            Read our
+            <a href="#" class="underline hover:text-white/80 transition-colors duration-200"
+              >terms</a
+            >
+            and
+            <a href="#" class="underline hover:text-white/80 transition-colors duration-200"
+              >conditions</a
+            >
           </p>
         </div>
-      </div>      <!-- Right side - Form content -->
+      </div>
+      <!-- Right side - Form content -->
       <div class="form-section flex-1 bg-white relative" [class.loading]="isLoading">
         <!-- Form container with proper scroll -->
         <div class="h-full overflow-y-auto">
           <div class="p-8 lg:p-10 min-h-full flex flex-col">
-
             <!-- Form header -->
             <div class="mb-8">
               <ng-container *ngIf="modalState.type === 'login'">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">
-                  Welcome back
-                </h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome back</h2>
                 <p class="text-gray-600">
-                  Sign in to your {{ modalState.userType === 'user' ? 'researcher' : 'company' }} account
+                  Sign in to your
+                  {{ modalState.userType === 'user' ? 'researcher' : 'company' }} account
                 </p>
               </ng-container>
 
               <ng-container *ngIf="modalState.type === 'register'">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">
-                  Get started
-                </h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Get started</h2>
                 <p class="text-gray-600">
-                  Create your {{ modalState.userType === 'user' ? 'researcher' : 'company' }} account
+                  Create your
+                  {{ modalState.userType === 'user' ? 'researcher' : 'company' }} account
                 </p>
               </ng-container>
             </div>
@@ -114,23 +144,43 @@
             <!-- Form content -->
             <div class="flex-1 flex flex-col">
               <!-- Login Form for Researchers -->
-              <div *ngIf="modalState.type === 'login' && modalState.userType === 'user'" class="flex-1">
+              <div
+                *ngIf="modalState.type === 'login' && modalState.userType === 'user'"
+                class="flex-1"
+              >
                 <app-login-form [userType]="'user'" (loginSuccess)="closeModal()"></app-login-form>
               </div>
 
               <!-- Login Form for Companies -->
-              <div *ngIf="modalState.type === 'login' && modalState.userType === 'company'" class="flex-1">
-                <app-login-form [userType]="'company'" (loginSuccess)="closeModal()"></app-login-form>
+              <div
+                *ngIf="modalState.type === 'login' && modalState.userType === 'company'"
+                class="flex-1"
+              >
+                <app-login-form
+                  [userType]="'company'"
+                  (loginSuccess)="closeModal()"
+                ></app-login-form>
               </div>
 
               <!-- Register Form for Researchers -->
-              <div *ngIf="modalState.type === 'register' && modalState.userType === 'user'" class="flex-1">
-                <app-register-form [userType]="'user'" (registerSuccess)="switchToLogin()"></app-register-form>
+              <div
+                *ngIf="modalState.type === 'register' && modalState.userType === 'user'"
+                class="flex-1"
+              >
+                <app-register-form
+                  [userType]="'user'"
+                  (registerSuccess)="switchToLogin()"
+                ></app-register-form>
               </div>
 
               <!-- Register Form for Companies -->
-              <div *ngIf="modalState.type === 'register' && modalState.userType === 'company'" class="flex-1">
-                <app-company-register-form (registerSuccess)="switchToLogin()"></app-company-register-form>
+              <div
+                *ngIf="modalState.type === 'register' && modalState.userType === 'company'"
+                class="flex-1"
+              >
+                <app-company-register-form
+                  (registerSuccess)="switchToLogin()"
+                ></app-company-register-form>
               </div>
             </div>
           </div>

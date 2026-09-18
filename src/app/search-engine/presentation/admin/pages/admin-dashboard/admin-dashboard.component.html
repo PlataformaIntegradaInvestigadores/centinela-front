@@ -1,15 +1,17 @@
 <!-- component -->
 <div class="min-h-screen bg-gray-50/50 flex flex-col">
-  <app-sidebar/>
+  <app-sidebar />
   <div class="p-4 xl:ml-80 flex min-h-screen flex-col">
-    <nav class="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1">
-      <app-header/>
+    <nav
+      class="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1"
+    >
+      <app-header />
     </nav>
     <main class="mt-12 flex-1">
       <router-outlet></router-outlet>
     </main>
     <div class="text-blue-gray-600">
-       <app-footer/>
+      <app-footer />
     </div>
   </div>
 </div>

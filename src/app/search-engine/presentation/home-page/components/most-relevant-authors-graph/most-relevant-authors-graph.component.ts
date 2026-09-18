@@ -1,57 +1,68 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, Output, SimpleChanges, ViewChild} from "@angular/core";
-import {Link, Node} from "../../../../../shared/d3";
-import {AuthorNode, Coauthors} from "../../../../../shared/interfaces/author.interface";
-import {faDownload, faVectorSquare, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import {DOCUMENT} from "@angular/common";
-import {AuthorService} from "../../../../domain/services/author.service";
-import {catchError, EMPTY, of, tap} from "rxjs";
-import * as htmlToImage from "html-to-image";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { Link, Node } from '../../../../../shared/d3';
+import { AuthorNode, Coauthors } from '../../../../../shared/interfaces/author.interface';
+import { faDownload, faVectorSquare, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { DOCUMENT } from '@angular/common';
+import { AuthorService } from '../../../../domain/services/author.service';
+import { catchError, EMPTY, tap } from 'rxjs';
+import * as htmlToImage from 'html-to-image';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-most-relevant-authors-graph',
   templateUrl: './most-relevant-authors-graph.component.html',
-  styleUrls: ['./most-relevant-authors-graph.component.css']
+  styleUrls: ['./most-relevant-authors-graph.component.css'],
 })
-export class MostRelevantAuthorsGraphComponent {
+export class MostRelevantAuthorsGraphComponent implements OnInit, OnChanges {
+  @Input() query!: string;
+  @Output() loading: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @Input() query!: string
-  @Output() loading: EventEmitter<boolean> = new EventEmitter<boolean>()
+  d3Nodes!: Node[];
+  d3Links!: Link[];
 
-  d3Nodes!: Node[]
-  d3Links!: Link[]
+  apiNodes!: AuthorNode[];
 
-  apiNodes!: AuthorNode[]
+  forces: { manyBody: number; collide: number } = { manyBody: 1, collide: 50 };
 
-  forces: { manyBody: number, collide: number } = {manyBody: 1, collide: 50}
+  showGraph: boolean = false;
 
-  showGraph: boolean = false
-
-  authorsNumber: number = 50
-  affiliations!: { scopus_id: string, name: string }[]
-  selectedAffiliations: string[] = []
-  affiliationSearch: string = ''
+  authorsNumber: number = 50;
+  affiliations!: { scopus_id: string; name: string }[];
+  selectedAffiliations: string[] = [];
+  affiliationSearch: string = '';
   noResults = false;
   isLoadingResults = false;
   isFirstLoad = true;
   isFiltering = false;
 
-  @ViewChild("downloadEl") downloadEl!: ElementRef;
-  faDownload = faDownload
-  faVectorSquare = faVectorSquare
-  faMagnifyingGlass = faMagnifyingGlass
+  @ViewChild('downloadEl') downloadEl!: ElementRef;
+  faDownload = faDownload;
+  faVectorSquare = faVectorSquare;
+  faMagnifyingGlass = faMagnifyingGlass;
 
   // Seleccion de zona para exportar solo una parte del grafo
-  selectingRegion = false
-  regionStart: { x: number, y: number } | null = null
-  regionRect: { x: number, y: number, w: number, h: number } | null = null
+  selectingRegion = false;
+  regionStart: { x: number; y: number } | null = null;
+  regionRect: { x: number; y: number; w: number; h: number } | null = null;
 
-  constructor(private authorService: AuthorService,
-              @Inject(DOCUMENT) private coreDoc: Document) {
-  }
+  constructor(
+    private authorService: AuthorService,
+    @Inject(DOCUMENT) private coreDoc: Document,
+  ) {}
 
   ngOnInit() {
-    this.refreshGraph()
+    this.refreshGraph();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -63,17 +74,18 @@ export class MostRelevantAuthorsGraphComponent {
       if (this.authorsNumber === 0) {
         this.authorsNumber = 50;
       }
-      this.refreshGraph()
+      this.refreshGraph();
     }
   }
 
   refreshGraph() {
-    this.showGraph = false
-    this.loading.emit(true)
-    this.authorService.getMostRelevantAuthors(this.query, this.authorsNumber)
+    this.showGraph = false;
+    this.loading.emit(true);
+    this.authorService
+      .getMostRelevantAuthors(this.query, this.authorsNumber)
       .pipe(
-        catchError(error => {
-          console.error("Error fetching most relevant authors graph:", error);
+        catchError((error) => {
+          console.error('Error fetching most relevant authors graph:', error);
           this.noResults = true;
           this.showGraph = true;
           this.isFirstLoad = false;
@@ -84,8 +96,8 @@ export class MostRelevantAuthorsGraphComponent {
           return EMPTY;
         }),
         tap((coauthors) => {
-          this.affiliations = []
-          coauthors.nodes.length === 0 ? this.noResults = true : this.noResults = false;
+          this.affiliations = [];
+          coauthors.nodes.length === 0 ? (this.noResults = true) : (this.noResults = false);
           this.affiliations = coauthors.affiliations;
           this.sortAffiliations();
           this.setupGraph(coauthors);
@@ -93,16 +105,16 @@ export class MostRelevantAuthorsGraphComponent {
           this.isFirstLoad = false;
           this.isFiltering = false;
           this.loading.emit(false);
-        })
-      ).subscribe();
+        }),
+      )
+      .subscribe();
   }
 
   setupGraph(coauthors: Coauthors) {
+    this.apiNodes = coauthors.nodes;
+    this.d3Nodes = this.getD3Nodes();
+    this.d3Links = this.getD3Links(coauthors.links);
 
-    this.apiNodes = coauthors.nodes
-    this.d3Nodes = this.getD3Nodes()
-    this.d3Links = this.getD3Links(coauthors.links)
-    
     // Zoom out initially — only if there are actual nodes to display
     if (coauthors.nodes.length > 0) {
       setTimeout(() => {
@@ -114,7 +126,7 @@ export class MostRelevantAuthorsGraphComponent {
   onAuthorsNumberChange() {
     console.log(this.authorsNumber);
     this.isFiltering = true;
-    this.refreshGraph()
+    this.refreshGraph();
   }
 
   setAuthorsNumber(num: number) {
@@ -123,20 +135,19 @@ export class MostRelevantAuthorsGraphComponent {
   }
 
   onClickCheckbox(event: any) {
-
-    let item = String(event.target.id)
+    const item = String(event.target.id);
     if (event.target.checked) {
       if (!this.selectedAffiliations.includes(item)) {
-        this.selectedAffiliations.push(item)
+        this.selectedAffiliations.push(item);
       }
     } else {
-      this.selectedAffiliations = this.selectedAffiliations.filter((id) => id !== item)
+      this.selectedAffiliations = this.selectedAffiliations.filter((id) => id !== item);
     }
-    
-    this.sortAffiliations()
+
+    this.sortAffiliations();
 
     // console.log(this.selectedAffiliations)
-    this.onClickAffiliationsFilter('include')
+    this.onClickAffiliationsFilter('include');
   }
 
   sortAffiliations() {
@@ -153,26 +164,31 @@ export class MostRelevantAuthorsGraphComponent {
 
   /** Normaliza texto para buscar/ordenar sin importar mayusculas ni acentos. */
   private normalize(text: string): string {
-    return (text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    return (text || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 
   /** Afiliaciones visibles segun el texto del buscador (coincidencia parcial, sin acentos/mayusculas). */
-  get filteredAffiliations(): { scopus_id: string, name: string }[] {
+  get filteredAffiliations(): { scopus_id: string; name: string }[] {
     if (!this.affiliations) return [];
     const term = this.normalize(this.affiliationSearch);
     if (!term) return this.affiliations;
-    return this.affiliations.filter(aff => this.normalize(aff.name).includes(term));
+    return this.affiliations.filter((aff) => this.normalize(aff.name).includes(term));
   }
 
   onClickAffiliationsFilter(type: string) {
     this.showGraph = false;
     this.isFiltering = true;
     if (this.selectedAffiliations.length > 0) {
-      this.loading.emit(true)
-      this.authorService.getMostRelevantAuthors(this.query, this.authorsNumber, type, this.selectedAffiliations)
+      this.loading.emit(true);
+      this.authorService
+        .getMostRelevantAuthors(this.query, this.authorsNumber, type, this.selectedAffiliations)
         .pipe(
-          catchError(error => {
-            console.error("Error fetching filtered most relevant authors graph:", error);
+          catchError((error) => {
+            console.error('Error fetching filtered most relevant authors graph:', error);
             this.noResults = true;
             this.showGraph = true;
             this.isFirstLoad = false;
@@ -190,15 +206,17 @@ export class MostRelevantAuthorsGraphComponent {
             this.isFirstLoad = false;
             this.isFiltering = false;
             this.loading.emit(false);
-          })
-        ).subscribe();
-    }else{
-      this.loading.emit(true)
-      console.log(this.query)
-      this.authorService.getMostRelevantAuthors(this.query, this.authorsNumber)
+          }),
+        )
+        .subscribe();
+    } else {
+      this.loading.emit(true);
+      console.log(this.query);
+      this.authorService
+        .getMostRelevantAuthors(this.query, this.authorsNumber)
         .pipe(
-          catchError(error => {
-            console.error("Error fetching most relevant authors graph:", error);
+          catchError((error) => {
+            console.error('Error fetching most relevant authors graph:', error);
             this.noResults = true;
             this.showGraph = true;
             this.isFirstLoad = false;
@@ -209,7 +227,7 @@ export class MostRelevantAuthorsGraphComponent {
             return EMPTY;
           }),
           tap((coauthors) => {
-            coauthors.nodes.length === 0 ? this.noResults = true : this.noResults = false;
+            coauthors.nodes.length === 0 ? (this.noResults = true) : (this.noResults = false);
             // console.log('dentro2: xd'+ this.authorsNumber)
             this.affiliations = coauthors.affiliations;
             this.sortAffiliations();
@@ -218,20 +236,27 @@ export class MostRelevantAuthorsGraphComponent {
             this.isFirstLoad = false;
             this.isFiltering = false;
             this.loading.emit(false);
-          })
-        ).subscribe();
+          }),
+        )
+        .subscribe();
     }
   }
 
   getD3Nodes() {
     return this.apiNodes.map((node, index) => {
-      return new Node(node.scopus_id, this.apiNodes.length, this.truncateString(node.first_name) + " \n" + this.truncateString(node.last_name), {
-        enablePopover: true,
-        title: 'Author',
-        content: node.first_name + " " + node.last_name,
-        link: 'profile/' + node.scopus_id
-      }, this.apiNodes.length - index)
-    })
+      return new Node(
+        node.scopus_id,
+        this.apiNodes.length,
+        this.truncateString(node.first_name) + ' \n' + this.truncateString(node.last_name),
+        {
+          enablePopover: true,
+          title: 'Author',
+          content: node.first_name + ' ' + node.last_name,
+          link: 'profile/' + node.scopus_id,
+        },
+        this.apiNodes.length - index,
+      );
+    });
   }
 
   truncateString(text: string): string {
@@ -248,20 +273,22 @@ export class MostRelevantAuthorsGraphComponent {
     }
   }
 
-  getD3Links(links: { source: string | number, target: string | number, collabStrength: number }[]) {
-    return links.map(link => {
-      this.d3Nodes[this.getIndexByScopusId(link.source)].degree++
-      this.d3Nodes[this.getIndexByScopusId(link.target)].degree++
-      return new Link(link.source, link.target, link.collabStrength * (4 + 1))
-    })
+  getD3Links(
+    links: { source: string | number; target: string | number; collabStrength: number }[],
+  ) {
+    return links.map((link) => {
+      this.d3Nodes[this.getIndexByScopusId(link.source)].degree++;
+      this.d3Nodes[this.getIndexByScopusId(link.target)].degree++;
+      return new Link(link.source, link.target, link.collabStrength * (4 + 1));
+    });
   }
 
   getIndexByScopusId(scopusId: any) {
-    return this.apiNodes.map(node => String(node.scopus_id)).indexOf(String(scopusId))
+    return this.apiNodes.map((node) => String(node.scopus_id)).indexOf(String(scopusId));
   }
 
   downloadDataUrl(dataUrl: string, filename: string): void {
-    let a = this.coreDoc.createElement("a");
+    const a = this.coreDoc.createElement('a');
     a.href = dataUrl;
     a.download = filename;
     this.coreDoc.body.appendChild(a);
@@ -279,7 +306,7 @@ export class MostRelevantAuthorsGraphComponent {
       // pixelRatio alto => etiquetas nitidas y legibles al ampliar la imagen.
       const svgEl = this.downloadEl.nativeElement.querySelector('graph svg') as HTMLElement | null;
       const target = svgEl ?? this.downloadEl.nativeElement;
-      htmlToImage.toPng(target, { pixelRatio: 3, backgroundColor: '#ffffff' }).then(dataUrl => {
+      htmlToImage.toPng(target, { pixelRatio: 3, backgroundColor: '#ffffff' }).then((dataUrl) => {
         this.downloadDataUrl(dataUrl, `most-relevant-authors-graph-${this.query}`);
       });
     }, 450); // espera a que termine la transicion del fit (350ms)
@@ -300,10 +327,10 @@ export class MostRelevantAuthorsGraphComponent {
     const scale = Math.min(Math.min(vw / bbox.width, vh / bbox.height) * 0.9, 1.5); // 0.9 = margen, tope 1.5x
     const tx = vw / 2 - scale * (bbox.x + bbox.width / 2);
     const ty = vh / 2 - scale * (bbox.y + bbox.height / 2);
-    data.svg.transition().duration(durationMs).call(
-      data.zoom.transform,
-      d3.zoomIdentity.translate(tx, ty).scale(scale)
-    );
+    data.svg
+      .transition()
+      .duration(durationMs)
+      .call(data.zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }
 
   // --- Seleccion de zona: arrastrar un rectangulo sobre el grafo y exportar solo ese recorte ---
@@ -313,7 +340,7 @@ export class MostRelevantAuthorsGraphComponent {
     this.regionRect = null;
   }
 
-  private regionCoords(e: MouseEvent): { x: number, y: number } {
+  private regionCoords(e: MouseEvent): { x: number; y: number } {
     const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }
@@ -345,11 +372,11 @@ export class MostRelevantAuthorsGraphComponent {
   }
 
   /** Exporta solo el rectangulo seleccionado (en coords del viewport del grafo) en alta resolucion. */
-  private exportRegion(rect: { x: number, y: number, w: number, h: number }): void {
+  private exportRegion(rect: { x: number; y: number; w: number; h: number }): void {
     const svgEl = this.downloadEl.nativeElement.querySelector('graph svg') as HTMLElement | null;
     if (!svgEl) return;
     const PR = 3; // pixelRatio: alta resolucion para que las etiquetas se lean
-    htmlToImage.toPng(svgEl, { pixelRatio: PR, backgroundColor: '#ffffff' }).then(dataUrl => {
+    htmlToImage.toPng(svgEl, { pixelRatio: PR, backgroundColor: '#ffffff' }).then((dataUrl) => {
       const img = new Image();
       img.onload = () => {
         const canvas = this.coreDoc.createElement('canvas');
@@ -360,7 +387,17 @@ export class MostRelevantAuthorsGraphComponent {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         // recorta del PNG completo (svg) la region seleccionada (rect * pixelRatio)
-        ctx.drawImage(img, rect.x * PR, rect.y * PR, rect.w * PR, rect.h * PR, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(
+          img,
+          rect.x * PR,
+          rect.y * PR,
+          rect.w * PR,
+          rect.h * PR,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
         this.downloadDataUrl(canvas.toDataURL('image/png'), `grafo-zona-${this.query}`);
       };
       img.src = dataUrl;
@@ -397,7 +434,16 @@ export class MostRelevantAuthorsGraphComponent {
     if (data && data.zoom) {
       const width = data.svgEl.clientWidth || 800;
       const height = data.svgEl.clientHeight || 600;
-      data.svg.transition().duration(750).call(data.zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(0.3).translate(-width / 2, -height / 2));
+      data.svg
+        .transition()
+        .duration(750)
+        .call(
+          data.zoom.transform,
+          d3.zoomIdentity
+            .translate(width / 2, height / 2)
+            .scale(0.3)
+            .translate(-width / 2, -height / 2),
+        );
     }
   }
 

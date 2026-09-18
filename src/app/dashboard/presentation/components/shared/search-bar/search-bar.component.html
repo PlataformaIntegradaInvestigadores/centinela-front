@@ -1,4 +1,4 @@
-<div class="w-full flex flex-col justify-center items-center relative ">
+<div class="w-full flex flex-col justify-center items-center relative">
   <input
     class="p-2 w-2/4 border-2 border-black rounded-md"
     [(ngModel)]="searchQuery"
@@ -7,29 +7,38 @@
     autocomplete="off"
     (focus)="onFocus()"
     (blur)="onBlur()"
+  />
+  <div
+    *ngIf="showSuggestions && affiliations.length > 0"
+    class="w-2/5 max-h-40 bg-white border-2 p-2 border-black flex overflow-y-scroll absolute top-10 z-50"
+    [ngSwitch]="code"
   >
-  <div *ngIf="showSuggestions && affiliations.length > 0"
-       class="w-2/5 max-h-40 bg-white border-2 p-2 border-black flex overflow-y-scroll absolute top-10 z-50"
-       [ngSwitch]="code">
-
-    <div *ngSwitchCase="'affiliation'"
-         class="flex flex-col flex-grow justify-start items-start ">
-      <button class="hover:bg-gray-400 w-full flex flex-grow justify-start items-start" *ngFor="let affiliation of affiliations"
-              (click)="selectSuggestion(affiliation)">
+    <div *ngSwitchCase="'affiliation'" class="flex flex-col flex-grow justify-start items-start">
+      <button
+        class="hover:bg-gray-400 w-full flex flex-grow justify-start items-start"
+        *ngFor="let affiliation of affiliations"
+        (click)="selectSuggestion(affiliation)"
+      >
         {{ affiliation.name }}
       </button>
     </div>
   </div>
-  <div *ngIf="showSuggestions && topics.length > 0"
-       class="w-2/5 max-h-40 bg-white border-2 p-2 border-black flex overflow-y-scroll absolute top-10 z-50"
-       [ngSwitch]="code">
-    <div *ngSwitchCase="'topic'"
-         class="flex flex-col flex-grow justify-start items-start min-w-max">
-      <button class="hover:bg-gray-400 w-full flex justify-start items-start" *ngFor="let topic of topics"
-              (click)="selectSuggestion(topic)">
+  <div
+    *ngIf="showSuggestions && topics.length > 0"
+    class="w-2/5 max-h-40 bg-white border-2 p-2 border-black flex overflow-y-scroll absolute top-10 z-50"
+    [ngSwitch]="code"
+  >
+    <div
+      *ngSwitchCase="'topic'"
+      class="flex flex-col flex-grow justify-start items-start min-w-max"
+    >
+      <button
+        class="hover:bg-gray-400 w-full flex justify-start items-start"
+        *ngFor="let topic of topics"
+        (click)="selectSuggestion(topic)"
+      >
         {{ topic.name }}
       </button>
     </div>
   </div>
 </div>
-

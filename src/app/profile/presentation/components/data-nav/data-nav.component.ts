@@ -8,7 +8,7 @@ import { Author } from 'src/app/shared/interfaces/author.interface';
   selector: 'app-data-nav',
   templateUrl: './data-nav.component.html',
   styleUrls: ['./data-nav.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class DataNavComponent implements OnChanges {
   @Input() user: UserProfile | null = null;
@@ -17,8 +17,10 @@ export class DataNavComponent implements OnChanges {
   isLoggedIn: boolean = false;
   navOpen: boolean = false;
 
-  constructor(private userDataService: UserDataService, private authService: AuthService) {
-  }
+  constructor(
+    private userDataService: UserDataService,
+    private authService: AuthService,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user']) {

@@ -2,46 +2,57 @@
 <div class="flex items-start justify-between px-4 pt-4 pb-2">
   <div class="flex items-center space-x-3 flex-1 cursor-pointer group" (click)="onProfileClick()">
     <div class="relative">
-      <img 
-        [src]="post.author.profile_picture || '/assets/profile.png'" 
+      <img
+        [src]="post.author.profile_picture || '/assets/profile.png'"
         [alt]="post.author.first_name + ' ' + post.author.last_name"
         class="w-10 h-10 rounded-full object-cover ring-2 ring-transparent group-hover:ring-blue-100 transition-all duration-300"
-        onerror="this.src='/assets/profile.png'">
+        onerror="this.src = '/assets/profile.png'"
+      />
     </div>
-    
+
     <div class="flex flex-col justify-center">
       <div class="flex items-center gap-2">
-        <h3 class="text-[14px] font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-none">
+        <h3
+          class="text-[14px] font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-none"
+        >
           {{ post.author.first_name }} {{ post.author.last_name }}
         </h3>
-        
+
         <!-- Trending Indicator -->
-        <div *ngIf="post.trending_metadata && post.trending_metadata.trending_rank > 5" 
-             class="flex items-center gap-1 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100">
+        <div
+          *ngIf="post.trending_metadata && post.trending_metadata.trending_rank > 5"
+          class="flex items-center gap-1 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100"
+        >
           <i class="fas fa-fire text-orange-500 text-[9px]"></i>
           <span class="text-[9px] font-medium text-orange-700 uppercase tracking-wider">
             Trending
           </span>
         </div>
       </div>
-      
+
       <div class="flex items-center gap-1.5 mt-1">
         <p class="text-[12px] text-gray-500 leading-none">{{ formattedDate }}</p>
-        
+
         <!-- Edited Indicator -->
         <ng-container *ngIf="isPostEdited">
           <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-          <span class="text-[11px] text-gray-400 italic leading-none" title="Este post ha sido editado">
+          <span
+            class="text-[11px] text-gray-400 italic leading-none"
+            title="Este post ha sido editado"
+          >
             Editado
           </span>
         </ng-container>
-        
+
         <!-- Engagement Score Indicator -->
         <ng-container *ngIf="post.engagement_score && post.engagement_score > 0">
           <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-          <div class="text-[11px] text-gray-400 flex items-center gap-1 leading-none" [title]="getEngagementTooltip()">
+          <div
+            class="text-[11px] text-gray-400 flex items-center gap-1 leading-none"
+            [title]="getEngagementTooltip()"
+          >
             <i class="fas fa-chart-line text-[10px]"></i>
-            <span>{{ post.engagement_score | number:'1.1-1' }}</span>
+            <span>{{ post.engagement_score | number: '1.1-1' }}</span>
           </div>
         </ng-container>
       </div>
@@ -50,22 +61,30 @@
 
   <!-- Post Actions Menu -->
   <div class="relative ml-3" *ngIf="canEditPost">
-    <button class="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200" 
-            type="button" 
-            (click)="toggleDropdown()">
+    <button
+      class="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+      type="button"
+      (click)="toggleDropdown()"
+    >
       <i class="fas fa-ellipsis-h text-sm"></i>
     </button>
-    
+
     <!-- Dropdown Menu -->
-    <div *ngIf="showDropdown" 
-         class="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20 transform origin-top-right transition-all">
-      <button class="w-full px-3 py-1.5 text-[13px] text-gray-700 text-left hover:bg-gray-50 hover:text-blue-600 flex items-center transition-colors"
-              (click)="onEditClick()">
+    <div
+      *ngIf="showDropdown"
+      class="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20 transform origin-top-right transition-all"
+    >
+      <button
+        class="w-full px-3 py-1.5 text-[13px] text-gray-700 text-left hover:bg-gray-50 hover:text-blue-600 flex items-center transition-colors"
+        (click)="onEditClick()"
+      >
         <i class="fas fa-pen mr-2 text-gray-400 group-hover:text-blue-500 text-xs"></i>
         Editar
       </button>
-      <button class="w-full px-3 py-1.5 text-[13px] text-red-600 text-left hover:bg-red-50 flex items-center transition-colors" 
-              (click)="onDeleteClick()">
+      <button
+        class="w-full px-3 py-1.5 text-[13px] text-red-600 text-left hover:bg-red-50 flex items-center transition-colors"
+        (click)="onDeleteClick()"
+      >
         <i class="fas fa-trash-alt mr-2 text-red-400 group-hover:text-red-500 text-xs"></i>
         Eliminar
       </button>

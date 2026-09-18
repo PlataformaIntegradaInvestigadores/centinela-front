@@ -2,7 +2,8 @@
 <div class="mb-12 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-2">
   <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-lg">
     <div
-      class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl">
+      class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl"
+    >
       <p class="text-lg font-semibold">State of Authors on Centinela</p>
 
       <div class="text-center">
@@ -10,18 +11,27 @@
           <mat-spinner></mat-spinner>
         </ng-container>
         <div *ngIf="!loadingAuthors">
-          <button class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
-                  (click)="updateAuthors()">
+          <button
+            class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
+            (click)="updateAuthors()"
+          >
             <span *ngIf="!loadingAuthors">Update</span>
           </button>
-          <div *ngIf="updateAuthorStatus?.success"
-               class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4" role="alert">
+          <div
+            *ngIf="updateAuthorStatus?.success"
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
+            role="alert"
+          >
             <div>{{ updateAuthorStatus?.message }}</div>
           </div>
 
           <ng-container *ngIf="!updateAuthorStatus?.success && updateAuthorStatus?.message">
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">{{
-              updateAuthorStatus?.message }}</div>
+            <div
+              class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+              role="alert"
+            >
+              {{ updateAuthorStatus?.message }}
+            </div>
           </ng-container>
         </div>
       </div>
@@ -29,22 +39,21 @@
 
     <div class="flex justify-evenly items-stretch gap-6 w-full mt-8 mb-8">
       <div
-        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 m-3 h-32 bg-gray-50 shadow-sm">
+        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 m-3 h-32 bg-gray-50 shadow-sm"
+      >
         <div class="text-sm text-gray-500">Total Authors</div>
         <ng-container *ngIf="loadingAuthorsComparator">
           <mat-spinner [diameter]="40"></mat-spinner>
-
         </ng-container>
         <ng-container *ngIf="!loadingAuthorsComparator">
           <div class="font-bold text-3xl text-gray-800">
             {{ authorComparator?.total_authors }}
           </div>
         </ng-container>
-
-
       </div>
       <div
-        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 m-3 h-32 bg-gray-50 shadow-sm">
+        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 m-3 h-32 bg-gray-50 shadow-sm"
+      >
         <div class="text-sm text-gray-500">Not Updated Authors</div>
         <ng-container *ngIf="loadingAuthorsComparator">
           <mat-spinner [diameter]="40"></mat-spinner>
@@ -54,7 +63,6 @@
             {{ authorComparator?.authors_no_updated }}
           </div>
         </ng-container>
-
       </div>
     </div>
     <div class="flex justify-center w-full p-4 bg-gray-50 rounded-b-xl rounded-t-2xl">
@@ -63,11 +71,8 @@
           <mat-spinner [diameter]="40"></mat-spinner>
         </ng-container>
         <ng-container *ngIf="!loadingAuthorsComparator">
-          <div class="text-4xl font-bold text-indigo-500">
-            {{ authorPercentage }}%
-          </div>
+          <div class="text-4xl font-bold text-indigo-500">{{ authorPercentage }}%</div>
         </ng-container>
-
       </div>
       <div class="w-1/2 flex justify-center items-center h-20">
         <div class="text-sm text-gray-600 pl-2">Authors are not updated</div>
@@ -77,7 +82,8 @@
 
   <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-lg">
     <div
-      class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl">
+      class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl"
+    >
       <p class="text-lg font-semibold">State of Articles on Centinela</p>
 
       <div class="text-center">
@@ -85,25 +91,35 @@
           <mat-spinner></mat-spinner>
         </ng-container>
         <div *ngIf="!loadingArticles">
-          <button class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
-                  (click)="updateArticlesCentinela()">
+          <button
+            class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
+            (click)="updateArticlesCentinela()"
+          >
             <span *ngIf="!loadingArticles">Update</span>
           </button>
-          <div *ngIf="updateArticleStatus?.success"
-               class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4" role="alert">
+          <div
+            *ngIf="updateArticleStatus?.success"
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
+            role="alert"
+          >
             <div>{{ updateArticleStatus?.message }}</div>
           </div>
 
           <ng-container *ngIf="!updateArticleStatus?.success && updateArticleStatus?.message">
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">{{
-              updateArticleStatus?.message }}</div>
+            <div
+              class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+              role="alert"
+            >
+              {{ updateArticleStatus?.message }}
+            </div>
           </ng-container>
         </div>
       </div>
     </div>
     <div class="flex justify-evenly items-stretch gap-6 w-full mt-8 mb-8">
       <div
-        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm">
+        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm"
+      >
         <div class="text-sm text-gray-500">Articles in Scopus</div>
         <ng-container *ngIf="loadingArticleComparator" class="mt-3">
           <mat-spinner [diameter]="40"></mat-spinner>
@@ -116,7 +132,8 @@
       </div>
 
       <div
-        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm">
+        class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm"
+      >
         <div class="text-sm text-gray-500">Articles on Centinela</div>
         <ng-container *ngIf="loadingArticleComparator" class="mt-3">
           <mat-spinner [diameter]="40"></mat-spinner>
@@ -134,21 +151,20 @@
           <mat-spinner [diameter]="40"></mat-spinner>
         </ng-container>
         <ng-container *ngIf="!loadingArticleComparator">
-          <div class="text-4xl font-bold text-indigo-500">
-            {{ articlePercentage }}%
-          </div>
+          <div class="text-4xl font-bold text-indigo-500">{{ articlePercentage }}%</div>
         </ng-container>
       </div>
       <div class="w-1/2 flex justify-center items-center h-20">
-        <div class="text-sm text-gray-600 pl-2">
-          Articles From Scopus are on Centinela
-        </div>
+        <div class="text-sm text-gray-600 pl-2">Articles From Scopus are on Centinela</div>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="generalStatus !== undefined && !generalStatus.success"
-     class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+<div
+  *ngIf="generalStatus !== undefined && !generalStatus.success"
+  class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+  role="alert"
+>
   <p>{{ generalStatus.message }}</p>
 </div>
 
@@ -156,14 +172,25 @@
 
 <div class="mb-12 grid gap-y-10 gap-x-4 md:grid-cols-2 xl:grid-cols-2">
   <div
-    class="flex flex-col md:flex-row justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-lg">
+    class="flex flex-col md:flex-row justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-lg"
+  >
     <div class="mb-4 md:mb-0">
       <p class="text-xl font-bold mb-2">CORPUS</p>
       <div class="flex items-center">
-        <mat-icon *ngIf="!existsCorpus" aria-hidden="false" aria-label="Warning Icon" class="white-icon mr-2"
-                  fontIcon="warning"></mat-icon>
-        <mat-icon *ngIf="existsCorpus" aria-hidden="false" aria-label="Success Icon" class="green-icon mr-2"
-                  fontIcon="check_circle"></mat-icon>
+        <mat-icon
+          *ngIf="!existsCorpus"
+          aria-hidden="false"
+          aria-label="Warning Icon"
+          class="white-icon mr-2"
+          fontIcon="warning"
+        ></mat-icon>
+        <mat-icon
+          *ngIf="existsCorpus"
+          aria-hidden="false"
+          aria-label="Success Icon"
+          class="green-icon mr-2"
+          fontIcon="check_circle"
+        ></mat-icon>
         <p class="text-sm" *ngIf="existsCorpus">Corpus detected</p>
         <p class="text-sm" *ngIf="!existsCorpus">Corpus was not detected</p>
       </div>
@@ -173,33 +200,52 @@
         <mat-spinner></mat-spinner>
       </ng-container>
       <div *ngIf="!loadingCorpus">
-        <button class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
-                (click)="generateCorpus()">
+        <button
+          class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
+          (click)="generateCorpus()"
+        >
           <span *ngIf="!loadingCorpus">Update</span>
         </button>
-        <div *ngIf="corpusStatus?.success"
-             class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4" role="alert">
+        <div
+          *ngIf="corpusStatus?.success"
+          class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
+          role="alert"
+        >
           <div>{{ corpusStatus?.message }}</div>
         </div>
 
-        <ng-container *ngIf="!corpusStatus?.success && corpusStatus?.message"
-        >
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
-               role="alert">{{ corpusStatus?.message }}</div>
+        <ng-container *ngIf="!corpusStatus?.success && corpusStatus?.message">
+          <div
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+            role="alert"
+          >
+            {{ corpusStatus?.message }}
+          </div>
         </ng-container>
       </div>
     </div>
   </div>
 
   <div
-    class="flex flex-col md:flex-row justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-lg">
+    class="flex flex-col md:flex-row justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-lg"
+  >
     <div class="mb-4 md:mb-0">
       <p class="text-xl font-bold mb-2">Model</p>
       <div class="flex items-center">
-        <mat-icon *ngIf="!existsModel" aria-hidden="false" aria-label="Warning Icon" class="white-icon mr-2"
-                  fontIcon="warning"></mat-icon>
-        <mat-icon *ngIf="existsModel" aria-hidden="false" aria-label="Success Icon" class="green-icon mr-2"
-                  fontIcon="check_circle"></mat-icon>
+        <mat-icon
+          *ngIf="!existsModel"
+          aria-hidden="false"
+          aria-label="Warning Icon"
+          class="white-icon mr-2"
+          fontIcon="warning"
+        ></mat-icon>
+        <mat-icon
+          *ngIf="existsModel"
+          aria-hidden="false"
+          aria-label="Success Icon"
+          class="green-icon mr-2"
+          fontIcon="check_circle"
+        ></mat-icon>
         <p class="text-sm" *ngIf="existsModel">Model detected</p>
         <p class="text-sm" *ngIf="!existsModel">Model was not detected</p>
       </div>
@@ -209,18 +255,28 @@
         <mat-spinner></mat-spinner>
       </ng-container>
       <div *ngIf="!loadingModel">
-        <button class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
-                (click)="generateModel()">
+        <button
+          class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
+          (click)="generateModel()"
+        >
           <span *ngIf="!loadingModel">Update</span>
         </button>
         <ng-container *ngIf="modelStatus?.success">
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4" role="alert">
-            {{ modelStatus?.message }}</div>
+          <div
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
+            role="alert"
+          >
+            {{ modelStatus?.message }}
+          </div>
         </ng-container>
 
         <ng-container *ngIf="!modelStatus?.success && modelStatus?.message">
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 " role="alert"> {{
-            modelStatus?.message }}</div>
+          <div
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+            role="alert"
+          >
+            {{ modelStatus?.message }}
+          </div>
         </ng-container>
       </div>
     </div>
@@ -228,9 +284,11 @@
 </div>
 <p class="text-lg font-semibold">Analytics DB state</p>
 <div
-  class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl">
+  class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-xl"
+>
   <div
-    class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm">
+    class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm"
+  >
     <div class="text-sm text-gray-500">Authors on Centinela</div>
     <ng-container *ngIf="loadingArticleComparator" class="mt-3">
       <mat-spinner [diameter]="40"></mat-spinner>
@@ -242,7 +300,8 @@
     </ng-container>
   </div>
   <div
-    class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm">
+    class="flex justify-center items-center flex-col border border-gray-200 rounded-lg w-1/2 h-32 m-3 bg-gray-50 shadow-sm"
+  >
     <div class="text-sm text-gray-500">Authors on Analytics DB</div>
     <ng-container *ngIf="populating" class="mt-3">
       <mat-spinner [diameter]="40"></mat-spinner>
@@ -254,20 +313,31 @@
     </ng-container>
   </div>
   <div class="flex flex-col justify-center items-center">
-    <button class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md" (click)="populateNoSqlDb()">
+    <button
+      class="bg-white text-blue-500 hover:bg-blue-100 font-bold py-2 px-4 rounded shadow-md"
+      (click)="populateNoSqlDb()"
+    >
       <span>Update</span>
-      <p [ngClass]="{'success': !isErrorUpdatingNoSqlDb, 'error': isErrorUpdatingNoSqlDb}">{{ messageNoSqlDb }}</p>
+      <p [ngClass]="{ success: !isErrorUpdatingNoSqlDb, error: isErrorUpdatingNoSqlDb }">
+        {{ messageNoSqlDb }}
+      </p>
     </button>
     <div *ngIf="authorComparator">
       <ng-container *ngIf="authorComparator.total_authors > authorsNumberNoSqlDb">
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+        <div
+          class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+          role="alert"
+        >
           Analytics DB is outdated
         </div>
       </ng-container>
     </div>
 
     <ng-container *ngIf="authorComparator?.total_authors === authorsNumberNoSqlDb">
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 " role="alert">
+      <div
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
+        role="alert"
+      >
         Analytics DB is up to date
       </div>
     </ng-container>

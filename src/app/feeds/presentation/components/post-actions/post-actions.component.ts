@@ -4,7 +4,7 @@ import { FeedPost } from '../../types/post.types';
 @Component({
   selector: 'app-post-actions',
   templateUrl: './post-actions.component.html',
-  styleUrls: ['./post-actions.component.css']
+  styleUrls: ['./post-actions.component.css'],
 })
 export class PostActionsComponent {
   @Input() post!: FeedPost;
@@ -12,7 +12,7 @@ export class PostActionsComponent {
   @Input() showComments: boolean = true;
   @Input() isLiking: boolean = false;
   @Input() showCommentsSection: boolean = false;
-  
+
   @Output() likeClick = new EventEmitter<void>();
   @Output() commentToggle = new EventEmitter<void>();
 
@@ -30,7 +30,7 @@ export class PostActionsComponent {
         }
       }, 800);
     }
-    
+
     this.likeClick.emit();
   }
 

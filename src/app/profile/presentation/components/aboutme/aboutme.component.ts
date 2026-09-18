@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-aboutme',
   templateUrl: './aboutme.component.html',
-  styleUrls: ['./aboutme.component.css']
+  styleUrls: ['./aboutme.component.css'],
 })
 export class AboutMeComponent implements OnInit, OnDestroy {
   user: User | null = null;
@@ -19,8 +19,8 @@ export class AboutMeComponent implements OnInit, OnDestroy {
   constructor(
     private userDataService: UserDataService,
     private authService: AuthService,
-    private authModalService: AuthModalService
-  ) { }
+    private authModalService: AuthModalService,
+  ) {}
 
   ngOnInit(): void {
     this.userSubscription = this.userDataService.getUser().subscribe((user: User | null) => {
@@ -35,8 +35,8 @@ export class AboutMeComponent implements OnInit, OnDestroy {
     this.userSubscription.unsubscribe();
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
+  @HostListener('window:resize')
+  onResize(): void {
     this.checkScreenSize();
   }
   /**

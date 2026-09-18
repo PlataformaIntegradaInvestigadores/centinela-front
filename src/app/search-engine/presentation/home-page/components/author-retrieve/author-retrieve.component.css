@@ -1,10 +1,9 @@
-
 /* Structure */
 .container {
   position: relative;
   margin-top: 5px;
   min-height: 30vh;
-  border-radius: 10px ;
+  border-radius: 10px;
 }
 
 .table-container {
@@ -36,7 +35,6 @@
   border: 1px solid #000000;
   background-color: #ffffff;
 }
-
 
 .status-wrapper {
   display: flex;

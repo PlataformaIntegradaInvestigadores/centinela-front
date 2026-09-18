@@ -1,25 +1,24 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-post-files',
   templateUrl: './post-files.component.html',
-  styleUrls: ['./post-files.component.css']
+  styleUrls: ['./post-files.component.css'],
 })
 export class PostFilesComponent implements OnInit, OnChanges {
   @Input() files: any[] = [];
-  
+
   @Output() fileOpen = new EventEmitter<any>();
   @Output() fileDownload = new EventEmitter<any>();
 
   // Track image load states
   imageLoadStates: { [key: string]: 'loading' | 'loaded' | 'error' } = {};
   mediaOrientations: { [key: string]: 'portrait' | 'landscape' | 'square' } = {};
-  
+
   // Cache para evitar recálculos
   private fileTypeCache: { [key: string]: string } = {};
   private imageUrlCache: { [key: string]: string } = {};
-  
+
   // Processed files para optimización
   processedFiles: any[] = [];
 
@@ -36,17 +35,17 @@ export class PostFilesComponent implements OnInit, OnChanges {
       const fileType = this.getFileTypeCached(file);
       const imageUrl = this.getImageUrlCached(file);
       const fileKey = String(file.id || file.file || index);
-      
+
       // Inicializar estado de carga para imágenes
       if (fileType === 'image') {
         this.imageLoadStates[fileKey] = 'loading';
       }
-      
+
       return {
         ...file,
         _fileKey: fileKey,
         _fileType: fileType,
-        _imageUrl: imageUrl
+        _imageUrl: imageUrl,
       };
     });
   }
@@ -61,9 +60,8 @@ export class PostFilesComponent implements OnInit, OnChanges {
     const width = image.naturalWidth || 1;
     const height = image.naturalHeight || 1;
 
-    this.mediaOrientations[key] = Math.abs(width - height) < 80
-      ? 'square'
-      : width > height ? 'landscape' : 'portrait';
+    this.mediaOrientations[key] =
+      Math.abs(width - height) < 80 ? 'square' : width > height ? 'landscape' : 'portrait';
     this.imageLoadStates[key] = 'loaded';
   }
 
@@ -81,12 +79,12 @@ export class PostFilesComponent implements OnInit, OnChanges {
 
   private getFileTypeCached(file: any): string {
     if (!file || !file.file) return 'other';
-    
+
     const cacheKey = file.id || file.file;
     if (this.fileTypeCache[cacheKey]) {
       return this.fileTypeCache[cacheKey];
     }
-    
+
     const fileType = this.calculateFileType(file);
     this.fileTypeCache[cacheKey] = fileType;
     return fileType;
@@ -94,12 +92,12 @@ export class PostFilesComponent implements OnInit, OnChanges {
 
   private getImageUrlCached(file: any): string {
     if (!file || !file.file) return '';
-    
+
     const cacheKey = file.id || file.file;
     if (this.imageUrlCache[cacheKey]) {
       return this.imageUrlCache[cacheKey];
     }
-    
+
     const imageUrl = this.calculateImageUrl(file);
     this.imageUrlCache[cacheKey] = imageUrl;
     return imageUrl;
@@ -107,7 +105,7 @@ export class PostFilesComponent implements OnInit, OnChanges {
 
   private calculateFileType(file: any): string {
     const url = file.file.toLowerCase();
-    
+
     if (url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?.*)?$/i)) {
       return 'image';
     } else if (url.match(/\.(mp4|avi|mov|wmv|flv|webm|mkv)(\?.*)?$/i)) {
@@ -125,16 +123,16 @@ export class PostFilesComponent implements OnInit, OnChanges {
 
   private calculateImageUrl(file: any): string {
     let url = file.file.trim();
-    
+
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    
+
     const baseUrl = '';
     if (!url.startsWith('/')) {
       url = '/' + url;
     }
-    
+
     return `${baseUrl}${url}`;
   }
 
@@ -144,7 +142,7 @@ export class PostFilesComponent implements OnInit, OnChanges {
     if (this.fileTypeCache[cacheKey]) {
       return this.fileTypeCache[cacheKey];
     }
-    
+
     return this.getFileTypeCached(file);
   }
 
@@ -170,22 +168,22 @@ export class PostFilesComponent implements OnInit, OnChanges {
     if (this.imageUrlCache[cacheKey]) {
       return this.imageUrlCache[cacheKey];
     }
-    
+
     return this.getImageUrlCached(file);
   }
 
   formatFileSize(size: number): string {
     if (!size) return '';
-    
+
     const units = ['B', 'KB', 'MB', 'GB'];
     let unitIndex = 0;
     let fileSize = size;
-    
+
     while (fileSize >= 1024 && unitIndex < units.length - 1) {
       fileSize /= 1024;
       unitIndex++;
     }
-    
+
     return `${fileSize.toFixed(1)} ${units[unitIndex]}`;
   }
 }

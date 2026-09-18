@@ -18,10 +18,10 @@
   z-index: 1;
 
   /* Degradado que cambia entre blanco, gris y azul */
-  background: linear-gradient(to right, rgb(229 231 235), rgb(107 114 128), #1E3C8B);
-  
+  background: linear-gradient(to right, rgb(229 231 235), rgb(107 114 128), #1e3c8b);
+
   /* Para compatibilidad con navegadores antiguos */
-  background: -webkit-linear-gradient(to right, rgb(229 231 235), rgb(107 114 128), #1E3C8B);
+  background: -webkit-linear-gradient(to right, rgb(229 231 235), rgb(107 114 128), #1e3c8b);
 
   transform-origin: 0 50%;
 

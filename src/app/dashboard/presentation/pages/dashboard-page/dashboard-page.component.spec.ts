@@ -13,9 +13,8 @@ describe('DashboardPageComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [DashboardPageComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule]
-    ,
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, RouterTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(DashboardPageComponent);
     component = fixture.componentInstance;

@@ -7,20 +7,22 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'view-all-members',
   templateUrl: './view-all-members.component.html',
-  styleUrls: ['./view-all-members.component.css']
+  styleUrls: ['./view-all-members.component.css'],
 })
-export class ViewAllMembersComponent  implements OnInit{
-
+export class ViewAllMembersComponent implements OnInit {
   @Input() members: UserG[] | null = [];
   @Input() idOwnerGroup: string | null = null;
-  @Output() memberDeleted = new EventEmitter<string>(); 
+  @Output() memberDeleted = new EventEmitter<string>();
   private routerSubscription: Subscription | undefined;
 
-  constructor(private renderer: Renderer2, private router: Router) {}
-  
+  constructor(
+    private renderer: Renderer2,
+    private router: Router,
+  ) {}
+
   ngOnInit(): void {
     initFlowbite();
-    this.routerSubscription = this.router.events.subscribe(event => {
+    this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.closeModal();
       }
@@ -29,7 +31,7 @@ export class ViewAllMembersComponent  implements OnInit{
 
   onMemberDeleted(memberId: string): void {
     if (this.members) {
-      this.members = this.members.filter(member => member.id !== memberId);
+      this.members = this.members.filter((member) => member.id !== memberId);
     }
   }
 
@@ -48,6 +50,4 @@ export class ViewAllMembersComponent  implements OnInit{
     }
     this.renderer.removeClass(document.body, 'overflow-hidden');
   }
-
-
 }

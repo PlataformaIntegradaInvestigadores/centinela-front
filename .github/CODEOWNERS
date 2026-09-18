@@ -1,0 +1,8 @@
+# Default owners: whole repo requires review from the active team.
+# Al rotar de semestre: actualizar membership de team tic-current, NO editar este archivo.
+* @PlataformaIntegradaInvestigadores/tic-current
+
+# Critical infrastructure paths.
+/nginx.conf @PlataformaIntegradaInvestigadores/tic-current
+/docker-compose.yaml @PlataformaIntegradaInvestigadores/tic-current
+/docker-compose_produccion.yaml @PlataformaIntegradaInvestigadores/tic-current

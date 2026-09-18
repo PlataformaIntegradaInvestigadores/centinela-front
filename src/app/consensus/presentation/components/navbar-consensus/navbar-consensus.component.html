@@ -1,72 +1,127 @@
 <ol
-  class="flex justify-between items-center w-full p-3 space-x-2 sm:space-x-4 text-sm font-medium bg-white border border-gray-200 rounded-lg shadow-sm sm:text-base dark:bg-gray-800 dark:border-gray-700">
+  class="flex justify-between items-center w-full p-3 space-x-2 sm:space-x-4 text-sm font-medium bg-white border border-gray-200 rounded-lg shadow-sm sm:text-base dark:bg-gray-800 dark:border-gray-700"
+>
   <div class="flex flex-wrap items-center justify-start">
     <!-- Fases del consenso -->
     <li class="flex items-center">
-      <a href="javascript:void(0);" (click)="$event.preventDefault()" [ngClass]="{'active': currentPhase === 0}"
-        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default">
+      <a
+        href="javascript:void(0);"
+        (click)="$event.preventDefault()"
+        [ngClass]="{ active: currentPhase === 0 }"
+        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default"
+      >
         <span
-          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-900">1</span>
+          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-900"
+          >1</span
+        >
         <span class="hidden sm:inline-flex flex-col sm:flex-row items-center">
           Recommended <span class="hidden sm:inline-flex sm:ms-2">Topics</span>
         </span>
-        <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 12 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="m7 9 4-4-4-4M1 9l4-4-4-4" />
+        <svg
+          class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 12 10"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m7 9 4-4-4-4M1 9l4-4-4-4"
+          />
         </svg>
       </a>
     </li>
     <li class="flex items-center">
-      <a href="javascript:void(0);" (click)="$event.preventDefault()" [ngClass]="{'active': currentPhase === 1}"
-        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default">
+      <a
+        href="javascript:void(0);"
+        (click)="$event.preventDefault()"
+        [ngClass]="{ active: currentPhase === 1 }"
+        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default"
+      >
         <span
-          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-900">2</span>
+          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-900"
+          >2</span
+        >
         <span class="hidden sm:inline-flex flex-col sm:flex-row items-center">
           Valuation <span class="hidden sm:inline-flex sm:ms-2">Process</span>
         </span>
-        <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 12 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="m7 9 4-4-4-4M1 9l4-4-4-4" />
+        <svg
+          class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 12 10"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m7 9 4-4-4-4M1 9l4-4-4-4"
+          />
         </svg>
       </a>
     </li>
     <li class="flex items-center">
-      <a href="javascript:void(0);" (click)="$event.preventDefault()" [ngClass]="{'active': currentPhase === 2}"
-        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default">
+      <a
+        href="javascript:void(0);"
+        (click)="$event.preventDefault()"
+        [ngClass]="{ active: currentPhase === 2 }"
+        class="flex items-center no-underline text-gray-700 dark:text-gray-400 cursor-default"
+      >
         <span
-          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-400">3</span>
+          class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-900 rounded-full shrink-0 dark:border-gray-400"
+          >3</span
+        >
         <span class="hidden sm:inline-flex">Final Result</span>
       </a>
     </li>
   </div>
 
   <div *ngIf="isDecisionPhase">
-    <button *ngIf="showRepeatButton" (click)="openModal()"
-      class="inline-flex items-center justify-center p-2 border-b-2 border-transparent rounded-lg text-base transition-colors duration-200 ease-in-out bg-primary_tailwind text-white hover:bg-primary_hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:bg-primary_hover">
+    <button
+      *ngIf="showRepeatButton"
+      (click)="openModal()"
+      class="inline-flex items-center justify-center p-2 border-b-2 border-transparent rounded-lg text-base transition-colors duration-200 ease-in-out bg-primary_tailwind text-white hover:bg-primary_hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:bg-primary_hover"
+    >
       Repeat Vote
     </button>
   </div>
 </ol>
 
-
 <!-- Modal -->
-<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+<div
+  *ngIf="showModal"
+  class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
+>
   <div class="bg-white rounded-lg shadow-lg p-6 w-80 dark:bg-gray-800 lg:w-[425px] max-h-56">
     <div class="flex justify-between items-center mb-4 h-8">
       <h3 class="text-lg font-bold dark:text-white">Confirm Your Decision</h3>
-      <button (click)="closeModal()"
-        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+      <button
+        (click)="closeModal()"
+        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
         &times;
       </button>
     </div>
-    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure you want to repeat the voting phase? Once you resubmit your vote, it cannot be changed.</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+      Are you sure you want to repeat the voting phase? Once you resubmit your vote, it cannot be
+      changed.
+    </p>
     <div class="flex justify-end space-x-4">
-      <button (click)="cancelRepeatVote()"
-        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
-      <button (click)="confirmRepeatVote()"
-        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800">Confirm</button>
+      <button
+        (click)="cancelRepeatVote()"
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="confirmRepeatVote()"
+        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800"
+      >
+        Confirm
+      </button>
     </div>
   </div>
 </div>

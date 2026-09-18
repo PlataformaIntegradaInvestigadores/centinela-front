@@ -29,7 +29,6 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.env
 .env
 .env_produccion*
 certs/
@@ -38,6 +37,9 @@ certs/
 /.angular/cache
 .sass-cache/
 /connect.lock
+
+# Agent configuration (local only, not committed)
+AGENTS.md
 /coverage
 /libpeerconnection.log
 testem.log
@@ -48,6 +50,3 @@ testem.log
 Thumbs.db
 src/environments/environment.development.ts
 # ci-test
-
-# Agent configuration (local only, not committed)
-AGENTS.md

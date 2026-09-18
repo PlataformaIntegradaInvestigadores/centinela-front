@@ -67,4 +67,4 @@ import { ConfirmDeleteModalComponent } from '../group/presentation/confirm-delet
   ],
   providers: [D3Service],
 })
-export class ProfilePageModule { }
+export class ProfilePageModule {}

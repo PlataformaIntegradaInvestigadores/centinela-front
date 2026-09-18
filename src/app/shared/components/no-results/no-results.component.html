@@ -1,8 +1,18 @@
-<div *ngIf="isServerOnline" class="flex flex-col justify-center items-center text-center py-12 bg-white rounded-xl shadow-md border border-gray-200 text-gray-400 mt-4">
-  <mat-icon class="mb-4" style="font-size: 64px; width: 64px; height: 64px; line-height: 64px;">sentiment_very_dissatisfied</mat-icon>
+<div
+  *ngIf="isServerOnline"
+  class="flex flex-col justify-center items-center text-center py-12 bg-white rounded-xl shadow-md border border-gray-200 text-gray-400 mt-4"
+>
+  <mat-icon class="mb-4" style="font-size: 64px; width: 64px; height: 64px; line-height: 64px"
+    >sentiment_very_dissatisfied</mat-icon
+  >
   <p class="text-xl font-medium text-gray-500">{{ title }}</p>
 </div>
-<div *ngIf="!isServerOnline" class="flex flex-col justify-center items-center text-center py-12 bg-white rounded-xl shadow-md border border-gray-200 text-gray-400 mt-4">
-  <mat-icon class="mb-4" style="font-size: 64px; width: 64px; height: 64px; line-height: 64px;">cloud_off</mat-icon>
+<div
+  *ngIf="!isServerOnline"
+  class="flex flex-col justify-center items-center text-center py-12 bg-white rounded-xl shadow-md border border-gray-200 text-gray-400 mt-4"
+>
+  <mat-icon class="mb-4" style="font-size: 64px; width: 64px; height: 64px; line-height: 64px"
+    >cloud_off</mat-icon
+  >
   <p class="text-xl font-medium text-gray-500">Server is offline</p>
 </div>

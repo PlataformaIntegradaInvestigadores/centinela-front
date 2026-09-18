@@ -1,21 +1,24 @@
 <div class="w-full flex flex-col gap-4 py-4 px-2">
-
   <!-- Loading -->
   <div *ngIf="loading" class="flex justify-center items-center py-16">
     <app-mini-loader size="10"></app-mini-loader>
   </div>
 
   <!-- Data -->
-  <div *ngIf="!loading && articles.length > 0"
-       class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full">
-    <table
-      mat-table
-      [dataSource]="pagedArticles"
-      class="min-w-full"
-    >
+  <div
+    *ngIf="!loading && articles.length > 0"
+    class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full"
+  >
+    <table mat-table [dataSource]="pagedArticles" class="min-w-full">
       <!-- Title Column -->
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef class="font-bold text-gray-500 uppercase tracking-wider text-xs">Title</th>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="font-bold text-gray-500 uppercase tracking-wider text-xs"
+        >
+          Title
+        </th>
         <td mat-cell *matCellDef="let row" class="text-sm font-medium text-gray-900 py-3 pr-4">
           <div class="line-clamp-2">{{ row.title }}</div>
           <div class="text-xs text-gray-500 mt-1">Scopus ID: {{ row.scopus_id }}</div>
@@ -24,11 +27,15 @@
 
       <!-- Publication Date Column -->
       <ng-container matColumnDef="publication_date">
-        <th mat-header-cell *matHeaderCellDef class="font-bold text-gray-500 uppercase tracking-wider text-xs w-1/4">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="font-bold text-gray-500 uppercase tracking-wider text-xs w-1/4"
+        >
           Publication Date
         </th>
         <td mat-cell *matCellDef="let row" class="text-sm text-gray-900 py-3 whitespace-nowrap">
-          {{ row.publication_date | date:'mediumDate' }}
+          {{ row.publication_date | date: 'mediumDate' }}
         </td>
       </ng-container>
 
@@ -42,24 +49,36 @@
     </table>
 
     <!-- Paginacion (en cliente) -->
-    <div *ngIf="articles.length > pageSize"
-         class="flex items-center justify-end gap-3 px-4 py-3 bg-white border-t border-gray-200">
+    <div
+      *ngIf="articles.length > pageSize"
+      class="flex items-center justify-end gap-3 px-4 py-3 bg-white border-t border-gray-200"
+    >
       <span class="text-sm text-gray-600">
         Page <span class="font-bold text-red-700">{{ pageIndex + 1 }}</span> of {{ totalPages }}
         <span class="text-gray-400">({{ articles.length }} articles)</span>
       </span>
-      <button type="button" (click)="prevPage()" [disabled]="pageIndex === 0"
-              class="px-3 py-1 rounded border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+      <button
+        type="button"
+        (click)="prevPage()"
+        [disabled]="pageIndex === 0"
+        class="px-3 py-1 rounded border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         Previous
       </button>
-      <button type="button" (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1"
-              class="px-3 py-1 rounded border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="pageIndex >= totalPages - 1"
+        class="px-3 py-1 rounded border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         Next
       </button>
     </div>
   </div>
 
   <!-- No data -->
-  <app-no-results *ngIf="!loading && articles.length === 0"
-                  title="This author has no registered articles"></app-no-results>
+  <app-no-results
+    *ngIf="!loading && articles.length === 0"
+    title="This author has no registered articles"
+  ></app-no-results>
 </div>

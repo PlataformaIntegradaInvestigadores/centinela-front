@@ -3,8 +3,8 @@
 
 export interface FairnessThresholds {
   di_min: number;
-  spd: number[];          // [-0.1, 0.1]
-  util_max_drop: number;  // 0.05
+  spd: number[]; // [-0.1, 0.1]
+  util_max_drop: number; // 0.05
 }
 
 export interface FairnessMeta {

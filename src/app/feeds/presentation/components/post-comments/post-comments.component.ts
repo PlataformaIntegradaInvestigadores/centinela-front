@@ -7,17 +7,17 @@ import { Comment, CreateCommentData } from '../../../domain/entities/feed.interf
 @Component({
   selector: 'app-post-comments',
   templateUrl: './post-comments.component.html',
-  styleUrls: ['./post-comments.component.css']
+  styleUrls: ['./post-comments.component.css'],
 })
 export class PostCommentsComponent implements OnInit, OnDestroy {
   @Input() postId!: string;
   @Input() commentsCount: number = 0;
-  
+
   @Output() commentAdded = new EventEmitter<Comment>();
   @Output() commentsCountUpdated = new EventEmitter<number>();
 
   private destroy$ = new Subject<void>();
-  
+
   comments: Comment[] = [];
   newCommentContent = '';
   isLoadingComments = false;
@@ -27,7 +27,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
 
   constructor(
     private commentService: CommentService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -50,29 +50,32 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
     this.isLoadingComments = true;
     this.error = null;
 
-    this.commentService.getPostComments(this.postId)
+    this.commentService
+      .getPostComments(this.postId)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoadingComments = false)
+        finalize(() => (this.isLoadingComments = false)),
       )
       .subscribe({
         next: (comments) => {
           this.comments = comments;
-          
+
           // Actualizar el contador de comentarios real
           // Solo emitimos la actualización si los comentarios devueltos son diferentes al contador actual
           // Pero no cambiamos el contador interno ya que ese es un Input desde el post
           if (comments.length !== this.commentsCount) {
-            console.log(`Actualizando contador de comentarios de ${this.commentsCount} a ${comments.length}`);
+            console.log(
+              `Actualizando contador de comentarios de ${this.commentsCount} a ${comments.length}`,
+            );
             this.commentsCountUpdated.emit(comments.length);
           }
-          
+
           console.log(`Comentarios cargados para post ${this.postId}:`, comments.length);
         },
         error: (error) => {
           console.error('Error loading comments:', error);
           this.error = 'No se pudieron cargar los comentarios.';
-        }
+        },
       });
   }
 
@@ -86,13 +89,14 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
     this.error = null;
 
     const commentData: CreateCommentData = {
-      content: this.newCommentContent.trim()
+      content: this.newCommentContent.trim(),
     };
 
-    this.commentService.createComment(this.postId, commentData)
+    this.commentService
+      .createComment(this.postId, commentData)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isSubmittingComment = false)
+        finalize(() => (this.isSubmittingComment = false)),
       )
       .subscribe({
         next: (newComment) => {
@@ -100,17 +104,17 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
           this.comments.unshift(newComment);
           this.newCommentContent = '';
           this.commentsCount++;
-          
+
           // Emitir eventos para notificar al componente padre
           this.commentAdded.emit(newComment);
           this.commentsCountUpdated.emit(this.commentsCount);
-          
+
           console.log('Comentario creado:', newComment);
         },
         error: (error) => {
           console.error('Error creating comment:', error);
           this.error = 'No se pudo enviar el comentario. Intenta de nuevo.';
-        }
+        },
       });
   }
 
@@ -118,7 +122,8 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
    * Alterna el like de un comentario
    */
   toggleCommentLike(comment: Comment): void {
-    this.commentService.toggleCommentLike(comment.id)
+    this.commentService
+      .toggleCommentLike(comment.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -127,7 +132,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error toggling comment like:', error);
-        }
+        },
       });
   }
 
@@ -139,17 +144,18 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.commentService.deleteComment(comment.id)
+    this.commentService
+      .deleteComment(comment.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.comments = this.comments.filter(c => c.id !== comment.id);
+          this.comments = this.comments.filter((c) => c.id !== comment.id);
           this.commentsCount--;
         },
         error: (error) => {
           console.error('Error deleting comment:', error);
           this.error = 'No se pudo eliminar el comentario.';
-        }
+        },
       });
   }
 

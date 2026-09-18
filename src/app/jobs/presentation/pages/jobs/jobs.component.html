@@ -2,10 +2,10 @@
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-900">Portal de Empleos</h1>
+      <h1 class="text-3xl font-bold text-gray-900">Job Portal</h1>
       <p class="mt-2 text-gray-600">
-        <span *ngIf="isResearcher">Descubre oportunidades personalizadas para ti</span>
-        <span *ngIf="!isResearcher">Encuentra tu próxima oportunidad laboral</span>
+        <span *ngIf="isResearcher">Discover personalized opportunities for you</span>
+        <span *ngIf="isCompany">Manage your job postings and review applicants</span>
       </p>
     </div>
 
@@ -13,39 +13,59 @@
     <div *ngIf="isResearcher" class="mb-6">
       <div class="border-b border-gray-200">
         <nav class="flex space-x-8">
-          <button (click)="setActiveTab('recommendations')" [class.border-blue-500]="activeTab === 'recommendations'"
+          <button
+            (click)="setActiveTab('recommendations')"
+            [class.border-blue-500]="activeTab === 'recommendations'"
             [class.text-blue-600]="activeTab === 'recommendations'"
             [class.border-transparent]="activeTab !== 'recommendations'"
             [class.text-gray-500]="activeTab !== 'recommendations'"
-            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700">
+            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              ></path>
             </svg>
-            Recomendados para ti
+            Recommended for you
           </button>
-          <button (click)="setActiveTab('trending')" [class.border-blue-500]="activeTab === 'trending'"
-            [class.text-blue-600]="activeTab === 'trending'" [class.border-transparent]="activeTab !== 'trending'"
+          <button
+            (click)="setActiveTab('trending')"
+            [class.border-blue-500]="activeTab === 'trending'"
+            [class.text-blue-600]="activeTab === 'trending'"
+            [class.border-transparent]="activeTab !== 'trending'"
             [class.text-gray-500]="activeTab !== 'trending'"
-            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700">
+            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              ></path>
             </svg>
             Trending
           </button>
-          <button (click)="setActiveTab('my-applications')" [class.border-blue-500]="activeTab === 'my-applications'"
+          <button
+            (click)="setActiveTab('my-applications')"
+            [class.border-blue-500]="activeTab === 'my-applications'"
             [class.text-blue-600]="activeTab === 'my-applications'"
             [class.border-transparent]="activeTab !== 'my-applications'"
             [class.text-gray-500]="activeTab !== 'my-applications'"
-            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700">
+            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
             </svg>
-            Mis Postulaciones
+            My Applications
           </button>
         </nav>
       </div>
@@ -55,16 +75,23 @@
     <div *ngIf="isCompany" class="mb-6">
       <div class="border-b border-gray-200">
         <nav class="flex space-x-8">
-          <button (click)="setActiveTab('my-jobs')" [class.border-blue-500]="activeTab === 'my-jobs'"
-            [class.text-blue-600]="activeTab === 'my-jobs'" [class.border-transparent]="activeTab !== 'my-jobs'"
+          <button
+            (click)="setActiveTab('my-jobs')"
+            [class.border-blue-500]="activeTab === 'my-jobs'"
+            [class.text-blue-600]="activeTab === 'my-jobs'"
+            [class.border-transparent]="activeTab !== 'my-jobs'"
             [class.text-gray-500]="activeTab !== 'my-jobs'"
-            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700">
+            class="flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm hover:text-gray-700"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 00-2 2H6a2 2 0 00-2-2V4m16 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h12a2 2 0 012 2z">
-              </path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 00-2 2H6a2 2 0 00-2-2V4m16 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h12a2 2 0 012 2z"
+              ></path>
             </svg>
-            Mis Trabajos Publicados
+            My Posted Jobs
           </button>
         </nav>
       </div>
@@ -77,18 +104,29 @@
         <div class="lg:w-1/3">
           <!-- Botón crear trabajo para empresas -->
           <div *ngIf="isCompany && activeTab === 'my-jobs'" class="mb-4">
-            <button (click)="openCreateJobModal()"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200">
+            <button
+              (click)="openCreateJobModal()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-                </path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
               </svg>
-              Crear Nuevo Trabajo
+              Create New Job
             </button>
           </div>
 
-          <app-job-list [jobs]="jobs" [selectedJob]="selectedJob" [loading]="loading" [title]="getListTitle()"
-            (jobSelected)="selectJob($event)">
+          <app-job-list
+            [jobs]="jobs"
+            [selectedJob]="selectedJob"
+            [loading]="loading"
+            [title]="getListTitle()"
+            (jobSelected)="selectJob($event)"
+          >
           </app-job-list>
         </div>
 
@@ -96,14 +134,21 @@
         <div class="lg:w-2/3">
           <!-- Vista estándar del trabajo para researchers -->
           <div *ngIf="isResearcher">
-            <app-job-detail [job]="selectedJob" (applicationSubmitted)="onApplicationSubmitted()"></app-job-detail>
+            <app-job-detail
+              [job]="selectedJob"
+              (applicationSubmitted)="onApplicationSubmitted()"
+            ></app-job-detail>
           </div>
 
           <!-- Vista extendida para empresas: trabajo + aplicaciones -->
           <div *ngIf="isCompany" class="space-y-6">
-            <app-job-detail [job]="selectedJob" [showCompanyActions]="isCompany && activeTab === 'my-jobs'"
-              (applicationSubmitted)="onApplicationSubmitted()" (editJob)="editJob($event)"
-              (deleteJob)="confirmDeleteJob($event)">
+            <app-job-detail
+              [job]="selectedJob"
+              [showCompanyActions]="isCompany && activeTab === 'my-jobs'"
+              (applicationSubmitted)="onApplicationSubmitted()"
+              (editJob)="editJob($event)"
+              (deleteJob)="confirmDeleteJob($event)"
+            >
             </app-job-detail>
           </div>
         </div>
@@ -113,21 +158,27 @@
       <div *ngIf="activeTab === 'my-applications'" class="w-full">
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Mis Postulaciones</h3>
+            <h3 class="text-lg font-medium text-gray-900">My Applications</h3>
           </div>
 
           <div *ngIf="applicationsLoading" class="p-6">
             <div class="flex items-center justify-center">
               <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span class="ml-2 text-gray-600">Cargando postulaciones...</span>
+              <span class="ml-2 text-gray-600">Loading applications...</span>
             </div>
           </div>
 
-          <div *ngIf="!applicationsLoading && applications.length === 0" class="p-6 text-center text-gray-500">
-            No has realizado ninguna postulación aún.
+          <div
+            *ngIf="!applicationsLoading && applications.length === 0"
+            class="p-6 text-center text-gray-500"
+          >
+            You haven't applied to any jobs yet.
           </div>
 
-          <div *ngIf="!applicationsLoading && applications.length > 0" class="divide-y divide-gray-200">
+          <div
+            *ngIf="!applicationsLoading && applications.length > 0"
+            class="divide-y divide-gray-200"
+          >
             <div *ngFor="let application of applications" class="p-6">
               <div class="flex items-start justify-between">
                 <div class="flex-1">
@@ -139,43 +190,53 @@
                   </p>
 
                   <div *ngIf="application.cover_letter" class="mb-3">
-                    <h5 class="text-sm font-medium text-gray-700 mb-1">Tu carta de presentación:</h5>
-                    <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded">{{ application.cover_letter }}</p>
+                    <h5 class="text-sm font-medium text-gray-700 mb-1">Your cover letter:</h5>
+                    <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                      {{ application.cover_letter }}
+                    </p>
                   </div>
 
-
                   <div class="flex items-center gap-4 text-sm text-gray-500">
-                    <span>Aplicaste el {{ application.applied_at | date:'dd/MM/yyyy HH:mm' }}</span>
+                    <span>Applied on {{ application.applied_at | date: 'dd/MM/yyyy HH:mm' }}</span>
                     <span *ngIf="application.resume_file">
-                      <a [href]="getFullFileUrl(application.resume_file)" target="_blank"
-                        class="text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                      <a
+                        [href]="getFullFileUrl(application.resume_file)"
+                        target="_blank"
+                        class="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                      >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                          </path>
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          ></path>
                         </svg>
-                        Ver CV enviado
+                        View submitted resume
                       </a>
                     </span>
                   </div>
                 </div>
 
                 <div class="flex-shrink-0 ml-4">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" [ngClass]="{
-                          'bg-yellow-100 text-yellow-800': application.status === 'pending',
-                          'bg-blue-100 text-blue-800': application.status === 'reviewing',
-                          'bg-purple-100 text-purple-800': application.status === 'interviewed',
-                          'bg-green-100 text-green-800': application.status === 'accepted',
-                          'bg-red-100 text-red-800': application.status === 'rejected',
-                          'bg-gray-100 text-gray-800': application.status === 'withdrawn'
-                        }">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                    [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': application.status === 'pending',
+                      'bg-blue-100 text-blue-800': application.status === 'reviewing',
+                      'bg-purple-100 text-purple-800': application.status === 'interviewed',
+                      'bg-green-100 text-green-800': application.status === 'accepted',
+                      'bg-red-100 text-red-800': application.status === 'rejected',
+                      'bg-gray-100 text-gray-800': application.status === 'withdrawn',
+                    }"
+                  >
                     {{ application.status_display }}
                   </span>
                 </div>
               </div>
 
               <div *ngIf="application.notes" class="mt-3 pt-3 border-t border-gray-100">
-                <h5 class="text-sm font-medium text-gray-700 mb-1">Comentarios de la empresa:</h5>
+                <h5 class="text-sm font-medium text-gray-700 mb-1">Company comments:</h5>
                 <p class="text-sm text-gray-600">{{ application.notes }}</p>
               </div>
             </div>
@@ -187,14 +248,22 @@
 </div>
 
 <!-- Modal de notas (para empresas) -->
-<div *ngIf="showNotesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div
+  *ngIf="showNotesModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-medium text-gray-900">Editar Notas</h3>
+        <h3 class="text-lg font-medium text-gray-900">Edit Notes</h3>
         <button (click)="closeNotesModal()" class="text-gray-400 hover:text-gray-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
           </svg>
         </button>
       </div>
@@ -208,21 +277,29 @@
 
       <div class="mb-4">
         <label for="notesText" class="block text-sm font-medium text-gray-700 mb-2">
-          Notas internas (solo visibles para tu empresa)
+          Internal notes (only visible to your company)
         </label>
-        <textarea id="notesText" [(ngModel)]="notesText" rows="4"
+        <textarea
+          id="notesText"
+          [(ngModel)]="notesText"
+          rows="4"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Añade notas sobre este candidato..."></textarea>
+          placeholder="Add notes about this candidate..."
+        ></textarea>
       </div>
 
       <div class="flex gap-3">
-        <button (click)="closeNotesModal()"
-          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg">
-          Cancelar
+        <button
+          (click)="closeNotesModal()"
+          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg"
+        >
+          Cancel
         </button>
-        <button (click)="saveNotes()"
-          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">
-          Guardar Notas
+        <button
+          (click)="saveNotes()"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg"
+        >
+          Save Notes
         </button>
       </div>
     </div>
@@ -230,16 +307,24 @@
 </div>
 
 <!-- Modal de creación/edición de trabajo -->
-<div *ngIf="showJobModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div
+  *ngIf="showJobModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
     <div class="px-6 py-4 border-b border-gray-200">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-medium text-gray-900">
-          {{ isEditingJob ? 'Editar Trabajo' : 'Crear Nuevo Trabajo' }}
+          {{ isEditingJob ? 'Edit Job' : 'Create New Job' }}
         </h3>
         <button (click)="closeJobModal()" class="text-gray-400 hover:text-gray-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
           </svg>
         </button>
       </div>
@@ -250,131 +335,195 @@
         <!-- Título -->
         <div class="md:col-span-2">
           <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1">
-            Título del Trabajo *
+            Job Title *
           </label>
-          <input id="jobTitle" [(ngModel)]="currentJobData.title" name="jobTitle" type="text" required
+          <input
+            id="jobTitle"
+            [(ngModel)]="currentJobData.title"
+            name="jobTitle"
+            type="text"
+            required
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Ej: Desarrollador Frontend Senior">
+            placeholder="E.g: Senior Frontend Developer"
+          />
         </div>
 
-        <!-- Ubicación -->
+        <!-- Location -->
         <div>
           <label for="jobLocation" class="block text-sm font-medium text-gray-700 mb-1">
-            Ubicación *
+            Location *
           </label>
-          <input id="jobLocation" [(ngModel)]="currentJobData.location" name="jobLocation" type="text" required
+          <input
+            id="jobLocation"
+            [(ngModel)]="currentJobData.location"
+            name="jobLocation"
+            type="text"
+            required
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Ej: Madrid, España">
+            placeholder="E.g: Madrid, Spain"
+          />
         </div>
 
-        <!-- Tipo de trabajo -->
+        <!-- Job type -->
         <div>
           <label for="jobType" class="block text-sm font-medium text-gray-700 mb-1">
-            Tipo de Trabajo *
+            Job Type *
           </label>
-          <select id="jobType" [(ngModel)]="currentJobData.job_type" name="jobType" required
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <option value="full_time">Tiempo Completo</option>
-            <option value="part_time">Tiempo Parcial</option>
-            <option value="contract">Contrato</option>
-            <option value="internship">Prácticas</option>
+          <select
+            id="jobType"
+            [(ngModel)]="currentJobData.job_type"
+            name="jobType"
+            required
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="full_time">Full Time</option>
+            <option value="part_time">Part Time</option>
+            <option value="contract">Contract</option>
+            <option value="internship">Internship</option>
             <option value="freelance">Freelance</option>
           </select>
         </div>
 
-        <!-- Nivel de experiencia -->
+        <!-- Experience level -->
         <div>
           <label for="experienceLevel" class="block text-sm font-medium text-gray-700 mb-1">
-            Nivel de Experiencia *
+            Experience Level *
           </label>
-          <select id="experienceLevel" [(ngModel)]="currentJobData.experience_level" name="experienceLevel" required
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <option value="entry">Nivel de Entrada</option>
-            <option value="mid">Nivel Intermedio</option>
-            <option value="senior">Nivel Senior</option>
-            <option value="executive">Ejecutivo</option>
+          <select
+            id="experienceLevel"
+            [(ngModel)]="currentJobData.experience_level"
+            name="experienceLevel"
+            required
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="entry">Entry Level</option>
+            <option value="mid">Mid Level</option>
+            <option value="senior">Senior Level</option>
+            <option value="executive">Executive</option>
           </select>
         </div>
 
-        <!-- Trabajo remoto -->
+        <!-- Remote work -->
         <div>
           <label class="flex items-center">
-            <input type="checkbox" [(ngModel)]="currentJobData.is_remote" name="isRemote"
-              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-            <span class="ml-2 text-sm text-gray-700">Trabajo Remoto</span>
+            <input
+              type="checkbox"
+              [(ngModel)]="currentJobData.is_remote"
+              name="isRemote"
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span class="ml-2 text-sm text-gray-700">Remote Work</span>
           </label>
         </div>
 
-        <!-- Salario mínimo -->
+        <!-- Minimum salary -->
         <div>
           <label for="salaryMin" class="block text-sm font-medium text-gray-700 mb-1">
-            Salario Mínimo (€)
+            Minimum Salary (€)
           </label>
-          <input id="salaryMin" [(ngModel)]="currentJobData.salary_min" name="salaryMin" type="number" min="0"
+          <input
+            id="salaryMin"
+            [(ngModel)]="currentJobData.salary_min"
+            name="salaryMin"
+            type="number"
+            min="0"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="30000">
+            placeholder="30000"
+          />
         </div>
 
-        <!-- Salario máximo -->
+        <!-- Maximum salary -->
         <div>
           <label for="salaryMax" class="block text-sm font-medium text-gray-700 mb-1">
-            Salario Máximo (€)
+            Maximum Salary (€)
           </label>
-          <input id="salaryMax" [(ngModel)]="currentJobData.salary_max" name="salaryMax" type="number" min="0"
+          <input
+            id="salaryMax"
+            [(ngModel)]="currentJobData.salary_max"
+            name="salaryMax"
+            type="number"
+            min="0"
             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="50000">
+            placeholder="50000"
+          />
         </div>
 
-        <!-- Fecha límite -->
+        <!-- Deadline -->
         <div>
           <label for="deadline" class="block text-sm font-medium text-gray-700 mb-1">
-            Fecha Límite de Aplicación
+            Application Deadline
           </label>
-          <input id="deadline" [(ngModel)]="currentJobData.application_deadline" name="deadline" type="date"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <input
+            id="deadline"
+            [(ngModel)]="currentJobData.application_deadline"
+            name="deadline"
+            type="date"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
         </div>
       </div>
 
-      <!-- Descripción -->
+      <!-- Description -->
       <div>
         <label for="jobDescription" class="block text-sm font-medium text-gray-700 mb-1">
-          Descripción del Trabajo *
+          Job Description *
         </label>
-        <textarea id="jobDescription" [(ngModel)]="currentJobData.description" name="jobDescription" rows="4" required
+        <textarea
+          id="jobDescription"
+          [(ngModel)]="currentJobData.description"
+          name="jobDescription"
+          rows="4"
+          required
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Describe las responsabilidades y tareas del puesto..."></textarea>
+          placeholder="Describe the responsibilities and tasks of the position..."
+        ></textarea>
       </div>
 
-      <!-- Requisitos -->
+      <!-- Requirements -->
       <div>
         <label for="jobRequirements" class="block text-sm font-medium text-gray-700 mb-1">
-          Requisitos
+          Requirements
         </label>
-        <textarea id="jobRequirements" [(ngModel)]="currentJobData.requirements" name="jobRequirements" rows="3"
+        <textarea
+          id="jobRequirements"
+          [(ngModel)]="currentJobData.requirements"
+          name="jobRequirements"
+          rows="3"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Cada requisito en una línea nueva..."></textarea>
-        <p class="text-xs text-gray-500 mt-1">Escribe cada requisito en una línea separada</p>
+          placeholder="Each requirement on a new line..."
+        ></textarea>
+        <p class="text-xs text-gray-500 mt-1">Write each requirement on a separate line</p>
       </div>
 
-      <!-- Beneficios -->
+      <!-- Benefits -->
       <div>
         <label for="jobBenefits" class="block text-sm font-medium text-gray-700 mb-1">
-          Beneficios
+          Benefits
         </label>
-        <textarea id="jobBenefits" [(ngModel)]="currentJobData.benefits" name="jobBenefits" rows="3"
+        <textarea
+          id="jobBenefits"
+          [(ngModel)]="currentJobData.benefits"
+          name="jobBenefits"
+          rows="3"
           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Cada beneficio en una línea nueva..."></textarea>
-        <p class="text-xs text-gray-500 mt-1">Escribe cada beneficio en una línea separada</p>
+          placeholder="Each benefit on a new line..."
+        ></textarea>
+        <p class="text-xs text-gray-500 mt-1">Write each benefit on a separate line</p>
       </div>
 
       <div class="flex gap-3 pt-4">
-        <button type="button" (click)="closeJobModal()"
-          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-          Cancelar
+        <button
+          type="button"
+          (click)="closeJobModal()"
+          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          Cancel
         </button>
-        <button type="submit"
-          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-          {{ isEditingJob ? 'Actualizar Trabajo' : 'Crear Trabajo' }}
+        <button
+          type="submit"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          {{ isEditingJob ? 'Update Job' : 'Create Job' }}
         </button>
       </div>
     </form>
@@ -382,41 +531,50 @@
 </div>
 
 <!-- Modal de confirmación de eliminación -->
-<div *ngIf="showDeleteConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div
+  *ngIf="showDeleteConfirm"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
     <div class="px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-medium text-gray-900">Confirmar Eliminación</h3>
+      <h3 class="text-lg font-medium text-gray-900">Confirm Deletion</h3>
     </div>
 
     <div class="p-6">
       <div class="flex items-center mb-4">
         <div class="flex-shrink-0">
           <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 16.5c-.77.833.192 2.5 1.732 2.5z">
-            </path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 16.5c-.77.833.192 2.5 1.732 2.5z"
+            ></path>
           </svg>
         </div>
         <div class="ml-3">
-          <h4 class="text-lg font-medium text-gray-900">¿Estás seguro?</h4>
+          <h4 class="text-lg font-medium text-gray-900">Are you sure?</h4>
           <p class="text-sm text-gray-600 mt-1">
-            Esta acción eliminará permanentemente el trabajo "{{ jobToDelete?.title }}" y todas sus aplicaciones
-            asociadas.
+            This action will permanently delete the job "{{ jobToDelete?.title }}" and all its
+            associated applications.
           </p>
         </div>
       </div>
 
       <div class="flex gap-3">
-        <button (click)="cancelDelete()"
-          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-          Cancelar
+        <button
+          (click)="cancelDelete()"
+          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          Cancel
         </button>
-        <button (click)="deleteJob()"
-          class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-          Eliminar Trabajo
+        <button
+          (click)="deleteJob()"
+          class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          Delete Job
         </button>
       </div>
     </div>
   </div>
-
 </div>

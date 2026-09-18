@@ -1,11 +1,11 @@
 services:
-  angular-app:
+  centinela-front:
     build: .
-    container_name: angular-app
+    container_name: centinela-front
     ports:
-      - "127.0.0.1:8082:80"
+      - '127.0.0.1:8082:80'
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true

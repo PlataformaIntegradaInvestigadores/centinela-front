@@ -14,12 +14,12 @@ export interface CompanyChoices {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CompanyChoicesService {
   private apiUrl = environment.apiIdentity;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Obtiene las opciones disponibles para los formularios de empresa

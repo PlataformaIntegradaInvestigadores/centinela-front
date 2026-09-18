@@ -1,21 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {debounce} from "rxjs";
-import {DashboardCounts} from "../../../interfaces/dashboard.interface";
+import { Component, Input } from '@angular/core';
+import { DashboardCounts } from '../../../interfaces/dashboard.interface';
 
 @Component({
   selector: 'app1-summary',
   templateUrl: './summary.component.html',
-  styleUrls: ['./summary.component.css']
+  styleUrls: ['./summary.component.css'],
 })
-export class SummaryComponent implements OnInit{
+export class SummaryComponent {
   @Input()
   counts!: DashboardCounts;
-
-  ngOnInit(): void {
-    // console.log(this.counts.author)
-  }
-
-
-
-
 }

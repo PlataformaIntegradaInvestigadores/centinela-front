@@ -10,7 +10,7 @@ import { PostCreatorComponent } from 'src/app/feeds/presentation/components/post
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css']
+  styleUrls: ['./post.component.css'],
 })
 export class PostComponent implements OnInit {
   @ViewChild(PostCreatorComponent) postCreator?: PostCreatorComponent;
@@ -28,8 +28,8 @@ export class PostComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private feedService: FeedService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUserId();
@@ -62,7 +62,7 @@ export class PostComponent implements OnInit {
         console.error('Error loading posts:', error);
         this.error = 'No se pudieron cargar las publicaciones';
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -78,7 +78,7 @@ export class PostComponent implements OnInit {
       content: postData.content,
       tags: postData.tags,
       files: postData.files,
-      is_public: true // Los posts del perfil son públicos por defecto
+      is_public: true, // Los posts del perfil son públicos por defecto
     };
 
     this.feedService.createPost(createPostData).subscribe({
@@ -98,10 +98,10 @@ export class PostComponent implements OnInit {
         console.error('Error creando post:', error);
         this.error = this.feedService.getFriendlyErrorMessage(
           error,
-          'No se pudo crear la publicación. Revisa la descripción y los archivos adjuntos.'
+          'No se pudo crear la publicación. Revisa la descripción y los archivos adjuntos.',
         );
         this.isSubmittingPost = false;
-      }
+      },
     });
   }
 
@@ -114,18 +114,18 @@ export class PostComponent implements OnInit {
     this.feedService.toggleLikePost(post.id).subscribe({
       next: (response) => {
         // Actualizar el post en la lista
-        const index = this.posts.findIndex(p => p.id === post.id);
+        const index = this.posts.findIndex((p) => p.id === post.id);
         if (index !== -1) {
           this.posts[index] = {
             ...this.posts[index],
             is_liked: response.liked,
-            likes_count: response.likes_count
+            likes_count: response.likes_count,
           };
         }
       },
       error: (error) => {
         console.error('Error toggling like:', error);
-      }
+      },
     });
   }
 
@@ -155,7 +155,7 @@ export class PostComponent implements OnInit {
 
     this.feedService.deletePost(postId).subscribe({
       next: () => {
-        this.posts = this.posts.filter(post => post.id !== postId);
+        this.posts = this.posts.filter((post) => post.id !== postId);
         this.success = 'Post eliminado exitosamente!';
         setTimeout(() => {
           this.success = null;
@@ -163,8 +163,11 @@ export class PostComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error deleting post:', error);
-        this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo eliminar la publicación.');
-      }
+        this.error = this.feedService.getFriendlyErrorMessage(
+          error,
+          'No se pudo eliminar la publicación.',
+        );
+      },
     });
   }
 
@@ -172,7 +175,7 @@ export class PostComponent implements OnInit {
    * Abre el modal de edición para un post
    */
   onEditPost(postId: string): void {
-    const post = this.posts.find(p => p.id === postId);
+    const post = this.posts.find((p) => p.id === postId);
     if (post) {
       this.postToEdit = { ...post };
       this.editModalVisible = true;
@@ -190,33 +193,38 @@ export class PostComponent implements OnInit {
   /**
    * Guarda los cambios del post editado
    */
-  saveEditPost(editData: { content: string, tags: string[] }): void {
+  saveEditPost(editData: { content: string; tags: string[] }): void {
     if (!this.postToEdit) return;
     this.isSubmittingPost = true;
     this.error = null;
     this.success = null;
-    this.feedService.updatePost(this.postToEdit.id, {
-      content: editData.content,
-      tags: editData.tags
-    }).subscribe({
-      next: (updatedPost) => {
-        const postIndex = this.posts.findIndex(p => p.id === this.postToEdit!.id);
-        if (postIndex !== -1) {
-          this.posts[postIndex] = updatedPost;
-        }
-        this.isSubmittingPost = false;
-        this.success = 'Post editado exitosamente!';
-        setTimeout(() => {
-          this.success = null;
-        }, 3000);
-        this.closeEditModal();
-      },
-      error: (error) => {
-        console.error('Error editando post:', error);
-        this.error = this.feedService.getFriendlyErrorMessage(error, 'No se pudo editar la publicación. Intenta de nuevo.');
-        this.isSubmittingPost = false;
-        this.closeEditModal();
-      }
-    });
+    this.feedService
+      .updatePost(this.postToEdit.id, {
+        content: editData.content,
+        tags: editData.tags,
+      })
+      .subscribe({
+        next: (updatedPost) => {
+          const postIndex = this.posts.findIndex((p) => p.id === this.postToEdit!.id);
+          if (postIndex !== -1) {
+            this.posts[postIndex] = updatedPost;
+          }
+          this.isSubmittingPost = false;
+          this.success = 'Post editado exitosamente!';
+          setTimeout(() => {
+            this.success = null;
+          }, 3000);
+          this.closeEditModal();
+        },
+        error: (error) => {
+          console.error('Error editando post:', error);
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'No se pudo editar la publicación. Intenta de nuevo.',
+          );
+          this.isSubmittingPost = false;
+          this.closeEditModal();
+        },
+      });
   }
 }

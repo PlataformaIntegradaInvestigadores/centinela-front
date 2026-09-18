@@ -1,5 +1,5 @@
 .custom-bg {
-  background-image: url("src/assets/img.png");
+  background-image: url('src/assets/img.png');
   background-size: auto 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -34,7 +34,7 @@
   margin: 0;
   padding: 0;
 }
-.w-80{
+.w-80 {
   width: 80%;
   border: solid red 1px;
 }

@@ -3,8 +3,19 @@
   <button class="block md:hidden pl-4 pt-4 pb-0" (click)="toggleMenu()">
     <!-- Icono de hamburguesa -->
     <p class="inline text-lg text-gray-800 font-bold">Table of content</p>
-    <svg class="h-6 w-6 text-gray-700 inline ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    <svg
+      class="h-6 w-6 text-gray-700 inline ml-3"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16"
+      ></path>
     </svg>
   </button>
 
@@ -25,9 +36,19 @@
     <!-- Botón de cerrar -->
     <button class="block p-4" (click)="closeMenu()">
       <!-- Icono de cerrar -->
-      <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      <svg
+        class="h-6 w-6 text-gray-700"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        ></path>
       </svg>
     </button>
     <ng-container *ngTemplateOutlet="menuContent"></ng-container>
@@ -40,20 +61,22 @@
       Table of content
     </div>
     <nav>
-      <ul class="mt-2 mx-auto max-w-xs text-left text-base ">
+      <ul class="mt-2 mx-auto max-w-xs text-left text-base">
         <!-- Lista de elementos del menú -->
         <li class="group">
-          <a [routerLink]="'getting-started'" (click)="closeMenu()"
+          <a
+            [routerLink]="'getting-started'"
+            (click)="closeMenu()"
             [ngClass]="{
               'text-primary_tailwind font-semibold': isActive('getting-started'),
-              'text-gray-600': !isActive('getting-started')
+              'text-gray-600': !isActive('getting-started'),
             }"
-            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50 "
+            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50"
           >
             <span
               [ngClass]="{
                 'bg-primary_tailwind': isActive('getting-started'),
-                'bg-gray-300': !isActive('getting-started')
+                'bg-gray-300': !isActive('getting-started'),
               }"
               class="ml-5 mr-2.5 w-1 h-7 rounded-r-md group-hover:bg-primary_tailwind"
             ></span>
@@ -67,14 +90,14 @@
             (click)="closeMenu()"
             [ngClass]="{
               'text-primary_tailwind font-semibold': isActive('author-search'),
-              'text-gray-600': !isActive('author-search')
+              'text-gray-600': !isActive('author-search'),
             }"
             class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50"
           >
             <span
               [ngClass]="{
                 'bg-primary_tailwind': isActive('author-search'),
-                'bg-gray-300': !isActive('author-search')
+                'bg-gray-300': !isActive('author-search'),
               }"
               class="ml-5 mr-2.5 w-1 h-7 rounded-r-md group-hover:bg-primary_tailwind"
             ></span>
@@ -83,17 +106,19 @@
         </li>
 
         <li class="group">
-          <a [routerLink]="'relevant-authors'" (click)="closeMenu()"
+          <a
+            [routerLink]="'relevant-authors'"
+            (click)="closeMenu()"
             [ngClass]="{
               'text-primary_tailwind font-semibold': isActive('relevant-authors'),
-              'text-gray-600': !isActive('relevant-authors')
+              'text-gray-600': !isActive('relevant-authors'),
             }"
-            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50 "
+            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50"
           >
             <span
               [ngClass]="{
                 'bg-primary_tailwind': isActive('relevant-authors'),
-                'bg-gray-300': !isActive('relevant-authors')
+                'bg-gray-300': !isActive('relevant-authors'),
               }"
               class="ml-5 mr-2.5 w-1 h-7 rounded-r-md group-hover:bg-primary_tailwind"
             ></span>
@@ -102,17 +127,19 @@
         </li>
 
         <li class="group">
-          <a [routerLink]="'relevant-articles'" (click)="closeMenu()"
+          <a
+            [routerLink]="'relevant-articles'"
+            (click)="closeMenu()"
             [ngClass]="{
               'text-primary_tailwind font-semibold': isActive('relevant-articles'),
-              'text-gray-600': !isActive('relevant-articles')
+              'text-gray-600': !isActive('relevant-articles'),
             }"
-            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50 "
+            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50"
           >
             <span
               [ngClass]="{
                 'bg-primary_tailwind': isActive('relevant-articles'),
-                'bg-gray-300': !isActive('relevant-articles')
+                'bg-gray-300': !isActive('relevant-articles'),
               }"
               class="ml-5 mr-2.5 w-1 h-7 rounded-r-md group-hover:bg-primary_tailwind"
             ></span>
@@ -121,28 +148,26 @@
         </li>
 
         <li class="group">
-          <a [routerLink]="'consensus-workshop'" (click)="closeMenu()"
+          <a
+            [routerLink]="'consensus-workshop'"
+            (click)="closeMenu()"
             [ngClass]="{
               'text-primary_tailwind font-semibold': isActive('consensus-workshop'),
-              'text-gray-600': !isActive('consensus-workshop')
+              'text-gray-600': !isActive('consensus-workshop'),
             }"
-            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50 "
+            class="py-3.5 w-full flex items-center hover:text-primary_tailwind hover:bg-blue-50"
           >
             <span
               [ngClass]="{
                 'bg-primary_tailwind': isActive('consensus-workshop'),
-                'bg-gray-300': !isActive('consensus-workshop')
+                'bg-gray-300': !isActive('consensus-workshop'),
               }"
               class="ml-5 mr-2.5 w-1 h-7 rounded-r-md group-hover:bg-primary_tailwind"
             ></span>
             Consensus Workshop
           </a>
         </li>
-
-
       </ul>
     </nav>
   </ng-template>
 </div>
-
-

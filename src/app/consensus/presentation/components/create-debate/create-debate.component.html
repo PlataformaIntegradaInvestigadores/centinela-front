@@ -1,58 +1,65 @@
 <div class="fixed z-10 inset-0 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4">
-      <div class="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
-      <div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto relative z-20">
-        <h2 class="text-xl font-bold text-gray-700 mb-4">Crear Nuevo Debate</h2>
-        <form (ngSubmit)="onSubmit()">
-          <div class="mb-4">
-            <label for="debateTitle" class="block text-sm font-medium text-gray-700">Título del Debate</label>
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto relative z-20">
+      <h2 class="text-xl font-bold text-gray-700 mb-4">Crear Nuevo Debate</h2>
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label for="debateTitle" class="block text-sm font-medium text-gray-700"
+            >Título del Debate</label
+          >
+          <input
+            [(ngModel)]="debateTitle"
+            id="debateTitle"
+            name="debateTitle"
+            class="form-input mt-1 block w-full"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="debateDescription" class="block text-sm font-medium text-gray-700"
+            >Descripción</label
+          >
+          <textarea
+            [(ngModel)]="debateDescription"
+            id="debateDescription"
+            name="debateDescription"
+            class="form-textarea mt-1 block w-full"
+            required
+          ></textarea>
+        </div>
+        <div class="mb-4">
+          <label for="duration" class="block text-sm font-medium text-gray-700">Duración</label>
+          <div class="flex space-x-2">
             <input
-              [(ngModel)]="debateTitle"
-              id="debateTitle"
-              name="debateTitle"
-              class="form-input mt-1 block w-full"
+              [(ngModel)]="durationHours"
+              id="durationHours"
+              name="durationHours"
+              type="number"
+              class="form-input w-1/2"
+              placeholder="Horas"
               required
-            />
-          </div>
-          <div class="mb-4">
-            <label for="debateDescription" class="block text-sm font-medium text-gray-700">Descripción</label>
-            <textarea
-              [(ngModel)]="debateDescription"
-              id="debateDescription"
-              name="debateDescription"
-              class="form-textarea mt-1 block w-full"
+            />Hours
+            <input
+              [(ngModel)]="durationMinutes"
+              id="durationMinutes"
+              name="durationMinutes"
+              type="number"
+              class="form-input w-1/2"
+              placeholder="Minutos"
               required
-            ></textarea>
+            />Seconds
           </div>
-          <div class="mb-4">
-            <label for="duration" class="block text-sm font-medium text-gray-700">Duración</label>
-            <div class="flex space-x-2">
-              <input
-                [(ngModel)]="durationHours"
-                id="durationHours"
-                name="durationHours"
-                type="number"
-                class="form-input w-1/2"
-                placeholder="Horas"
-                required
-              />Hours
-              <input
-                [(ngModel)]="durationMinutes"
-                id="durationMinutes"
-                name="durationMinutes"
-                type="number"
-                class="form-input w-1/2"
-                placeholder="Minutos"
-                required
-              />Seconds
-            </div>
-          </div>
-          <div class="flex justify-end space-x-4">
-            <button type="button" class="bg-gray-200 px-4 py-2 rounded" (click)="closeModal()">Cancelar</button>
-            <button type="submit" class="bg-primary_tailwind text-white px-4 py-2 rounded">Crear</button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div class="flex justify-end space-x-4">
+          <button type="button" class="bg-gray-200 px-4 py-2 rounded" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-primary_tailwind text-white px-4 py-2 rounded">
+            Crear
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-  
+</div>

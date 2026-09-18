@@ -4,14 +4,21 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LogService {
-  private apiUrl = environment.apiSearch+'/v1/admin/logs/';
+  private apiUrl = environment.apiSearch + '/v1/admin/logs/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getLogs(page: number, linesPerPage: number, level?: string, startDate?: string, endDate?: string, keyword?: string): Observable<any> {
+  getLogs(
+    page: number,
+    linesPerPage: number,
+    level?: string,
+    startDate?: string,
+    endDate?: string,
+    keyword?: string,
+  ): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('lines_per_page', linesPerPage.toString());

@@ -27,7 +27,9 @@
 }
 
 .feed-panel {
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 22px rgba(15, 23, 42, 0.05);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 8px 22px rgba(15, 23, 42, 0.05);
 }
 
 .feed-rail-stack {
@@ -87,7 +89,8 @@
 
 /* Animaciones personalizadas */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

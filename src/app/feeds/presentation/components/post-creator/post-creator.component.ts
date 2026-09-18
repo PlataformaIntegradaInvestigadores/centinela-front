@@ -1,10 +1,18 @@
-import { AfterViewInit, Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { PostCreatorData } from '../../types/post.types';
 
 @Component({
   selector: 'app-post-creator',
   templateUrl: './post-creator.component.html',
-  styleUrls: ['./post-creator.component.css']
+  styleUrls: ['./post-creator.component.css'],
 })
 export class PostCreatorComponent implements AfterViewInit {
   @Input() placeholder: string = "What's on your mind?";
@@ -13,9 +21,9 @@ export class PostCreatorComponent implements AfterViewInit {
   @Input() userAvatar: string = '/assets/profile.png';
   @Input() userName: string = '';
   @Input() isLoading: boolean = false;
-  
+
   @Output() postSubmitted = new EventEmitter<PostCreatorData>();
-  
+
   @ViewChild('textArea') textArea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('imageInput') imageInput!: ElementRef<HTMLInputElement>;
   @ViewChild('videoInput') videoInput!: ElementRef<HTMLInputElement>;
@@ -26,12 +34,12 @@ export class PostCreatorComponent implements AfterViewInit {
   tags: string[] = [];
   newTag: string = '';
   validationMessage: string | null = null;
-  
+
   // Poll related properties
   showPollCreator = false;
   pollQuestion = '';
   pollOptions: string[] = ['', ''];
-  
+
   // Tags related properties
   showTagInput = false;
 
@@ -44,10 +52,10 @@ export class PostCreatorComponent implements AfterViewInit {
    */
   get isPollValid(): boolean {
     if (!this.showPollCreator) return true;
-    
+
     const hasQuestion = this.pollQuestion.trim() !== '';
-    const validOptions = this.pollOptions.filter(option => option.trim() !== '');
-    
+    const validOptions = this.pollOptions.filter((option) => option.trim() !== '');
+
     return hasQuestion && validOptions.length >= 2;
   }
 
@@ -55,7 +63,7 @@ export class PostCreatorComponent implements AfterViewInit {
    * Obtiene el número de opciones válidas
    */
   get validPollOptionsCount(): number {
-    return this.pollOptions.filter(option => option.trim() !== '').length;
+    return this.pollOptions.filter((option) => option.trim() !== '').length;
   }
 
   /**
@@ -109,8 +117,8 @@ export class PostCreatorComponent implements AfterViewInit {
         alert('Por favor, escriba una pregunta para la encuesta.');
         return;
       }
-      
-      const validOptions = this.pollOptions.filter(option => option.trim() !== '');
+
+      const validOptions = this.pollOptions.filter((option) => option.trim() !== '');
       if (validOptions.length < 2) {
         alert('Por favor, proporcione al menos 2 opciones válidas para la encuesta.');
         return;
@@ -127,10 +135,12 @@ export class PostCreatorComponent implements AfterViewInit {
       content: content,
       tags: this.tags.length > 0 ? this.tags : undefined,
       files: this.selectedFiles.length > 0 ? this.selectedFiles : undefined,
-      poll: this.showPollCreator ? {
-        question: this.pollQuestion.trim(),
-        options: this.pollOptions.filter(option => option.trim() !== '')
-      } : undefined
+      poll: this.showPollCreator
+        ? {
+            question: this.pollQuestion.trim(),
+            options: this.pollOptions.filter((option) => option.trim() !== ''),
+          }
+        : undefined,
     };
 
     this.postSubmitted.emit(postData);
@@ -143,7 +153,8 @@ export class PostCreatorComponent implements AfterViewInit {
     this.validationMessage = null;
 
     if (!this.newPostContent.trim()) {
-      this.validationMessage = 'Escribe una descripción para publicar. Puedes agregar imágenes o archivos, pero el texto es obligatorio.';
+      this.validationMessage =
+        'Escribe una descripción para publicar. Puedes agregar imágenes o archivos, pero el texto es obligatorio.';
       this.focusPostInput();
       return false;
     }
@@ -204,7 +215,7 @@ export class PostCreatorComponent implements AfterViewInit {
     this.showPollCreator = false;
     this.pollQuestion = '';
     this.pollOptions = ['', ''];
-    
+
     // Limpiar los inputs de archivo
     if (this.imageInput) this.imageInput.nativeElement.value = '';
     if (this.videoInput) this.videoInput.nativeElement.value = '';
@@ -215,18 +226,21 @@ export class PostCreatorComponent implements AfterViewInit {
   /**
    * Maneja la selección de archivos
    */
-  onFileSelected(event: any, type?: 'image' | 'video' | 'file'): void {
+  onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {
       // Agregar nuevos archivos a los existentes
       const newFiles = Array.from(files) as File[];
       this.selectedFiles = [...this.selectedFiles, ...newFiles];
-      console.log('Archivos seleccionados:', newFiles.map(f => f.name));
+      console.log(
+        'Archivos seleccionados:',
+        newFiles.map((f) => f.name),
+      );
       if (!this.newPostContent.trim()) {
         this.validationMessage = 'Agrega una descripción antes de publicar el archivo.';
       }
     }
-    
+
     // Limpiar el input para permitir seleccionar el mismo archivo de nuevo
     event.target.value = '';
   }
@@ -242,7 +256,7 @@ export class PostCreatorComponent implements AfterViewInit {
    * Maneja opciones adicionales (photo, video, file, poll)
    */
   onOptionClick(option: 'photo' | 'video' | 'file' | 'poll' | 'tag'): void {
-    switch(option) {
+    switch (option) {
       case 'photo':
         this.imageInput.nativeElement.click();
         break;
@@ -272,7 +286,7 @@ export class PostCreatorComponent implements AfterViewInit {
     if (event) {
       event.preventDefault();
     }
-    
+
     const tag = this.newTag.trim().toLowerCase();
     if (tag && !this.tags.includes(tag)) {
       // Remove # if user typed it
@@ -295,7 +309,7 @@ export class PostCreatorComponent implements AfterViewInit {
   getFileIcon(file: File): string {
     const type = file.type.toLowerCase();
     const name = file.name.toLowerCase();
-    
+
     if (type.startsWith('image/')) {
       return 'fas fa-image';
     } else if (type.startsWith('video/')) {
@@ -319,7 +333,7 @@ export class PostCreatorComponent implements AfterViewInit {
   addPollOption(): void {
     if (this.pollOptions.length < 10) {
       this.pollOptions.push('');
-      
+
       // Enfocar la nueva opción después de que se renderice
       setTimeout(() => {
         const newIndex = this.pollOptions.length - 1;
@@ -361,7 +375,7 @@ export class PostCreatorComponent implements AfterViewInit {
   /**
    * Función de tracking para ngFor para evitar problemas con el focus
    */
-  trackByIndex(index: number, item: any): number {
+  trackByIndex(index: number): number {
     return index;
   }
 

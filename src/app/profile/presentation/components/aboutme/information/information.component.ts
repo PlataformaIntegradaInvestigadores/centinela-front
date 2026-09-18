@@ -7,7 +7,7 @@ import { UserDataService } from 'src/app/profile/domain/services/user_data.servi
 @Component({
   selector: 'app-information',
   templateUrl: './information.component.html',
-  styleUrls: ['./information.component.css']
+  styleUrls: ['./information.component.css'],
 })
 export class InformationComponent implements OnInit {
   @Input() user: User | null = null;
@@ -19,8 +19,8 @@ export class InformationComponent implements OnInit {
   constructor(
     private informationService: InformationService,
     private authService: AuthService,
-    private userDataService: UserDataService
-  ) { }
+    private userDataService: UserDataService,
+  ) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -46,9 +46,11 @@ export class InformationComponent implements OnInit {
    * @param aboutMe - El contenido de "Sobre mí".
    */
   saveAboutMe(aboutMe: string): void {
-    this.informationService.updateInformation({ about_me: aboutMe }).subscribe((response: UserInfo) => {
-      this.userInfo.about_me = response.about_me;
-    });
+    this.informationService
+      .updateInformation({ about_me: aboutMe })
+      .subscribe((response: UserInfo) => {
+        this.userInfo.about_me = response.about_me;
+      });
   }
 
   /**
@@ -66,9 +68,11 @@ export class InformationComponent implements OnInit {
    * @param contactInfo - La información de contacto a guardar.
    */
   saveContactInfo(contactInfo: ContactInfo[]): void {
-    this.informationService.updateInformation({ contact_info: contactInfo }).subscribe((response: UserInfo) => {
-      this.contactInfo = response.contact_info || [];
-    });
+    this.informationService
+      .updateInformation({ contact_info: contactInfo })
+      .subscribe((response: UserInfo) => {
+        this.contactInfo = response.contact_info || [];
+      });
   }
 
   /**

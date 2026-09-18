@@ -5,7 +5,7 @@ import { AuthService } from '../../domain/services/auth.service';
 @Component({
   selector: 'app-mfa-verify-form',
   templateUrl: './mfa-verify-form.component.html',
-  styleUrls: ['./mfa-verify-form.component.css']
+  styleUrls: ['./mfa-verify-form.component.css'],
 })
 export class MfaVerifyFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) challenge!: string;
@@ -24,10 +24,10 @@ export class MfaVerifyFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     this.verifyForm = this.fb.group({
-      code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]]
+      code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
     });
   }
 
@@ -60,7 +60,7 @@ export class MfaVerifyFormComponent implements OnInit, OnDestroy {
         this.failedCodeAttempts = 0;
         this.completed.emit();
       },
-      error: error => {
+      error: () => {
         this.isSubmitting = false;
         if (this.challengeExpired) {
           this.restartLogin('MFA verification expired. Please sign in again.');
@@ -68,14 +68,16 @@ export class MfaVerifyFormComponent implements OnInit, OnDestroy {
         }
         this.failedCodeAttempts += 1;
         if (this.failedCodeAttempts >= this.challengeFailedAttemptLimit) {
-          this.restartLogin('Too many invalid MFA codes. Please sign in again to generate a new verification challenge.');
+          this.restartLogin(
+            'Too many invalid MFA codes. Please sign in again to generate a new verification challenge.',
+          );
           return;
         }
         const attemptsLeft = this.challengeFailedAttemptLimit - this.failedCodeAttempts;
         this.errorMessages = [
-          `Invalid verification code. ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left before restarting sign-in.`
+          `Invalid verification code. ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left before restarting sign-in.`,
         ];
-      }
+      },
     });
   }
 

@@ -1,94 +1,103 @@
 <div *ngIf="colorsCharged && general" class="hidden xl:block">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.4,height]"
+    [view]="[window.innerWidth * 0.4, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && general" class="hidden md:block xl:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.5,height]"
+    [view]="[window.innerWidth * 0.5, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && general" class="block md:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth * 0.97,height]"
+    [view]="[window.innerWidth * 0.97, height]"
     [results]="single1"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme1
-    (select)="onSelect($event)">
+    [scheme]="colorScheme1"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 
 <!--// affiliation-->
 <div *ngIf="colorsCharged && affiliation" class="hidden xl:block">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.77,height]"
+    [view]="[window.innerWidth * 0.77, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && affiliation" class="hidden md:block xl:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.82,height]"
+    [view]="[window.innerWidth * 0.82, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && affiliation" class="block md:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth * 0.98,height]"
+    [view]="[window.innerWidth * 0.98, height]"
     [results]="single1"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme1
-    (select)="onSelect($event)">
+    [scheme]="colorScheme1"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 
 <!--// topic-->
 <div *ngIf="colorsCharged && topic" class="hidden xl:block">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.8,height]"
+    [view]="[window.innerWidth * 0.8, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && topic" class="hidden md:block xl:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth*0.9,height]"
+    [view]="[window.innerWidth * 0.9, height]"
     [results]="single"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme
-    (select)="onSelect($event)">
+    [scheme]="colorScheme"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>
 <div *ngIf="colorsCharged && topic" class="block md:hidden">
   <ngx-charts-tree-map
-    [view]="[window.innerWidth * 0.95,height]"
+    [view]="[window.innerWidth * 0.95, height]"
     [results]="single1"
     [gradient]="gradient"
     [animations]="animations"
-    [scheme]=colorScheme1
-    (select)="onSelect($event)">
+    [scheme]="colorScheme1"
+    (select)="onSelect($event)"
+  >
   </ngx-charts-tree-map>
 </div>

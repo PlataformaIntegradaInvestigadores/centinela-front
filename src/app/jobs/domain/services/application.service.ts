@@ -1,35 +1,40 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Application, ApplicationCreate, ApplicationUpdate, ApplicationFilter } from '../entities/application.interface';
+import {
+  Application,
+  ApplicationCreate,
+  ApplicationUpdate,
+  ApplicationFilter,
+} from '../entities/application.interface';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApplicationService {
   private apiUrl = environment.apiSocial;
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+  ) {}
 
   /**
-   * Obtiene las aplicaciones del usuario actual (si es researcher) 
+   * Obtiene las aplicaciones del usuario actual (si es researcher)
    * o las aplicaciones a los trabajos de la empresa (si es company)
    */
   getApplications(filters?: ApplicationFilter): Observable<Application[]> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
         let params = new HttpParams();
@@ -40,7 +45,7 @@ export class ApplicationService {
 
         return this.http.get<Application[]>(`${this.apiUrl}/v1/applications/`, { headers, params });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -49,18 +54,20 @@ export class ApplicationService {
    */
   getApplication(applicationId: number): Observable<Application> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
-        return this.http.get<Application>(`${this.apiUrl}/v1/applications/${applicationId}/`, { headers });
+        return this.http.get<Application>(`${this.apiUrl}/v1/applications/${applicationId}/`, {
+          headers,
+        });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -69,70 +76,80 @@ export class ApplicationService {
    */
   createApplication(applicationData: ApplicationCreate): Observable<Application> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         let headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
         // Si hay archivo, usar FormData
-        let body: any;
+        let body: FormData | Pick<ApplicationCreate, 'job' | 'cover_letter'>;
         if (applicationData.resume_file) {
-          body = new FormData();
-          body.append('job', applicationData.job.toString());
+          const formBody = new FormData();
+          formBody.append('job', applicationData.job.toString());
           if (applicationData.cover_letter) {
-            body.append('cover_letter', applicationData.cover_letter);
+            formBody.append('cover_letter', applicationData.cover_letter);
           }
-          body.append('resume_file', applicationData.resume_file);
+          formBody.append('resume_file', applicationData.resume_file);
           // No añadir Content-Type para FormData, el navegador lo hará automáticamente
+          body = formBody;
         } else {
           headers = headers.set('Content-Type', 'application/json');
           body = {
             job: applicationData.job,
-            cover_letter: applicationData.cover_letter
+            cover_letter: applicationData.cover_letter,
           };
         }
 
         return this.http.post<Application>(`${this.apiUrl}/v1/applications/`, body, { headers });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
   /**
    * Actualizar una aplicación existente
    */
-  updateApplication(applicationId: number, applicationData: ApplicationUpdate): Observable<Application> {
+  updateApplication(
+    applicationId: number,
+    applicationData: ApplicationUpdate,
+  ): Observable<Application> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         let headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
         // Si hay archivo, usar FormData
-        let body: any;
+        let body: FormData | ApplicationUpdate;
         if (applicationData.resume_file) {
-          body = new FormData();
-          if (applicationData.status) body.append('status', applicationData.status);
-          if (applicationData.notes) body.append('notes', applicationData.notes);
-          if (applicationData.cover_letter) body.append('cover_letter', applicationData.cover_letter);
-          body.append('resume_file', applicationData.resume_file);
+          const formBody = new FormData();
+          if (applicationData.status) formBody.append('status', applicationData.status);
+          if (applicationData.notes) formBody.append('notes', applicationData.notes);
+          if (applicationData.cover_letter)
+            formBody.append('cover_letter', applicationData.cover_letter);
+          formBody.append('resume_file', applicationData.resume_file);
           // No añadir Content-Type para FormData
+          body = formBody;
         } else {
           headers = headers.set('Content-Type', 'application/json');
           body = applicationData;
         }
 
-        return this.http.put<Application>(`${this.apiUrl}/v1/applications/${applicationId}/`, body, { headers });
+        return this.http.put<Application>(
+          `${this.apiUrl}/v1/applications/${applicationId}/`,
+          body,
+          { headers },
+        );
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -141,18 +158,20 @@ export class ApplicationService {
    */
   deleteApplication(applicationId: number): Observable<void> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
-        return this.http.delete<void>(`${this.apiUrl}/v1/applications/${applicationId}/`, { headers });
+        return this.http.delete<void>(`${this.apiUrl}/v1/applications/${applicationId}/`, {
+          headers,
+        });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -166,20 +185,25 @@ export class ApplicationService {
   /**
    * Verificar si el usuario actual ya postuló a un trabajo específico
    */
-  checkApplicationStatus(jobId: number): Observable<{has_applied: boolean, application: any}> {
+  checkApplicationStatus(
+    jobId: number,
+  ): Observable<{ has_applied: boolean; application: Application | null }> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
-        return this.http.get<{has_applied: boolean, application: any}>(`${this.apiUrl}/v1/jobs/${jobId}/application-status/`, { headers });
+        return this.http.get<{ has_applied: boolean; application: Application | null }>(
+          `${this.apiUrl}/v1/jobs/${jobId}/application-status/`,
+          { headers },
+        );
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -188,13 +212,13 @@ export class ApplicationService {
    */
   getCompanyApplications(filters?: ApplicationFilter): Observable<Application[]> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
         let params = new HttpParams();
@@ -203,9 +227,12 @@ export class ApplicationService {
           if (filters.status) params = params.set('status', filters.status);
         }
 
-        return this.http.get<Application[]>(`${this.apiUrl}/v1/company/applications/`, { headers, params });
+        return this.http.get<Application[]>(`${this.apiUrl}/v1/company/applications/`, {
+          headers,
+          params,
+        });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -214,13 +241,13 @@ export class ApplicationService {
    */
   getUserApplications(statusFilter?: string): Observable<Application[]> {
     return this.authService.getToken().pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (!token) {
           return throwError(() => new Error('No authentication token found'));
         }
-        
+
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
 
         let params = new HttpParams();
@@ -228,16 +255,19 @@ export class ApplicationService {
           params = params.set('status', statusFilter);
         }
 
-        return this.http.get<Application[]>(`${this.apiUrl}/v1/user/applications/`, { headers, params });
+        return this.http.get<Application[]>(`${this.apiUrl}/v1/user/applications/`, {
+          headers,
+          params,
+        });
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
   /**
    * Manejo de errores
    */
-  private handleError(error: any): Observable<never> {
+  private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('Application service error:', error);
     return throwError(() => error);
   }

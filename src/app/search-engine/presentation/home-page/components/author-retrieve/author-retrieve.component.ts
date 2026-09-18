@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, Observable, of, switchMap, tap } from 'rxjs';
@@ -10,22 +10,35 @@ import { PaginationAuthorResult } from 'src/app/shared/interfaces/author.interfa
   templateUrl: './author-retrieve.component.html',
   styleUrls: ['./author-retrieve.component.css'],
 })
-export class AuthorRetrieveComponent {
-
+export class AuthorRetrieveComponent implements OnInit, OnChanges {
   @Input()
   query: string = '';
   pageEvent: PageEvent = new PageEvent();
   page: number = 1;
   size: number = 10;
   total: number = 0;
-  authors!:Observable<PaginationAuthorResult>
-  refreshTable$: BehaviorSubject<{ page: number, size: number }> = new BehaviorSubject<{ page: number, size: number }>({ page: this.page, size: this.size });
+  authors!: Observable<PaginationAuthorResult>;
+  refreshTable$: BehaviorSubject<{ page: number; size: number }> = new BehaviorSubject<{
+    page: number;
+    size: number;
+  }>({ page: this.page, size: this.size });
   isLoading: boolean = false;
   isFirstLoad: boolean = true;
   isPaginating: boolean = false;
-  displayedColumns: string[] = ['name','current_affiliation','articles','topics', 'affiliations', 'citation_count', 'updated'];
+  displayedColumns: string[] = [
+    'name',
+    'current_affiliation',
+    'articles',
+    'topics',
+    'affiliations',
+    'citation_count',
+    'updated',
+  ];
   isServerOnline: boolean = true;
-  constructor(private authorService: AuthorService, @Inject(Router) private router: Router) { }
+  constructor(
+    private authorService: AuthorService,
+    @Inject(Router) private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.retrieveAuthors();
@@ -40,29 +53,23 @@ export class AuthorRetrieveComponent {
         return this.authorService.getAuthorsByQuery(this.query, page, size).pipe(
           catchError((error) => {
             console.log(error);
-              if (error.status === 0){
-                this.isServerOnline = false;
-              }
-              this.isLoading = false;
-              this.isFirstLoad = false;
-              this.isPaginating = false;
-            return of({authors: [], total: 0, data: []} as PaginationAuthorResult);
-          }
-          )
-
+            if (error.status === 0) {
+              this.isServerOnline = false;
+            }
+            this.isLoading = false;
+            this.isFirstLoad = false;
+            this.isPaginating = false;
+            return of({ authors: [], total: 0, data: [] } as PaginationAuthorResult);
+          }),
         );
-      },
-
-    ),
+      }),
       tap((authors) => {
         this.total = authors.total;
         this.isLoading = false;
         this.isFirstLoad = false;
         this.isPaginating = false;
       }),
-
     );
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,7 +77,6 @@ export class AuthorRetrieveComponent {
       this.isFirstLoad = true;
       this.refreshTable$.next({ page: this.page, size: this.size });
     }
-
   }
 
   onChangePagination(event: PageEvent) {
@@ -87,8 +93,8 @@ export class AuthorRetrieveComponent {
   goToAuthor(scopus_id: string) {
     this.router.navigate(['/profile', scopus_id], {
       queryParams: {
-        returnUrl: this.router.url
-      }
+        returnUrl: this.router.url,
+      },
     });
   }
 }

@@ -1,43 +1,46 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {AuthorService} from "../../../../search-engine/domain/services/author.service";
-import {ArticlesResponse} from "../../../../shared/interfaces/article.interface";
-import {User} from "../../../domain/entities/user.interfaces";
-import {Subscription} from "rxjs";
-import {AuthService} from "../../../../auth/domain/services/auth.service";
-import {UserDataService} from "../../../domain/services/user_data.service";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthorService } from '../../../../search-engine/domain/services/author.service';
+import { ArticlesResponse } from '../../../../shared/interfaces/article.interface';
+import { User } from '../../../domain/entities/user.interfaces';
+import { Subscription } from 'rxjs';
+import { UserDataService } from '../../../domain/services/user_data.service';
 
 @Component({
   selector: 'app-article',
   templateUrl: './article.component.html',
-  styleUrls: ['./article.component.css']
+  styleUrls: ['./article.component.css'],
 })
-export class ArticleComponent implements OnInit{
+export class ArticleComponent implements OnInit {
   // El componente actualmente no tiene lógica específica ni datos.
 
-  idRoute!: string
-  articles: ArticlesResponse[]= []
-  pagedArticles: ArticlesResponse[] = []
-  pageIndex = 0
-  pageSize = 10
-  loading = false
+  idRoute!: string;
+  articles: ArticlesResponse[] = [];
+  pagedArticles: ArticlesResponse[] = [];
+  pageIndex = 0;
+  pageSize = 10;
+  loading = false;
   private userSubscription: Subscription = new Subscription();
   user: User | null = null;
   // articles:
 
-  constructor(private route: ActivatedRoute, private authorService: AuthorService, private router: Router, private userDataService: UserDataService) {
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private authorService: AuthorService,
+    private router: Router,
+    private userDataService: UserDataService,
+  ) {}
   ngOnInit() {
-    this.route.parent?.paramMap.subscribe(params => {
-      this.idRoute = params?.get('id')!;
+    this.route.parent?.paramMap.subscribe((params) => {
+      this.idRoute = params.get('id') ?? '';
       if (this.isNumeric(this.idRoute)) {
-        this.fetchArticles(this.idRoute)
-      }else {
+        this.fetchArticles(this.idRoute);
+      } else {
         this.userSubscription = this.userDataService.getUser().subscribe((user: User | null) => {
           this.user = user;
-          if(this.user?.scopus_id){
-            this.idRoute=this.user.scopus_id
-            this.fetchArticles(this.idRoute)
+          if (this.user?.scopus_id) {
+            this.idRoute = this.user.scopus_id;
+            this.fetchArticles(this.idRoute);
           }
         });
       }
@@ -50,7 +53,7 @@ export class ArticleComponent implements OnInit{
   private fetchArticles(id: string): void {
     this.loading = true;
     this.authorService.getArticles(id).subscribe({
-      next: data => {
+      next: (data) => {
         this.articles = data || [];
         this.pageIndex = 0;
         this.updatePaged();
@@ -60,7 +63,7 @@ export class ArticleComponent implements OnInit{
         this.articles = [];
         this.updatePaged();
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -75,17 +78,21 @@ export class ArticleComponent implements OnInit{
   }
 
   prevPage(): void {
-    if (this.pageIndex > 0) { this.pageIndex--; this.updatePaged(); }
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      this.updatePaged();
+    }
   }
 
   nextPage(): void {
-    if (this.pageIndex < this.totalPages - 1) { this.pageIndex++; this.updatePaged(); }
+    if (this.pageIndex < this.totalPages - 1) {
+      this.pageIndex++;
+      this.updatePaged();
+    }
   }
 
   seeMoreInformation(scopusId: string) {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree(['home/article', scopusId])
-    );
+    const url = this.router.serializeUrl(this.router.createUrlTree(['home/article', scopusId]));
     window.open(url, '_blank');
   }
 }

@@ -1,7 +1,7 @@
 /* ===== PROFILE DATA STYLES ===== */
 .color-text {
-  background: linear-gradient(135deg, #FF7F50, #FF6347);
-  color: #F7EEDD;
+  background: linear-gradient(135deg, #ff7f50, #ff6347);
+  color: #f7eedd;
   font-weight: 600;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 6px rgba(255, 99, 71, 0.2);
@@ -9,8 +9,8 @@
 }
 
 .color-text:hover {
-  background: linear-gradient(135deg, #FF6347, #DC143C);
-  color: #F7EEDD;
+  background: linear-gradient(135deg, #ff6347, #dc143c);
+  color: #f7eedd;
   cursor: pointer;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(255, 99, 71, 0.3);
@@ -69,12 +69,16 @@
 .profile-card {
   background: white;
   border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
 .profile-card:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), 0 15px 35px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 15px 35px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
@@ -113,7 +117,7 @@
     font-size: 0.75rem;
     padding: 0.625rem 1.25rem;
   }
-  
+
   .profile-card {
     margin: 0.5rem;
     border-radius: 0.75rem;

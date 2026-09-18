@@ -1,18 +1,20 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css']
+  styleUrls: ['./home-page.component.css'],
 })
-export class HomePageComponent implements AfterViewInit {
+export class HomePageComponent implements AfterViewInit, OnInit {
   showSearchBox: boolean = false;
-  showinformationNavigationBar:boolean = true
+  showinformationNavigationBar: boolean = true;
 
-  constructor(private router: Router, private title:Title) {}
-
+  constructor(
+    private router: Router,
+    private title: Title,
+  ) {}
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -26,14 +28,11 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.title.setTitle("Welcome")
+    this.title.setTitle('Welcome');
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.updateSearchBoxVisibility();
       }
     });
   }
-
-
-
 }

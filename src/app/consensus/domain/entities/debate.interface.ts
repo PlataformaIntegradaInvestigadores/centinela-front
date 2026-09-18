@@ -6,5 +6,4 @@ export interface Debate {
   created_at?: string; // Campo de solo lectura, formato ISO 8601
   end_time: string; // Obligatorio
   is_closed?: boolean; // Campo de solo lectura
-
 }

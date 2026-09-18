@@ -83,7 +83,9 @@
 }
 
 @keyframes pollBarGrow {
-  from { width: 0 !important; }
+  from {
+    width: 0 !important;
+  }
 }
 
 /* ── Footer ── */

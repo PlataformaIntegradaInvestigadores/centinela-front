@@ -9,19 +9,19 @@ import { EditCompanyProfileModalComponent } from './presentation/components/edit
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-    imports: [
-        ProfileCompanyRoutingModule,
-        SharedModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule
-    ],
-    exports: [],
-    declarations: [
-        CompanyProfilePageComponent,
-        CreateJobModalComponent,
-        EditCompanyProfileModalComponent
-    ],
-    providers: [],
+  imports: [
+    ProfileCompanyRoutingModule,
+    SharedModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  exports: [],
+  declarations: [
+    CompanyProfilePageComponent,
+    CreateJobModalComponent,
+    EditCompanyProfileModalComponent,
+  ],
+  providers: [],
 })
-export class ProfileCompanyPageModule { }
+export class ProfileCompanyPageModule {}

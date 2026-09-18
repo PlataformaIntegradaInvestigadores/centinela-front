@@ -1,26 +1,21 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes} from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { JobsComponent } from './presentation/pages/jobs/jobs.component';
-
 
 const routes: Routes = [
   {
     path: '',
     component: JobsComponent,
-   /* children: [
+    /* children: [
       { path: 'recomendaciones', component: AboutMeComponent },
       { path: 'nombre-trabajo/:id', component: AboutMeComponent },
     ] */
   },
-  { path: '**', redirectTo: 'home' }
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class JobsPageRoutingModule { }
+export class JobsPageRoutingModule {}

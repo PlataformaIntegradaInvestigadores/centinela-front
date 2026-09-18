@@ -9,13 +9,13 @@ export interface AuthModalState {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthModalService {
   private modalStateSubject = new BehaviorSubject<AuthModalState>({
     isOpen: false,
     type: null,
-    userType: 'user'
+    userType: 'user',
   });
 
   public modalState$ = this.modalStateSubject.asObservable();
@@ -27,7 +27,7 @@ export class AuthModalService {
     this.modalStateSubject.next({
       isOpen: true,
       type: 'login',
-      userType
+      userType,
     });
   }
 
@@ -38,7 +38,7 @@ export class AuthModalService {
     this.modalStateSubject.next({
       isOpen: true,
       type: 'register',
-      userType
+      userType,
     });
   }
 
@@ -49,7 +49,7 @@ export class AuthModalService {
     this.modalStateSubject.next({
       isOpen: false,
       type: null,
-      userType: 'user'
+      userType: 'user',
     });
   }
 
@@ -60,7 +60,7 @@ export class AuthModalService {
     const currentState = this.modalStateSubject.value;
     this.modalStateSubject.next({
       ...currentState,
-      type: 'register'
+      type: 'register',
     });
   }
 
@@ -71,16 +71,16 @@ export class AuthModalService {
     const currentState = this.modalStateSubject.value;
     this.modalStateSubject.next({
       ...currentState,
-      type: 'login'
+      type: 'login',
     });
-  }  /**
+  } /**
    * Cambia el tipo de usuario
    */
   switchUserType(userType: UserType): void {
     const currentState = this.modalStateSubject.value;
     this.modalStateSubject.next({
       ...currentState,
-      userType
+      userType,
     });
   }
 

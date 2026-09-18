@@ -8,48 +8,48 @@ export interface DashboardCounts {
   affiliation: number;
   topic: number;
 }
-export interface AffiliationCounts{
+export interface AffiliationCounts {
   articles: number;
   topics: number;
 }
-export interface DashboardCountsYear{
+export interface DashboardCountsYear {
   year: number;
   author: number;
   article: number;
   affiliation: number;
   topic: number;
 }
-export interface Word{
+export interface Word {
   text: string;
   size: number;
 }
 
-export interface AffiliationId{
-  scopus_id: string
+export interface AffiliationId {
+  scopus_id: string;
 }
-export interface LineChartInfo{
+export interface LineChartInfo {
   name: string;
-  series: NameValue[]
+  series: NameValue[];
 }
 
-export interface NameValue{
+export interface NameValue {
   name: string;
   value: number;
 }
 
-export interface LineResponse{
+export interface LineResponse {
   per_year: LineChartInfo;
   acumulative: LineChartInfo;
 }
 
-export interface BarTreeResponse{
+export interface BarTreeResponse {
   name: string;
   per_year: NameValue[];
   acumulative: NameValue;
 }
 
-export interface YearsResponse{
-  year: number,
+export interface YearsResponse {
+  year: number;
   author: number;
   article: number;
   affiliation: number;
@@ -61,42 +61,40 @@ export interface Year {
 }
 
 export interface AffiliationInfo {
-  scopus_id:      number;
-  name:           string;
+  scopus_id: number;
+  name: string;
   total_articles: number;
 }
 
 export interface Affiliation {
-  id:             string;
-  scopus_id:      number;
-  name:           string;
-  year:           number;
+  id: string;
+  scopus_id: number;
+  name: string;
+  year: number;
   total_articles: number;
 }
 
 export interface AuthorYears {
-  id:             string;
-  scopus_id:      number;
-  year:           number;
+  id: string;
+  scopus_id: number;
+  year: number;
   total_articles: number;
 }
 
-
-
 export interface TopicSummary {
-  articles:     number;
+  articles: number;
   affiliations: number;
 }
 
 export interface TopicInfo {
-  name:           string;
+  name: string;
   total_articles: number;
 }
 
 export interface TopicResponse {
-  id:             string;
-  topic_name:     string;
-  year:           number;
+  id: string;
+  topic_name: string;
+  year: number;
   total_articles: number;
 }
 

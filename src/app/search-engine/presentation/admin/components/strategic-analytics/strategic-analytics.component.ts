@@ -34,7 +34,6 @@ interface SystemWarning {
   styleUrls: ['./strategic-analytics.component.css'],
 })
 export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
-
   constructor(private dashboardAdminService: DashboardAdminService) {}
 
   // ── A: Salud del Sistema ───────────────────────────────────────────────────
@@ -69,7 +68,10 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
         } else {
           this.etlStatus = 'error';
           this.etlMessage = 'Error al conectar con el servidor';
-          setTimeout(() => { this.etlStatus = 'idle'; this.etlMessage = ''; }, 5000);
+          setTimeout(() => {
+            this.etlStatus = 'idle';
+            this.etlMessage = '';
+          }, 5000);
         }
       },
     });
@@ -88,7 +90,10 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
             this.stopEtlPolling();
             this.loadSystemWarnings();
             this.refreshAllData();
-            setTimeout(() => { this.etlStatus = 'idle'; this.etlMessage = ''; }, 6000);
+            setTimeout(() => {
+              this.etlStatus = 'idle';
+              this.etlMessage = '';
+            }, 6000);
           }
           // Si sigue 'running', no hacemos nada: el interval sigue corriendo
         },
@@ -100,7 +105,10 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
             this.stopEtlPolling();
             this.etlStatus = 'error';
             this.etlMessage = 'Se perdió la conexión con el servidor durante el ETL';
-            setTimeout(() => { this.etlStatus = 'idle'; this.etlMessage = ''; }, 6000);
+            setTimeout(() => {
+              this.etlStatus = 'idle';
+              this.etlMessage = '';
+            }, 6000);
           }
         },
       });
@@ -137,8 +145,10 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
     const lastRunLevel: 'ok' | 'warn' | 'error' =
       etl.last_run_status === 'error' ? 'error' : etl.last_run_status === 'success' ? 'ok' : 'warn';
     const lastRunDetail =
-      etl.last_run_status === 'error' ? 'La última ejecución falló'
-        : etl.last_run_status === 'success' ? 'Ejecución exitosa'
+      etl.last_run_status === 'error'
+        ? 'La última ejecución falló'
+        : etl.last_run_status === 'success'
+          ? 'Ejecución exitosa'
           : 'Aún no se ha ejecutado el ETL en este servidor';
 
     return [
@@ -229,7 +239,7 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
     this.dashboardAdminService.getNoSqlDbYears().subscribe({
       next: (years: YearsResponse[]) => {
         const sorted = [...years].sort((a, b) => a.year - b.year);
-        this.availableYears = sorted.map(y => y.year);
+        this.availableYears = sorted.map((y) => y.year);
         this.buildArticlesEvolution(sorted);
 
         const latestYear = this.availableYears[this.availableYears.length - 1];
@@ -255,7 +265,7 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
     this.dashboardAdminService.getTopAffiliationsYear(year).subscribe({
       next: (words: Word[]) => {
         const mapped: AffiliationInfo[] = words
-          .map(w => ({ scopus_id: 0, name: w.text, total_articles: w.size }))
+          .map((w) => ({ scopus_id: 0, name: w.text, total_articles: w.size }))
           .sort((a, b) => b.total_articles - a.total_articles)
           .slice(0, 10);
         this.top10Affiliations = mapped;
@@ -280,12 +290,14 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
     this.dashboardAdminService.getTopicsHeatmap(year).subscribe({
       next: (res: HeatmapResponse) => {
         const cellLookup = new Map<string, number>();
-        res.cells.forEach(c => cellLookup.set(`${c.scopus_id}|${c.topic_name}`, c.total_articles));
+        res.cells.forEach((c) =>
+          cellLookup.set(`${c.scopus_id}|${c.topic_name}`, c.total_articles),
+        );
 
-        const universities: HeatmapUniversity[] = res.affiliations.map(a => {
+        const universities: HeatmapUniversity[] = res.affiliations.map((a) => {
           const cells: Record<string, number> = {};
           let rowTotal = 0;
-          res.topics.forEach(topic => {
+          res.topics.forEach((topic) => {
             const v = cellLookup.get(`${a.scopus_id}|${topic}`) ?? 0;
             cells[topic] = v;
             rowTotal += v;
@@ -296,12 +308,15 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
         this.sortedUniversities = [...universities].sort((a, b) => b.rowTotal - a.rowTotal);
 
         const colTotals: Record<string, number> = {};
-        res.topics.forEach(t => {
+        res.topics.forEach((t) => {
           colTotals[t] = universities.reduce((sum, u) => sum + (u.cells[t] ?? 0), 0);
         });
         this.sortedTopics = [...res.topics].sort((a, b) => colTotals[b] - colTotals[a]);
 
-        this.heatmapMaxValue = Math.max(0, ...universities.flatMap(u => Object.values(u.cells).map(v => v ?? 0)));
+        this.heatmapMaxValue = Math.max(
+          0,
+          ...universities.flatMap((u) => Object.values(u.cells).map((v) => v ?? 0)),
+        );
       },
       error: (err) => console.error('Error cargando heatmap:', err),
     });
@@ -318,7 +333,7 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
 
   getCellTextColor(value: number | undefined): string {
     if (!this.heatmapMaxValue || !value) return '#374151';
-    return (value / this.heatmapMaxValue) > 0.55 ? '#ffffff' : '#1e3c8b';
+    return value / this.heatmapMaxValue > 0.55 ? '#ffffff' : '#1e3c8b';
   }
 
   // ── D: Drill-down Modal ────────────────────────────────────────────────
@@ -330,7 +345,7 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
   openTopicDrilldown(topic: string): void {
     this.selectedTopic = topic;
     this.drilldownUniversities = this.sortedUniversities
-      .map(u => ({ name: u.name, total_articles: u.cells[topic] ?? 0 }))
+      .map((u) => ({ name: u.name, total_articles: u.cells[topic] ?? 0 }))
       .sort((a, b) => b.total_articles - a.total_articles);
     this.drilldownMax = this.drilldownUniversities[0]?.total_articles ?? 1;
     this.showDrilldownModal = true;
@@ -354,12 +369,12 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
   private buildTopicsTreemap(): void {
     this.dashboardAdminService.getCountryTopics(12).subscribe({
       next: (words: Word[]) => {
-        this.topicsChartData = words.map(w => ({ name: w.text, value: w.size }));
+        this.topicsChartData = words.map((w) => ({ name: w.text, value: w.size }));
         const n = this.topicsChartData.length;
         this.topicsColorScheme = {
           ...this.topicsColorScheme,
           domain: Array.from({ length: n }, (_, i) =>
-            this.lerpColor('#1E3C8B', '#60a5fa', i / Math.max(n - 1, 1))
+            this.lerpColor('#1E3C8B', '#60a5fa', i / Math.max(n - 1, 1)),
           ),
         };
         this.topicsColorsCharged = true;
@@ -371,8 +386,12 @@ export class StrategicAnalyticsComponent implements OnInit, OnDestroy {
   private lerpColor(a: string, b: string, t: number): string {
     const ah = parseInt(a.slice(1), 16);
     const bh = parseInt(b.slice(1), 16);
-    const ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
-    const br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
+    const ar = (ah >> 16) & 0xff,
+      ag = (ah >> 8) & 0xff,
+      ab = ah & 0xff;
+    const br = (bh >> 16) & 0xff,
+      bg = (bh >> 8) & 0xff,
+      bb = bh & 0xff;
     const rr = Math.round(ar + (br - ar) * t);
     const rg = Math.round(ag + (bg - ag) * t);
     const rb = Math.round(ab + (bb - ab) * t);

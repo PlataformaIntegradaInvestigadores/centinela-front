@@ -1,13 +1,15 @@
 import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
 
 @Directive({
-  selector: '[appSwapButton]'
+  selector: '[appSwapButton]',
 })
 export class SwapButtonDirective {
-
   @Input('appSwapButton') targetId!: string; // El ID del botón objetivo para mostrar
 
-  constructor(private el: ElementRef, private renderer: Renderer2) { }
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+  ) {}
 
   @HostListener('click') onClick() {
     // Ocultar el botón actual
@@ -21,5 +23,4 @@ export class SwapButtonDirective {
       this.renderer.addClass(targetElement, 'block');
     }
   }
-
 }

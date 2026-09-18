@@ -2,68 +2,71 @@ name: CI — frontend-app
 
 on:
   push:
-    branches: [dev-Marlow]
+    branches: [develop]
   pull_request:
-    branches: [dev-Marlow, main]
+    branches: [develop, main]
 
 jobs:
-  # ── Tests Angular ──────────────────────────────────────────────────────────
+  branch-name:
+    if: github.event_name == 'pull_request'
+    uses: PlataformaIntegradaInvestigadores/.github/.github/workflows/branch-name.yml@main
+
+  # ── Tests ──────────────────────────────────────────────────────────────────
   test:
     name: Pruebas unitarias (Karma/Jasmine)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: "18"
+          node-version: '18'
           cache: npm
-      - name: Instalar Chromium
-        run: sudo apt-get install -y chromium-browser
       - name: Instalar dependencias
-        run: npm ci
+        run: npm ci --no-audit --no-fund
       - name: Ejecutar tests
+        # ubuntu-latest ya trae Chrome instalado, evita descargar chromium-browser via apt
         env:
-          CHROME_BIN: /usr/bin/chromium-browser
+          CHROME_BIN: /usr/bin/google-chrome-stable
         run: |
           npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox \
             --no-progress --code-coverage
       - name: Subir reporte de cobertura
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
           path: coverage/
 
-  # ── Docker build ───────────────────────────────────────────────────────────
+  # ── Docker build ─────────────────────────────────────────────────────────────
   build-docker:
     name: Build imagen Docker
     runs-on: ubuntu-latest
     needs: test
-    if: github.ref == 'refs/heads/dev-Marlow' || github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build imagen
         run: docker build -t frontend-app:${{ github.sha }} .
       - name: Verificar imagen
         run: docker images frontend-app
 
-  # ── Deploy staging ─────────────────────────────────────────────────────────
+  # ── Deploy staging ───────────────────────────────────────────────────────────
   deploy-staging:
     name: Deploy a servidor staging
     runs-on: [self-hosted, staging]
     needs: test
-    if: github.ref == 'refs/heads/dev-Marlow'
+    if: github.ref == 'refs/heads/develop'
     steps:
       - name: Actualizar codigo
         run: |
-          cd /opt/centinela/frontend-app
-          git fetch origin dev-Marlow
-          git reset --hard origin/dev-Marlow
+          cd /opt/centinela/centinela-front
+          git fetch origin develop
+          git reset --hard origin/develop
 
       - name: Reconstruir contenedor
         run: |
           cd /opt/centinela
-          docker compose up -d --build --no-deps angular-app
+          docker compose up -d --build --no-deps centinela-front
 
       - name: Health check
         run: |
@@ -79,7 +82,7 @@ jobs:
           done
           if [ "$HEALTHY" = "false" ]; then
             echo "Health check fallido — rollback"
-            cd /opt/centinela/frontend-app && git reset --hard HEAD~1
-            cd /opt/centinela && docker compose up -d --build --no-deps angular-app
+            cd /opt/centinela/centinela-front && git reset --hard HEAD~1
+            cd /opt/centinela && docker compose up -d --build --no-deps centinela-front
             exit 1
           fi

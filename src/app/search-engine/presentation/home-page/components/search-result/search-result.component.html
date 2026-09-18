@@ -19,13 +19,11 @@
         <div class="w-4/5">
           <h1>Welcome to Centinela</h1>
           <p class="text-justify">
-            Centinela is a tool designed specifically to provide detailed
-            academic information about Ecuadorian researchers, and offers users
-            three types of searches to access this information. Its main
-            objective is to streamline and facilitate the understanding of the
-            findings and results of relevant scientific research, allowing
-            researchers to explore the relationships and occurrences between
-            keywords used in these studies.
+            Centinela is a tool designed specifically to provide detailed academic information about
+            Ecuadorian researchers, and offers users three types of searches to access this
+            information. Its main objective is to streamline and facilitate the understanding of the
+            findings and results of relevant scientific research, allowing researchers to explore
+            the relationships and occurrences between keywords used in these studies.
           </p>
         </div>
       </div>
@@ -47,21 +45,12 @@
     class="flex pb-5 flex-col justify-center items-center md:flex-row w-full"
   >
     <!--    <app-filter-sidebar class="w-1/4" [code]="searchValue.option"  [ngClass]="{'hidden':isAuthorSearch()}" ></app-filter-sidebar>-->
-    <div class="w-5/6" [ngClass]="{'w-full':isAuthorSearch()}">
+    <div class="w-5/6" [ngClass]="{ 'w-full': isAuthorSearch() }">
       <div>
         <!-- Most Relevant Authors Results -->
-        <app-article-information
-          *ngSwitchCase="'mrar'"
-          query="{{ searchValue.query }}"
-
-        />
+        <app-article-information *ngSwitchCase="'mrar'" query="{{ searchValue.query }}" />
         <!-- Author Results -->
-        <app-author-retrieve
-          class="p-2"
-          *ngSwitchCase="'au'"
-          query="{{ searchValue.query }}"
-
-        />
+        <app-author-retrieve class="p-2" *ngSwitchCase="'au'" query="{{ searchValue.query }}" />
         <!-- Most Relevant Articles Results -->
         <app-most-relevant-authors-graph
           class="p-2"
@@ -71,5 +60,4 @@
       </div>
     </div>
   </div>
-
 </div>

@@ -8,21 +8,17 @@ import { RelevantArticlesComponent } from './components/relevant-articles/releva
 import { RelevantAuthorsComponent } from './components/relevant-authors/relevant-authors.component';
 import { ConsensusWorkshopComponent } from './components/consensus-workshop/consensus-workshop.component';
 
-
 @NgModule({
-  imports: [
-    AboutUsRoutingModule,
-    CommonModule
-  ],
+  imports: [AboutUsRoutingModule, CommonModule],
   exports: [],
   declarations: [
-  GettingStartedComponent,
-  AuthorSearchComponent,
-  AboutComponent,
-  RelevantArticlesComponent,
-  RelevantAuthorsComponent,
-  ConsensusWorkshopComponent
+    GettingStartedComponent,
+    AuthorSearchComponent,
+    AboutComponent,
+    RelevantArticlesComponent,
+    RelevantAuthorsComponent,
+    ConsensusWorkshopComponent,
   ],
   providers: [],
 })
-export class AboutUsModule { }
+export class AboutUsModule {}

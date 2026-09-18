@@ -21,33 +21,48 @@
 
 /* Animación de pulso en hover */
 @keyframes heartPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Animación de pop cuando se da like */
 @keyframes heartPop {
-  0% { 
-    transform: scale(1); 
+  0% {
+    transform: scale(1);
     color: #6b7280;
   }
-  50% { 
-    transform: scale(1.4) rotate(-3deg); 
+  50% {
+    transform: scale(1.4) rotate(-3deg);
     color: #ef4444;
   }
-  100% { 
-    transform: scale(1); 
+  100% {
+    transform: scale(1);
     color: #ef4444;
   }
 }
 
 /* Animación de latido cuando está liked */
 @keyframes heartBeat {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.1); }
-  50% { transform: scale(1); }
-  75% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.05);
+  }
 }
 
 /* Efecto de partículas de corazón */
@@ -86,9 +101,15 @@
 }
 
 @keyframes buttonWave {
-  0% { background-color: rgba(239, 68, 68, 0); }
-  50% { background-color: rgba(239, 68, 68, 0.1); }
-  100% { background-color: rgba(239, 68, 68, 0); }
+  0% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  50% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    background-color: rgba(239, 68, 68, 0);
+  }
 }
 
 /* Mejorar el hover del botón */

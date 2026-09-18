@@ -9,16 +9,16 @@ import {
   FeedFilters,
   CreatePostData,
   Comment,
-  UserFeedStats
+  UserFeedStats,
 } from '../entities/feed.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeedService {
   private apiUrl = `${environment.apiSocial}/v1`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Obtiene el token de autorización
@@ -31,7 +31,7 @@ export class FeedService {
     }
 
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
   }
 
@@ -56,15 +56,14 @@ export class FeedService {
     console.log('FeedService: Headers:', headers);
     console.log('FeedService: Params:', params.toString());
 
-    return this.http.get<FeedResponse>(url, { headers, params })
-      .pipe(
-        map(response => {
-          console.log('FeedService: Raw response:', response);
-          const convertedResponse = this.convertFeedResponseDates(response);
-          console.log('FeedService: Converted response:', convertedResponse);
-          return convertedResponse;
-        })
-      );
+    return this.http.get<FeedResponse>(url, { headers, params }).pipe(
+      map((response) => {
+        console.log('FeedService: Raw response:', response);
+        const convertedResponse = this.convertFeedResponseDates(response);
+        console.log('FeedService: Converted response:', convertedResponse);
+        return convertedResponse;
+      }),
+    );
   }
 
   /**
@@ -72,8 +71,9 @@ export class FeedService {
    */
   getFilteredFeed(filters: FeedFilters): Observable<FeedResponse> {
     const headers = this.getHeaders();
-    return this.http.post<FeedResponse>(`${this.apiUrl}/feed/`, filters, { headers })
-      .pipe(map(response => this.convertFeedResponseDates(response)));
+    return this.http
+      .post<FeedResponse>(`${this.apiUrl}/feed/`, filters, { headers })
+      .pipe(map((response) => this.convertFeedResponseDates(response)));
   }
 
   /**
@@ -81,12 +81,11 @@ export class FeedService {
    */
   getTrendingPosts(timeRange: string = 'week', limit: number = 20): Observable<FeedResponse> {
     const headers = this.getHeaders();
-    const params = new HttpParams()
-      .set('time_range', timeRange)
-      .set('limit', limit.toString());
+    const params = new HttpParams().set('time_range', timeRange).set('limit', limit.toString());
 
-    return this.http.get<FeedResponse>(`${this.apiUrl}/feed/trending/`, { headers, params })
-      .pipe(map(response => this.convertFeedResponseDates(response)));
+    return this.http
+      .get<FeedResponse>(`${this.apiUrl}/feed/trending/`, { headers, params })
+      .pipe(map((response) => this.convertFeedResponseDates(response)));
   }
 
   /**
@@ -96,8 +95,9 @@ export class FeedService {
     const headers = this.getHeaders();
     const params = new HttpParams().set('limit', limit.toString());
 
-    return this.http.get<FeedResponse>(`${this.apiUrl}/feed/recommendations/`, { headers, params })
-      .pipe(map(response => this.convertFeedResponseDates(response)));
+    return this.http
+      .get<FeedResponse>(`${this.apiUrl}/feed/recommendations/`, { headers, params })
+      .pipe(map((response) => this.convertFeedResponseDates(response)));
   }
 
   /**
@@ -118,7 +118,7 @@ export class FeedService {
     formData.append('is_public', isPublic.toString());
 
     if (postData.files) {
-      postData.files.forEach((file, index) => {
+      postData.files.forEach((file) => {
         formData.append(`files`, file);
       });
     }
@@ -128,11 +128,15 @@ export class FeedService {
       formData.append('poll_data', JSON.stringify(postData.poll_data));
     }
 
-    return this.http.post<FeedPost>(`${this.apiUrl}/posts/`, formData, { headers })
-      .pipe(map(post => this.convertPostDates(post)));
+    return this.http
+      .post<FeedPost>(`${this.apiUrl}/posts/`, formData, { headers })
+      .pipe(map((post) => this.convertPostDates(post)));
   }
 
-  getFriendlyErrorMessage(error: any, fallback: string = 'No se pudo completar la acción. Intenta de nuevo.'): string {
+  getFriendlyErrorMessage(
+    error: any,
+    fallback: string = 'No se pudo completar la acción. Intenta de nuevo.',
+  ): string {
     if (!error) return fallback;
 
     if (error.status === 0) {
@@ -143,7 +147,10 @@ export class FeedService {
     const rawMessage = this.extractErrorMessage(payload) || error.message || '';
     const normalized = rawMessage.toLowerCase();
 
-    if (normalized.includes('content cannot be empty') || normalized.includes('content') && normalized.includes('blank')) {
+    if (
+      normalized.includes('content cannot be empty') ||
+      (normalized.includes('content') && normalized.includes('blank'))
+    ) {
       return 'Escribe una descripción antes de publicar.';
     }
 
@@ -151,7 +158,11 @@ export class FeedService {
       return 'La descripción no puede superar los 5000 caracteres.';
     }
 
-    if (normalized.includes('file size') || normalized.includes('50mb') || normalized.includes('10mb')) {
+    if (
+      normalized.includes('file size') ||
+      normalized.includes('50mb') ||
+      normalized.includes('10mb')
+    ) {
       return 'Uno de los archivos supera el tamaño permitido. Usa archivos de hasta 10 MB y un total máximo de 50 MB.';
     }
 
@@ -182,12 +193,15 @@ export class FeedService {
     if (typeof directMessage === 'string') return directMessage;
 
     if (Array.isArray(payload)) {
-      return payload.map(item => this.extractErrorMessage(item)).filter(Boolean).join(' ');
+      return payload
+        .map((item) => this.extractErrorMessage(item))
+        .filter(Boolean)
+        .join(' ');
     }
 
     if (typeof payload === 'object') {
       const messages = Object.values(payload)
-        .map(value => this.extractErrorMessage(value))
+        .map((value) => this.extractErrorMessage(value))
         .filter(Boolean);
       return messages.join(' ');
     }
@@ -200,8 +214,9 @@ export class FeedService {
    */
   getPost(postId: string): Observable<FeedPost> {
     const headers = this.getHeaders();
-    return this.http.get<FeedPost>(`${this.apiUrl}/posts/${postId}/`, { headers })
-      .pipe(map(post => this.convertPostDates(post)));
+    return this.http
+      .get<FeedPost>(`${this.apiUrl}/posts/${postId}/`, { headers })
+      .pipe(map((post) => this.convertPostDates(post)));
   }
 
   /**
@@ -209,8 +224,9 @@ export class FeedService {
    */
   updatePost(postId: string, updateData: Partial<CreatePostData>): Observable<FeedPost> {
     const headers = this.getHeaders();
-    return this.http.patch<FeedPost>(`${this.apiUrl}/posts/${postId}/`, updateData, { headers })
-      .pipe(map(post => this.convertPostDates(post)));
+    return this.http
+      .patch<FeedPost>(`${this.apiUrl}/posts/${postId}/`, updateData, { headers })
+      .pipe(map((post) => this.convertPostDates(post)));
   }
 
   /**
@@ -224,30 +240,38 @@ export class FeedService {
   /**
    * Busca posts usando búsqueda vectorial semántica
    */
-  searchPosts(query: string, tags?: string[], author?: string, useVectorSearch: boolean = true): Observable<FeedPost[]> {
+  searchPosts(
+    query: string,
+    tags?: string[],
+    author?: string,
+    useVectorSearch: boolean = true,
+  ): Observable<FeedPost[]> {
     const headers = this.getHeaders();
     let params = new HttpParams().set('q', query);
 
-    if (tags && tags.length > 0) params = params.set('tags', tags.join(','));
+    if (tags && tags.length > 0) {
+      tags.forEach(tag => {
+        params = params.append('tags', tag);
+      });
+    }
     if (author) params = params.set('author', author);
-    
+
     // Parámetro para habilitar/deshabilitar búsqueda vectorial
     params = params.set('vector', useVectorSearch.toString());
     params = params.set('limit', '20');
 
-    return this.http.get<FeedPost[]>(`${this.apiUrl}/posts/search/`, { headers, params })
-      .pipe(
-        map(posts => posts.map(post => this.convertPostDates(post))),
-        catchError((error) => {
-          console.error('Error en búsqueda de posts:', error);
-          // Si falla la búsqueda vectorial, intentar búsqueda básica
-          if (useVectorSearch && error.status !== 404) {
-            console.log('Fallback a búsqueda básica de texto');
-            return this.searchPosts(query, tags, author, false);
-          }
-          return throwError(() => error);
-        })
-      );
+    return this.http.get<FeedPost[]>(`${this.apiUrl}/posts/search/`, { headers, params }).pipe(
+      map((posts) => posts.map((post) => this.convertPostDates(post))),
+      catchError((error) => {
+        console.error('Error en búsqueda de posts:', error);
+        // Si falla la búsqueda vectorial, intentar búsqueda básica
+        if (useVectorSearch && error.status !== 404) {
+          console.log('Fallback a búsqueda básica de texto');
+          return this.searchPosts(query, tags, author, false);
+        }
+        return throwError(() => error);
+      }),
+    );
   }
 
   /**
@@ -261,9 +285,13 @@ export class FeedService {
   /**
    * Da like/unlike a un post
    */
-  toggleLikePost(postId: string): Observable<{ liked: boolean, likes_count: number }> {
+  toggleLikePost(postId: string): Observable<{ liked: boolean; likes_count: number }> {
     const headers = this.getHeaders();
-    return this.http.post<{ liked: boolean, likes_count: number }>(`${this.apiUrl}/posts/${postId}/like/`, {}, { headers });
+    return this.http.post<{ liked: boolean; likes_count: number }>(
+      `${this.apiUrl}/posts/${postId}/like/`,
+      {},
+      { headers },
+    );
   }
 
   /**
@@ -271,12 +299,11 @@ export class FeedService {
    */
   getComments(postId: string, page: number = 1, limit: number = 20): Observable<Comment[]> {
     const headers = this.getHeaders();
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('limit', limit.toString());
+    const params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
 
-    return this.http.get<Comment[]>(`${this.apiUrl}/posts/${postId}/comments/`, { headers, params })
-      .pipe(map(comments => comments.map(comment => this.convertCommentDates(comment))));
+    return this.http
+      .get<Comment[]>(`${this.apiUrl}/posts/${postId}/comments/`, { headers, params })
+      .pipe(map((comments) => comments.map((comment) => this.convertCommentDates(comment))));
   }
 
   /**
@@ -287,16 +314,21 @@ export class FeedService {
     const data: any = { content };
     if (parentId) data.parent_comment = parentId;
 
-    return this.http.post<Comment>(`${this.apiUrl}/posts/${postId}/comments/`, data, { headers })
-      .pipe(map(comment => this.convertCommentDates(comment)));
+    return this.http
+      .post<Comment>(`${this.apiUrl}/posts/${postId}/comments/`, data, { headers })
+      .pipe(map((comment) => this.convertCommentDates(comment)));
   }
 
   /**
    * Da like/unlike a un comentario
    */
-  toggleLikeComment(commentId: string): Observable<{ liked: boolean, likes_count: number }> {
+  toggleLikeComment(commentId: string): Observable<{ liked: boolean; likes_count: number }> {
     const headers = this.getHeaders();
-    return this.http.post<{ liked: boolean, likes_count: number }>(`${this.apiUrl}/likes/comments/${commentId}/`, {}, { headers });
+    return this.http.post<{ liked: boolean; likes_count: number }>(
+      `${this.apiUrl}/likes/comments/${commentId}/`,
+      {},
+      { headers },
+    );
   }
 
   /**
@@ -312,16 +344,15 @@ export class FeedService {
    */
   getUserPosts(userId: string, limit: number = 20, cursor?: string): Observable<FeedResponse> {
     const headers = this.getHeaders();
-    let params = new HttpParams()
-      .set('author', userId)
-      .set('limit', limit.toString());
+    let params = new HttpParams().set('author', userId).set('limit', limit.toString());
 
     if (cursor) {
       params = params.set('cursor', cursor);
     }
 
-    return this.http.get<FeedResponse>(`${this.apiUrl}/feed/`, { headers, params })
-      .pipe(map(response => this.convertFeedResponseDates(response)));
+    return this.http
+      .get<FeedResponse>(`${this.apiUrl}/feed/`, { headers, params })
+      .pipe(map((response) => this.convertFeedResponseDates(response)));
   }
 
   /**
@@ -335,19 +366,27 @@ export class FeedService {
       params = params.set('cursor', cursor);
     }
 
-    return this.http.get<FeedResponse>(`${this.apiUrl}/user/posts/`, { headers, params })
-      .pipe(map(response => this.convertFeedResponseDates(response)));
+    return this.http
+      .get<FeedResponse>(`${this.apiUrl}/user/posts/`, { headers, params })
+      .pipe(map((response) => this.convertFeedResponseDates(response)));
   }
 
   /**
    * Registra una interacción del usuario
    */
-  recordUserInteraction(postId: string, interactionType: 'view' | 'like' | 'comment' | 'share'): Observable<void> {
+  recordUserInteraction(
+    postId: string,
+    interactionType: 'view' | 'like' | 'comment' | 'share',
+  ): Observable<void> {
     const headers = this.getHeaders();
-    return this.http.post<void>(`${this.apiUrl}/interactions/`, {
-      post_id: postId,
-      interaction_type: interactionType
-    }, { headers });
+    return this.http.post<void>(
+      `${this.apiUrl}/interactions/`,
+      {
+        post_id: postId,
+        interaction_type: interactionType,
+      },
+      { headers },
+    );
   }
 
   /**
@@ -357,13 +396,12 @@ export class FeedService {
     const headers = this.getHeaders();
     const body = { option_ids: optionIds };
 
-    return this.http.post(`${this.apiUrl}/polls/${pollId}/vote/`, body, { headers })
-      .pipe(
-        catchError(error => {
-          console.error('Error voting in poll:', error);
-          return throwError(() => error);
-        })
-      );
+    return this.http.post(`${this.apiUrl}/polls/${pollId}/vote/`, body, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error voting in poll:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 
   /**
@@ -372,13 +410,12 @@ export class FeedService {
   removePollVote(pollId: string): Observable<any> {
     const headers = this.getHeaders();
 
-    return this.http.delete(`${this.apiUrl}/polls/${pollId}/remove-vote/`, { headers })
-      .pipe(
-        catchError(error => {
-          console.error('Error removing poll vote:', error);
-          return throwError(() => error);
-        })
-      );
+    return this.http.delete(`${this.apiUrl}/polls/${pollId}/remove-vote/`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error removing poll vote:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 
   /**
@@ -387,13 +424,12 @@ export class FeedService {
   getPollDetails(pollId: string): Observable<any> {
     const headers = this.getHeaders();
 
-    return this.http.get(`${this.apiUrl}/polls/${pollId}/`, { headers })
-      .pipe(
-        catchError(error => {
-          console.error('Error getting poll details:', error);
-          return throwError(() => error);
-        })
-      );
+    return this.http.get(`${this.apiUrl}/polls/${pollId}/`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error getting poll details:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 
   /**
@@ -402,7 +438,7 @@ export class FeedService {
   private convertFeedResponseDates(response: FeedResponse): FeedResponse {
     return {
       ...response,
-      posts: response.posts.map(post => this.convertPostDates(post))
+      posts: response.posts.map((post) => this.convertPostDates(post)),
     };
   }
 
@@ -414,10 +450,11 @@ export class FeedService {
       ...post,
       created_at: new Date(post.created_at),
       updated_at: new Date(post.updated_at),
-      files: post.files?.map(file => ({
-        ...file,
-        uploaded_at: new Date(file.uploaded_at)
-      })) || []
+      files:
+        post.files?.map((file) => ({
+          ...file,
+          uploaded_at: new Date(file.uploaded_at),
+        })) || [],
     };
   }
 
@@ -428,7 +465,7 @@ export class FeedService {
     return {
       ...comment,
       created_at: new Date(comment.created_at),
-      updated_at: new Date(comment.updated_at)
+      updated_at: new Date(comment.updated_at),
     };
   }
 }

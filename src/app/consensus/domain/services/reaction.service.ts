@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import {environment} from "../../../../environments/environment";
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReactionService {
-
   private apiUrl = `${environment.apiSocial}/v1/reactions`;
 
   constructor(private http: HttpClient) {}

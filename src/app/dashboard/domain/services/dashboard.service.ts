@@ -1,81 +1,72 @@
-import {Injectable, OnInit} from '@angular/core';
-import {Observable} from "rxjs";
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
   DashboardCounts,
   LineChartInfo,
   NameValue,
-  Word, Year,
-  YearsResponse
-} from "../../../shared/interfaces/dashboard.interface";
-import {VisualsService} from "../../../shared/domain/services/visuals.service";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {map} from "rxjs/operators";
-import {Topic} from "../../../shared/interfaces/author.interface";
-import {environment} from "../../../../environments/environment";
+  Word,
+  YearsResponse,
+} from '../../../shared/interfaces/dashboard.interface';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class DashboardService implements OnInit {
+export class DashboardService {
+  private apiUrl = environment.apiSearch + '/v1/dashboard';
 
-  private apiUrl = environment.apiSearch+'/v1/dashboard';
+  constructor(private http: HttpClient) {}
 
-
-
-  constructor(private http: HttpClient) {
-  }
-
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
-
-
-  getTreeMapInfo(year:number): Observable<NameValue[]> {
+  getTreeMapInfo(year: number): Observable<NameValue[]> {
     return this.getTopicsYear(year).pipe(
-      map(response => {
-        const info: NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
-  getTreeMapInfoAcumulated(year:number): Observable<NameValue[]> {
+  getTreeMapInfoAcumulated(year: number): Observable<NameValue[]> {
     return this.getTopicsAcumulated(year).pipe(
-      map(response => {
-        const info: NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
 
   getLineChartInfo(): Observable<LineChartInfo[]> {
     return this.getYears().pipe(
-      map(response => {
-        const series: NameValue[] = response.map(cy => ({
+      map((response) => {
+        const series: NameValue[] = response.map((cy) => ({
           name: cy.year.toString(),
-          value: cy.article
+          value: cy.article,
         }));
-        return [{
-          name: 'Ecuador',
-          series: series
-        }];
-      })
+        return [
+          {
+            name: 'Ecuador',
+            series: series,
+          },
+        ];
+      }),
     );
   }
 
   getCounts(year: number): Observable<DashboardCounts> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<DashboardCounts>(`${this.apiUrl}/country/get_acumulated/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<DashboardCounts>(`${this.apiUrl}/country/get_acumulated/`, { params });
   }
 
   getCountsYear(year: number): Observable<DashboardCounts> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<DashboardCounts>(`${this.apiUrl}/country/get_year/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<DashboardCounts>(`${this.apiUrl}/country/get_year/`, { params });
   }
 
   getYears(): Observable<YearsResponse[]> {
@@ -83,131 +74,135 @@ export class DashboardService implements OnInit {
   }
 
   getTopicsYear(year: number): Observable<Word[]> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<Word[]>(`${this.apiUrl}/country/get_top_topics_year/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<Word[]>(`${this.apiUrl}/country/get_top_topics_year/`, { params });
   }
 
   getTopicsAcumulated(year: number): Observable<Word[]> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<Word[]>(`${this.apiUrl}/country/get_top_topics`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<Word[]>(`${this.apiUrl}/country/get_top_topics`, { params });
   }
 
   getAffiliationInfoAcumulated(year: number): Observable<Word[]> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_top_affiliations/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_top_affiliations/`, { params });
   }
-  getBarInfoAcumulated(year:number): Observable<NameValue[]> {
+  getBarInfoAcumulated(year: number): Observable<NameValue[]> {
     return this.getAffiliationInfoAcumulated(year).pipe(
-      map(response => {
-        const info: NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
 
-  getBarInfoYear(year:number):Observable<NameValue[]>{
+  getBarInfoYear(year: number): Observable<NameValue[]> {
     return this.getTopAffiliationsYear(year).pipe(
-      map(response => {
-        const info:NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
 
-  getTopAffiliationsYear(year: number):Observable<Word[]>{
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_top_affiliations_year/`,{params})
+  getTopAffiliationsYear(year: number): Observable<Word[]> {
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_top_affiliations_year/`, {
+      params,
+    });
   }
 
   getTreeMap(): Observable<NameValue[]> {
     return this.getTopics(10).pipe(
-      map(response => {
-        const info: NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
 
   private getTopics(number_top: number) {
-    let params = new HttpParams().set('number_top', number_top.toString());
-    return this.http.get<Word[]>(`${this.apiUrl}/country/get_topics/`, {params});
+    const params = new HttpParams().set('number_top', number_top.toString());
+    return this.http.get<Word[]>(`${this.apiUrl}/country/get_topics/`, { params });
   }
 
-  getBarInfo():Observable<NameValue[]>{
+  getBarInfo(): Observable<NameValue[]> {
     return this.getTopAffiliations().pipe(
-      map(response => {
-        const info:NameValue[] = response.map(t => ({
+      map((response) => {
+        const info: NameValue[] = response.map((t) => ({
           name: t.text,
-          value: t.size
+          value: t.size,
         }));
-        return info
-      })
-    )
+        return info;
+      }),
+    );
   }
 
-  getTopAffiliations():Observable<Word[]>{
-    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_affiliations/`)
+  getTopAffiliations(): Observable<Word[]> {
+    return this.http.get<Word[]>(`${this.apiUrl}/affiliation/get_affiliations/`);
   }
 
   getLineChartInfoYear(year: number): Observable<LineChartInfo[]> {
     return this.getYear(year).pipe(
-      map(response => {
-        const series: NameValue[] = response.map(cy => ({
+      map((response) => {
+        const series: NameValue[] = response.map((cy) => ({
           name: cy.year.toString(),
-          value: cy.article
+          value: cy.article,
         }));
-        return [{
-          name: 'Ecuador',
-          series: series
-        }];
-      })
+        return [
+          {
+            name: 'Ecuador',
+            series: series,
+          },
+        ];
+      }),
     );
   }
 
   getYear(year: number): Observable<YearsResponse[]> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<YearsResponse[]>(`${this.apiUrl}/country/get_year_info/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<YearsResponse[]>(`${this.apiUrl}/country/get_year_info/`, { params });
   }
 
   getLineChartInfoRange(year: number): Observable<LineChartInfo[]> {
     return this.getYearsRange(year).pipe(
-      map(response => {
-        const series: NameValue[] = response.map(cy => ({
+      map((response) => {
+        const series: NameValue[] = response.map((cy) => ({
           name: cy.year.toString(),
-          value: cy.article
+          value: cy.article,
         }));
-        return [{
-          name: 'Ecuador',
-          series: series
-        }];
-      })
+        return [
+          {
+            name: 'Ecuador',
+            series: series,
+          },
+        ];
+      }),
     );
   }
 
   getYearsRange(year: number): Observable<YearsResponse[]> {
-    let params = new HttpParams().set('year', year.toString());
-    return this.http.get<YearsResponse[]>(`${this.apiUrl}/country/get_range_info/`, {params});
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<YearsResponse[]>(`${this.apiUrl}/country/get_range_info/`, { params });
   }
 
-  getProvinces():string{
+  getProvinces(): string {
     return `${this.apiUrl}/province/get_provinces/`;
   }
-  getProvincesYear(year:number):string{
+  getProvincesYear(year: number): string {
     return `${this.apiUrl}/province/get_provinces_year/?year=${year}`;
   }
 
-  getProvincesAcumulated(year:number):string{
+  getProvincesAcumulated(year: number): string {
     return `${this.apiUrl}/province/get_provinces_acumulated/?year=${year}`;
   }
-
-
 }

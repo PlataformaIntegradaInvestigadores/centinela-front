@@ -3,35 +3,55 @@
     <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <p class="text-xl font-bold text-gray-800 py-2 md:text-base lg:text-xl">Workshop Options</p>
+          <p class="text-xl font-bold text-gray-800 py-2 md:text-base lg:text-xl">
+            Workshop Options
+          </p>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="flex items-center justify-center">
-        <button (click)="openModal()"
-          class="inline-flex items-center justify-center p-2 border-b-2 border-transparent rounded-lg text-base transition-colors duration-200 ease-in-out bg-primary_tailwind text-white hover:bg-primary_hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:bg-primary_hover">Repeat
-          Workshop</button>
+        <button
+          (click)="openModal()"
+          class="inline-flex items-center justify-center p-2 border-b-2 border-transparent rounded-lg text-base transition-colors duration-200 ease-in-out bg-primary_tailwind text-white hover:bg-primary_hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:bg-primary_hover"
+        >
+          Repeat Workshop
+        </button>
       </div>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
 
 <!-- Modal -->
-<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+<div
+  *ngIf="showModal"
+  class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
+>
   <div class="bg-white rounded-lg shadow-lg p-6 w-80 dark:bg-gray-800 lg:w-[425px] max-h-56">
     <div class="flex justify-between items-center mb-4 h-8">
       <h3 class="text-lg font-bold dark:text-white">Confirm Your Decision</h3>
-      <button (click)="closeModal()"
-        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+      <button
+        (click)="closeModal()"
+        class="text-3xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
         &times;
       </button>
     </div>
-    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure you want to repeat the workshop? Once you
-      resubmit your vote, it cannot be changed.</p>
+    <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+      Are you sure you want to repeat the workshop? Once you resubmit your vote, it cannot be
+      changed.
+    </p>
     <div class="flex justify-end space-x-4">
-      <button (click)="cancelRepeatWorkshop()"
-        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
-      <button (click)="confirmRepeatWorkshop()"
-        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800">Confirm</button>
+      <button
+        (click)="cancelRepeatWorkshop()"
+        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="confirmRepeatWorkshop()"
+        class="px-4 py-2 bg-alert text-white rounded hover:bg-red-800"
+      >
+        Confirm
+      </button>
     </div>
   </div>
 </div>

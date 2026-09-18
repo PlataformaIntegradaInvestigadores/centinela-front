@@ -2,49 +2,106 @@
   <app-header [showInformation]="true"></app-header>
 
   <div class="feed-shell w-full px-3 sm:px-5 lg:px-6 xl:px-8 py-4 sm:py-6">
-    <div class="feed-grid grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,640px)_280px] 2xl:grid-cols-[240px_minmax(0,680px)_300px] gap-4 lg:gap-5 xl:gap-6">
-      
+    <div
+      class="feed-grid grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,640px)_280px] 2xl:grid-cols-[240px_minmax(0,680px)_300px] gap-4 lg:gap-5 xl:gap-6"
+    >
       <!-- Left Sidebar (Navigation & Filters) -->
       <aside class="feed-sidebar hidden lg:block">
         <div class="feed-rail-stack space-y-4">
           <!-- Navigation/Filters -->
           <nav class="feed-panel bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div class="p-2">
-              <button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors" 
-                      [ngClass]="selectedFilter === 'personalized' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'" 
-                      (click)="onFilterChange('personalized')">
-                <i class="fas fa-magic w-5 text-center" [ngClass]="selectedFilter === 'personalized' ? 'text-blue-600' : 'text-gray-400'"></i>
-                <span>Para ti</span>
+              <button
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                [ngClass]="
+                  selectedFilter === 'personalized'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                "
+                (click)="onFilterChange('personalized')"
+              >
+                <i
+                  class="fas fa-magic w-5 text-center"
+                  [ngClass]="selectedFilter === 'personalized' ? 'text-blue-600' : 'text-gray-400'"
+                ></i>
+                <span>For you</span>
               </button>
-              
-              <button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-1" 
-                      [ngClass]="selectedFilter === 'trending' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'" 
-                      (click)="onFilterChange('trending')">
-                <i class="fas fa-fire w-5 text-center" [ngClass]="selectedFilter === 'trending' ? 'text-blue-600' : 'text-gray-400'"></i>
-                <span>Tendencias</span>
+
+              <button
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-1"
+                [ngClass]="
+                  selectedFilter === 'trending'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                "
+                (click)="onFilterChange('trending')"
+              >
+                <i
+                  class="fas fa-fire w-5 text-center"
+                  [ngClass]="selectedFilter === 'trending' ? 'text-blue-600' : 'text-gray-400'"
+                ></i>
+                <span>Trending</span>
               </button>
-              
-              <button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-1" 
-                      [ngClass]="selectedFilter === 'latest' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'" 
-                      (click)="onFilterChange('latest')">
-                <i class="fas fa-clock w-5 text-center" [ngClass]="selectedFilter === 'latest' ? 'text-blue-600' : 'text-gray-400'"></i>
-                <span>Recientes</span>
+
+              <button
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-1"
+                [ngClass]="
+                  selectedFilter === 'latest'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                "
+                (click)="onFilterChange('latest')"
+              >
+                <i
+                  class="fas fa-clock w-5 text-center"
+                  [ngClass]="selectedFilter === 'latest' ? 'text-blue-600' : 'text-gray-400'"
+                ></i>
+                <span>Recent</span>
               </button>
             </div>
 
             <!-- Trending Time Range -->
-            <div *ngIf="selectedFilter === 'trending'" class="px-3 pb-3 pt-2 bg-gray-50/50 border-t border-gray-100">
-              <p class="text-[11px] font-semibold text-gray-500 mb-2 uppercase tracking-wider px-1">Periodo</p>
+            <div
+              *ngIf="selectedFilter === 'trending'"
+              class="px-3 pb-3 pt-2 bg-gray-50/50 border-t border-gray-100"
+            >
+              <p class="text-[11px] font-semibold text-gray-500 mb-2 uppercase tracking-wider px-1">
+                Period
+              </p>
               <div class="flex gap-1">
-                <button class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
-                  [ngClass]="trendingTimeRange === '24h' ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-500 hover:bg-gray-100 border border-transparent'"
-                  (click)="setTrendingTimeRange('24h')">24h</button>
-                <button class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
-                  [ngClass]="trendingTimeRange === '7d' ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-500 hover:bg-gray-100 border border-transparent'"
-                  (click)="setTrendingTimeRange('7d')">7d</button>
-                <button class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
-                  [ngClass]="trendingTimeRange === '30d' ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-500 hover:bg-gray-100 border border-transparent'"
-                  (click)="setTrendingTimeRange('30d')">30d</button>
+                <button
+                  class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
+                  [ngClass]="
+                    trendingTimeRange === '24h'
+                      ? 'bg-white shadow-sm text-blue-600 border border-gray-200'
+                      : 'text-gray-500 hover:bg-gray-100 border border-transparent'
+                  "
+                  (click)="setTrendingTimeRange('24h')"
+                >
+                  24h
+                </button>
+                <button
+                  class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
+                  [ngClass]="
+                    trendingTimeRange === '7d'
+                      ? 'bg-white shadow-sm text-blue-600 border border-gray-200'
+                      : 'text-gray-500 hover:bg-gray-100 border border-transparent'
+                  "
+                  (click)="setTrendingTimeRange('7d')"
+                >
+                  7d
+                </button>
+                <button
+                  class="flex-1 py-1 text-xs font-medium rounded-md transition-colors"
+                  [ngClass]="
+                    trendingTimeRange === '30d'
+                      ? 'bg-white shadow-sm text-blue-600 border border-gray-200'
+                      : 'text-gray-500 hover:bg-gray-100 border border-transparent'
+                  "
+                  (click)="setTrendingTimeRange('30d')"
+                >
+                  30d
+                </button>
               </div>
             </div>
           </nav>
@@ -53,59 +110,96 @@
 
       <!-- Main Feed Area -->
       <main class="feed-main space-y-4 min-w-0">
-        
         <!-- Mobile Filters (Visible only on small screens) -->
-        <div class="mobile-filter-tabs lg:hidden bg-white rounded-lg shadow-sm border border-gray-200 p-1.5 grid grid-cols-3 gap-1">
-           <button class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors" 
-                    [ngClass]="selectedFilter === 'personalized' ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-700'" 
-                    (click)="onFilterChange('personalized')">
-              <i class="fas fa-magic flex-shrink-0"></i>
-              <span class="truncate">Para ti</span>
-            </button>
-            <button class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors" 
-                    [ngClass]="selectedFilter === 'trending' ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-700'" 
-                    (click)="onFilterChange('trending')">
-              <i class="fas fa-fire flex-shrink-0"></i>
-              <span class="truncate">Tendencias</span>
-            </button>
-            <button class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors" 
-                    [ngClass]="selectedFilter === 'latest' ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-700'" 
-                    (click)="onFilterChange('latest')">
-              <i class="fas fa-clock flex-shrink-0"></i>
-              <span class="truncate">Recientes</span>
-            </button>
+        <div
+          class="mobile-filter-tabs lg:hidden bg-white rounded-lg shadow-sm border border-gray-200 p-1.5 grid grid-cols-3 gap-1"
+        >
+          <button
+            class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+            [ngClass]="
+              selectedFilter === 'personalized'
+                ? 'bg-blue-50 text-blue-700'
+                : 'bg-gray-50 text-gray-700'
+            "
+            (click)="onFilterChange('personalized')"
+          >
+            <i class="fas fa-magic flex-shrink-0"></i>
+            <span class="truncate">For you</span>
+          </button>
+          <button
+            class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+            [ngClass]="
+              selectedFilter === 'trending'
+                ? 'bg-blue-50 text-blue-700'
+                : 'bg-gray-50 text-gray-700'
+            "
+            (click)="onFilterChange('trending')"
+          >
+            <i class="fas fa-fire flex-shrink-0"></i>
+            <span class="truncate">Trending</span>
+          </button>
+          <button
+            class="min-w-0 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+            [ngClass]="
+              selectedFilter === 'latest' ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-700'
+            "
+            (click)="onFilterChange('latest')"
+          >
+            <i class="fas fa-clock flex-shrink-0"></i>
+            <span class="truncate">Recent</span>
+          </button>
         </div>
 
         <!-- Compact Search (Visible until the right sidebar appears) -->
         <div class="feed-panel xl:hidden bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
-          <div class="compact-search-grid grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_220px_auto] gap-2 sm:items-center">
+          <div
+            class="compact-search-grid grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_220px_auto] gap-2 sm:items-center"
+          >
             <div class="compact-search-main relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-gray-400 text-[13px]"></i>
               </div>
-              <input type="text" placeholder="Buscar temas, personas..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
-                class="w-full pl-9 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-[13px] transition-all placeholder-gray-400 text-gray-900">
+              <input
+                type="text"
+                placeholder="Search topics, people..."
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                class="w-full pl-9 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-[13px] transition-all placeholder-gray-400 text-gray-900"
+              />
             </div>
 
             <div class="compact-search-tag relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="text-gray-400 font-medium text-[13px]">#</span>
               </div>
-              <input type="text" placeholder="Etiqueta (Enter)" [(ngModel)]="tagInput" (keyup.enter)="addSearchTag($event)"
-                class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-[13px] transition-all placeholder-gray-400 text-gray-700">
+              <input
+                type="text"
+                placeholder="Tag (Enter)"
+                [(ngModel)]="tagInput"
+                (keyup.enter)="addSearchTag($event)"
+                class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-[13px] transition-all placeholder-gray-400 text-gray-700"
+              />
             </div>
 
-            <button (click)="onSearch()"
-              class="compact-search-button w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-              Buscar
+            <button
+              (click)="onSearch()"
+              class="compact-search-button w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            >
+              Search
             </button>
           </div>
 
           <div class="flex flex-wrap gap-1.5 mt-3" *ngIf="selectedTags.length > 0">
-            <span *ngFor="let tag of selectedTags; let i = index"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700">
+            <span
+              *ngFor="let tag of selectedTags; let i = index"
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700"
+            >
               #{{ tag }}
-              <button type="button" (click)="removeSearchTag(i)" class="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none transition-colors">
+              <button
+                type="button"
+                (click)="removeSearchTag(i)"
+                class="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none transition-colors"
+              >
                 <i class="fas fa-times text-[9px]"></i>
               </button>
             </span>
@@ -113,42 +207,57 @@
         </div>
 
         <!-- Post Creator -->
-        <app-post-creator 
-          [placeholder]="'¿Qué estás pensando?'" 
-          [buttonText]="'Publicar'"
-          [showOptions]="true" 
+        <app-post-creator
+          [placeholder]="'What\'s on your mind?'"
+          [buttonText]="'Post'"
+          [showOptions]="true"
           [userAvatar]="currentUserAvatar"
           [userName]="currentUserName"
           [isLoading]="isSubmittingPost"
-          (postSubmitted)="onPostSubmitted($event)">
+          (postSubmitted)="onPostSubmitted($event)"
+        >
         </app-post-creator>
 
         <!-- Search Results Indicator -->
-        <div *ngIf="isSearchMode && posts.length > 0"
-          class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div
+          *ngIf="isSearchMode && posts.length > 0"
+          class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+        >
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600"
+            >
               <i class="fas fa-search"></i>
             </div>
             <div>
-              <p class="text-sm text-gray-500">Resultados de búsqueda</p>
+              <p class="text-sm text-gray-500">Search results</p>
               <div class="flex items-center gap-2 flex-wrap mt-0.5">
-                <span *ngIf="searchQuery" class="text-base text-gray-900 font-medium">"{{ searchQuery }}"</span>
-                <span *ngFor="let tag of selectedTags" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
+                <span *ngIf="searchQuery" class="text-base text-gray-900 font-medium"
+                  >"{{ searchQuery }}"</span
+                >
+                <span
+                  *ngFor="let tag of selectedTags"
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700"
+                >
                   #{{ tag }}
                 </span>
               </div>
             </div>
           </div>
-          <button (click)="clearSearch()"
-            class="text-gray-500 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors text-sm font-medium self-start sm:self-auto">
-            Limpiar búsqueda
+          <button
+            (click)="clearSearch()"
+            class="text-gray-500 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors text-sm font-medium self-start sm:self-auto"
+          >
+            Clear search
           </button>
         </div>
 
         <!-- Loading State -->
         <div *ngIf="(isLoading || isSearching) && posts.length === 0" class="space-y-4">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 animate-pulse" *ngFor="let item of [1,2,3]">
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 animate-pulse"
+            *ngFor="let item of [1, 2, 3]"
+          >
             <div class="flex items-center gap-3 mb-3">
               <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
               <div class="flex-1">
@@ -165,73 +274,93 @@
         </div>
 
         <!-- Error State -->
-        <div *ngIf="error" class="bg-white rounded-lg shadow-sm border border-red-200 p-6 sm:p-10 text-center">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-5 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-2xl sm:text-3xl">
+        <div
+          *ngIf="error"
+          class="bg-white rounded-lg shadow-sm border border-red-200 p-6 sm:p-10 text-center"
+        >
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-5 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-2xl sm:text-3xl"
+          >
             <i class="fas fa-exclamation-triangle"></i>
           </div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Algo salió mal</h3>
+          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Something went wrong</h3>
           <p class="text-base text-gray-600 mb-8 max-w-md mx-auto">{{ error }}</p>
-          <button class="px-6 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
-            (click)="refreshFeed()">
-            Intentar de nuevo
+          <button
+            class="px-6 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+            (click)="refreshFeed()"
+          >
+            Try again
           </button>
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="!isLoading && !isSearching && posts.length === 0 && !error"
-          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-10 text-center">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-5 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 text-2xl sm:text-3xl">
+        <div
+          *ngIf="!isLoading && !isSearching && posts.length === 0 && !error"
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-10 text-center"
+        >
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-5 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 text-2xl sm:text-3xl"
+          >
             <i class="fas fa-newspaper" *ngIf="!isSearchMode"></i>
             <i class="fas fa-search" *ngIf="isSearchMode"></i>
           </div>
           <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-3">
-            {{ isSearchMode ? 'No encontramos resultados' : 'Tu feed está vacío' }}
+            {{ isSearchMode ? 'No results found' : 'Your feed is empty' }}
           </h3>
           <p class="text-base text-gray-500 mb-8 max-w-md mx-auto">
             <ng-container *ngIf="isSearchMode">
-              No se encontraron posts relacionados con 
+              No posts found matching
               <span *ngIf="searchQuery">"{{ searchQuery }}"</span>
-              <span *ngIf="searchQuery && selectedTags.length > 0"> y </span>
-              <span *ngIf="selectedTags.length > 0">las etiquetas seleccionadas</span>. 
-              Intenta con otros términos o etiquetas.
+              <span *ngIf="searchQuery && selectedTags.length > 0"> and </span>
+              <span *ngIf="selectedTags.length > 0">the selected tags</span>. Try other terms or
+              tags.
             </ng-container>
             <ng-container *ngIf="!isSearchMode">
-              Sigue a más personas o sé el primero en compartir algo interesante hoy.
+              Follow more people or be the first to share something interesting today.
             </ng-container>
           </p>
-          <button class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-            (click)="isSearchMode ? clearSearch() : focusPostInput()">
-            {{ isSearchMode ? 'Limpiar búsqueda' : 'Crear una publicación' }}
+          <button
+            class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            (click)="isSearchMode ? clearSearch() : focusPostInput()"
+          >
+            {{ isSearchMode ? 'Clear search' : 'Create a post' }}
           </button>
         </div>
 
         <!-- Posts List -->
-        <app-post-list 
-          [posts]="posts" 
-          [isLoading]="isLoading" 
+        <app-post-list
+          [posts]="posts"
+          [isLoading]="isLoading"
           [showEmptyState]="false"
-          [showActions]="true" 
-          [currentUserId]="currentUserId" 
+          [showActions]="true"
+          [currentUserId]="currentUserId"
           (toggleLike)="onToggleLike($event)"
-          (deletePost)="onDeletePost($event)" 
-          (sharePost)="onSharePost($event)" 
+          (deletePost)="onDeletePost($event)"
+          (sharePost)="onSharePost($event)"
           (viewProfile)="onViewProfile($event)"
-          (votePoll)="onVotePoll($event)" 
-          (editPost)="onEditPost($event)">
+          (votePoll)="onVotePoll($event)"
+          (editPost)="onEditPost($event)"
+        >
         </app-post-list>
 
         <!-- Load More / End of Feed -->
         <div class="py-6 text-center">
-          <button *ngIf="hasMore"
+          <button
+            *ngIf="hasMore"
             class="px-5 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 font-medium hover:bg-gray-50 hover:text-blue-600 transition-colors shadow-sm disabled:opacity-50"
-            (click)="loadMorePosts()" [disabled]="isLoadingMore">
+            (click)="loadMorePosts()"
+            [disabled]="isLoadingMore"
+          >
             <i class="fas fa-spinner fa-spin mr-2" *ngIf="isLoadingMore"></i>
-            {{ isLoadingMore ? 'Cargando más...' : 'Cargar más publicaciones' }}
+            {{ isLoadingMore ? 'Loading more...' : 'Load more posts' }}
           </button>
-          
-          <div *ngIf="!hasMore && posts.length > 5" class="flex flex-col items-center justify-center text-gray-400">
+
+          <div
+            *ngIf="!hasMore && posts.length > 5"
+            class="flex flex-col items-center justify-center text-gray-400"
+          >
             <div class="w-1.5 h-1.5 bg-gray-300 rounded-full mb-2"></div>
-            <p class="text-xs font-medium">Has llegado al final</p>
+            <p class="text-xs font-medium">You've reached the end</p>
           </div>
         </div>
       </main>
@@ -239,18 +368,22 @@
       <!-- Right Sidebar (Search & Stats) -->
       <aside class="feed-sidebar hidden xl:block">
         <div class="feed-rail-stack space-y-4">
-          
           <!-- Smart Search -->
           <div class="feed-panel bg-white rounded-lg border border-gray-200 p-4">
-            <h3 class="text-gray-900 font-semibold text-[15px] mb-3">Búsqueda</h3>
-            
+            <h3 class="text-gray-900 font-semibold text-[15px] mb-3">Search</h3>
+
             <!-- Text Search -->
             <div class="relative mb-3">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-gray-400 text-[13px]"></i>
               </div>
-              <input type="text" placeholder="Buscar temas, personas..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
-                class="w-full pl-9 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-[13px] transition-all placeholder-gray-400 text-gray-900">
+              <input
+                type="text"
+                placeholder="Search topics, people..."
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                class="w-full pl-9 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-[13px] transition-all placeholder-gray-400 text-gray-900"
+              />
             </div>
 
             <!-- Tag Search -->
@@ -258,35 +391,52 @@
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="text-gray-400 font-medium text-[13px]">#</span>
               </div>
-              <input type="text" placeholder="Añadir etiqueta (Enter)" [(ngModel)]="tagInput" (keyup.enter)="addSearchTag($event)"
-                class="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-[13px] transition-all placeholder-gray-400 text-gray-700">
+              <input
+                type="text"
+                placeholder="Add tag (Enter)"
+                [(ngModel)]="tagInput"
+                (keyup.enter)="addSearchTag($event)"
+                class="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-[13px] transition-all placeholder-gray-400 text-gray-700"
+              />
             </div>
 
             <!-- Selected Tags -->
             <div class="flex flex-wrap gap-1.5 mb-3" *ngIf="selectedTags.length > 0">
-              <span *ngFor="let tag of selectedTags; let i = index" 
-                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700">
+              <span
+                *ngFor="let tag of selectedTags; let i = index"
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700"
+              >
                 #{{ tag }}
-                <button type="button" (click)="removeSearchTag(i)" class="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none transition-colors">
+                <button
+                  type="button"
+                  (click)="removeSearchTag(i)"
+                  class="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none transition-colors"
+                >
                   <i class="fas fa-times text-[9px]"></i>
                 </button>
               </span>
             </div>
-            
+
             <!-- Suggested Tags (only when not searching) -->
             <div *ngIf="!isSearchMode && selectedTags.length === 0">
-              <p class="text-[11px] text-gray-500 mb-1.5 font-medium">Sugerencias:</p>
+              <p class="text-[11px] text-gray-500 mb-1.5 font-medium">Suggestions:</p>
               <div class="flex flex-wrap gap-1.5">
-                <button (click)="tagInput = 'IA'; addSearchTag()"
-                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium">
+                <button
+                  (click)="tagInput = 'IA'; addSearchTag()"
+                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium"
+                >
                   #IA
                 </button>
-                <button (click)="tagInput = 'MachineLearning'; addSearchTag()"
-                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium">
+                <button
+                  (click)="tagInput = 'MachineLearning'; addSearchTag()"
+                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium"
+                >
                   #MachineLearning
                 </button>
-                <button (click)="tagInput = 'DataScience'; addSearchTag()"
-                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium">
+                <button
+                  (click)="tagInput = 'DataScience'; addSearchTag()"
+                  class="text-[11px] px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-900 transition-colors font-medium"
+                >
                   #DataScience
                 </button>
               </div>
@@ -295,35 +445,48 @@
 
           <!-- User Stats -->
           <div class="feed-panel bg-white rounded-lg border border-gray-200 p-4" *ngIf="userStats">
-            <h3 class="text-gray-900 font-semibold text-[15px] mb-3">Tu Impacto</h3>
+            <h3 class="text-gray-900 font-semibold text-[15px] mb-3">Your Impact</h3>
             <div class="space-y-3">
               <div class="flex items-center justify-between text-[13px]">
-                <span class="text-gray-600 flex items-center gap-2.5"><i class="fas fa-pen-nib w-3.5 text-center text-gray-400"></i> Publicaciones</span>
+                <span class="text-gray-600 flex items-center gap-2.5"
+                  ><i class="fas fa-pen-nib w-3.5 text-center text-gray-400"></i> Posts</span
+                >
                 <span class="font-semibold text-gray-900">{{ userStats.total_posts || 0 }}</span>
               </div>
               <div class="flex items-center justify-between text-[13px]">
-                <span class="text-gray-600 flex items-center gap-2.5"><i class="fas fa-heart w-3.5 text-center text-gray-400"></i> Likes recibidos</span>
-                <span class="font-semibold text-gray-900">{{ userStats.total_likes_received || 0 }}</span>
+                <span class="text-gray-600 flex items-center gap-2.5"
+                  ><i class="fas fa-heart w-3.5 text-center text-gray-400"></i> Likes received</span
+                >
+                <span class="font-semibold text-gray-900">{{
+                  userStats.total_likes_received || 0
+                }}</span>
               </div>
               <div class="flex items-center justify-between text-[13px]">
-                <span class="text-gray-600 flex items-center gap-2.5"><i class="fas fa-comment w-3.5 text-center text-gray-400"></i> Comentarios</span>
-                <span class="font-semibold text-gray-900">{{ userStats.total_comments_received || 0 }}</span>
+                <span class="text-gray-600 flex items-center gap-2.5"
+                  ><i class="fas fa-comment w-3.5 text-center text-gray-400"></i> Comments</span
+                >
+                <span class="font-semibold text-gray-900">{{
+                  userStats.total_comments_received || 0
+                }}</span>
               </div>
               <div class="flex items-center justify-between text-[13px]">
-                <span class="text-gray-600 flex items-center gap-2.5"><i class="fas fa-eye w-3.5 text-center text-gray-400"></i> Visualizaciones</span>
-                <span class="font-semibold text-gray-900">{{ userStats.total_views_received || 0 }}</span>
+                <span class="text-gray-600 flex items-center gap-2.5"
+                  ><i class="fas fa-eye w-3.5 text-center text-gray-400"></i> Views</span
+                >
+                <span class="font-semibold text-gray-900">{{
+                  userStats.total_views_received || 0
+                }}</span>
               </div>
             </div>
           </div>
 
           <!-- Footer Links -->
           <div class="text-xs text-gray-500 flex flex-wrap gap-x-3 gap-y-1 px-1">
-            <a href="#" class="hover:underline">Privacidad</a>
-            <a href="#" class="hover:underline">Términos</a>
-            <a href="#" class="hover:underline">Ayuda</a>
+            <a href="#" class="hover:underline">Privacy</a>
+            <a href="#" class="hover:underline">Terms</a>
+            <a href="#" class="hover:underline">Help</a>
             <span>&copy; 2026 Social Consensus</span>
           </div>
-
         </div>
       </aside>
     </div>

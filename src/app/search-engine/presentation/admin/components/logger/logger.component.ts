@@ -4,7 +4,7 @@ import { LogService } from 'src/app/search-engine/domain/services/logger.service
 @Component({
   selector: 'app-models',
   templateUrl: './logger.component.html',
-  styleUrls: ['./logger.component.css']
+  styleUrls: ['./logger.component.css'],
 })
 export class LoggerComponent implements OnInit {
   logs: string[] = [];
@@ -18,25 +18,33 @@ export class LoggerComponent implements OnInit {
   endDate: string = '';
   keyword: string = '';
 
-  constructor(private logService: LogService) { }
+  constructor(private logService: LogService) {}
 
   ngOnInit(): void {
     this.fetchLogs();
   }
 
   fetchLogs(): void {
-    this.logService.getLogs(this.currentPage, this.linesPerPage, this.logLevel, this.startDate, this.endDate, this.keyword)
-      .subscribe(response => {
-        console.log(response);
-        this.logs = response.logs;
-        this.totalLogs = response.total_lines;
-        this.totalPages = Math.ceil(this.totalLogs / this.linesPerPage);
-      },
-      error => {
-        console.log(error);
-      }
-    )
-      ;
+    this.logService
+      .getLogs(
+        this.currentPage,
+        this.linesPerPage,
+        this.logLevel,
+        this.startDate,
+        this.endDate,
+        this.keyword,
+      )
+      .subscribe(
+        (response) => {
+          console.log(response);
+          this.logs = response.logs;
+          this.totalLogs = response.total_lines;
+          this.totalPages = Math.ceil(this.totalLogs / this.linesPerPage);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
   }
 
   prevPage(): void {

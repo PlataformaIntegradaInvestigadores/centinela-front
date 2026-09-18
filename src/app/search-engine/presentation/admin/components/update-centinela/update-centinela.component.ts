@@ -5,15 +5,10 @@ import { UpdateCentinelaService } from 'src/app/search-engine/domain/services/up
 @Component({
   selector: 'app-corpus',
   templateUrl: './update-centinela.component.html',
-  styleUrls: ['./update-centinela.component.css']
+  styleUrls: ['./update-centinela.component.css'],
 })
 export class UpdateCentinelaComponent {
-  integrationStatus:Status | undefined;
-  loading :boolean = false;
-   constructor(private updateCentinelaService: UpdateCentinelaService) {
-   }
-
-
-
-
+  integrationStatus: Status | undefined;
+  loading: boolean = false;
+  constructor(private updateCentinelaService: UpdateCentinelaService) {}
 }

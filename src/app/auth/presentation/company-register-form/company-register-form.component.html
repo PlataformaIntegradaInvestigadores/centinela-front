@@ -1,326 +1,392 @@
 <div class="step-wizard-container">
-    <!-- Progress Header -->
-    <div class="progress-header">
-        <div class="progress-bar-container">
-            <div class="progress-bar" [style.width.%]="getProgress()"></div>
+  <!-- Progress Header -->
+  <div class="progress-header">
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="getProgress()"></div>
+    </div>
+    <div class="steps-indicator">
+      <div
+        *ngFor="let step of steps; let i = index"
+        class="step-indicator"
+        [class.active]="step.id === currentStep"
+        [class.completed]="step.id < currentStep"
+        [class.available]="step.id <= currentStep || isStepCompleted(step.id)"
+        (click)="goToStep(step.id)"
+      >
+        <div class="step-number">
+          <span *ngIf="step.id < currentStep" class="check-icon">✓</span>
+          <span *ngIf="step.id >= currentStep">{{ step.id }}</span>
         </div>
-        <div class="steps-indicator">
-            <div 
-                *ngFor="let step of steps; let i = index"
-                class="step-indicator"
-                [class.active]="step.id === currentStep"
-                [class.completed]="step.id < currentStep"
-                [class.available]="step.id <= currentStep || isStepCompleted(step.id)"
-                (click)="goToStep(step.id)"
-            >
-                <div class="step-number">
-                    <span *ngIf="step.id < currentStep" class="check-icon">✓</span>
-                    <span *ngIf="step.id >= currentStep">{{ step.id }}</span>
-                </div>
-                <div class="step-info">
-                    <div class="step-title">{{ step.title }}</div>
-                    <div class="step-description">{{ step.description }}</div>
-                </div>
-            </div>
+        <div class="step-info">
+          <div class="step-title">{{ step.title }}</div>
+          <div class="step-description">{{ step.description }}</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="step-form">
+    <!-- Error Messages -->
+    <div *ngIf="errorMessages.length > 0" class="error-container">
+      <div class="error-icon">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <div class="error-content">
+        <div class="error-message" *ngFor="let error of errorMessages">
+          {{ error }}
+        </div>
+      </div>
     </div>
 
-    <!-- Form Container -->
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="step-form">
-        <!-- Error Messages -->
-        <div *ngIf="errorMessages.length > 0" class="error-container">
-            <div class="error-icon">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="error-content">
-                <div class="error-message" *ngFor="let error of errorMessages">
-                    {{ error }}
-                </div>
-            </div>
+    <!-- Step Content -->
+    <div class="step-content">
+      <!-- Step 1: Company Information -->
+      <div *ngIf="currentStep === 1" class="step-panel fade-in">
+        <div class="step-header">
+          <h3 class="step-title">Company Information</h3>
+          <p class="step-subtitle">Tell us about your company</p>
         </div>
 
-        <!-- Step Content -->
-        <div class="step-content">
-            
-            <!-- Step 1: Company Information -->
-            <div *ngIf="currentStep === 1" class="step-panel fade-in">
-                <div class="step-header">
-                    <h3 class="step-title">Company Information</h3>
-                    <p class="step-subtitle">Tell us about your company</p>
-                </div>
-                
-                <div class="form-fields">
-                    <!-- Company Name -->
-                    <div class="form-group">
-                        <label for="company_name" class="form-label">
-                            Company Name <span class="required">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="company_name"
-                            formControlName="company_name"
-                            class="form-control"
-                            placeholder="Enter your company name"
-                            required
-                            [class.error-input]="registerForm.get('company_name')?.invalid && registerForm.get('company_name')?.touched"
-                        />
-                        <div class="error-text" *ngIf="registerForm.get('company_name')?.invalid && registerForm.get('company_name')?.touched">
-                            Company name is required.
-                        </div>
-                    </div>
-
-                    <!-- Industry -->
-                    <div class="form-group">
-                        <label for="industry" class="form-label">Industry</label>
-                        <select
-                            id="industry"
-                            formControlName="industry"
-                            class="form-control select-field"
-                            [disabled]="isLoadingChoices"
-                        >
-                            <option value="" *ngIf="!isLoadingChoices">Select industry (optional)</option>
-                            <option value="" *ngIf="isLoadingChoices">Loading options...</option>
-                            <option *ngFor="let industry of industryOptions" [value]="industry.value">
-                                {{ industry.label }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <!-- Company Size -->
-                    <div class="form-group">
-                        <label for="employee_count" class="form-label">Company Size</label>
-                        <select
-                            id="employee_count"
-                            formControlName="employee_count"
-                            class="form-control select-field"
-                            [disabled]="isLoadingChoices"
-                        >
-                            <option value="" *ngIf="!isLoadingChoices">Select size (optional)</option>
-                            <option value="" *ngIf="isLoadingChoices">Loading options...</option>
-                            <option *ngFor="let option of employeeCountOptions" [value]="option.value">
-                                {{ option.label }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="form-group">
-                        <label for="description" class="form-label">Company Description</label>
-                        <textarea
-                            id="description"
-                            formControlName="description"
-                            class="form-control textarea-field"
-                            placeholder="Brief description of your company (optional)"
-                            rows="4"
-                            maxlength="500"
-                        ></textarea>
-                        <div class="char-count">{{ registerForm.get('description')?.value?.length || 0 }}/500</div>
-                    </div>
-                </div>
+        <div class="form-fields">
+          <!-- Company Name -->
+          <div class="form-group">
+            <label for="company_name" class="form-label">
+              Company Name <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="company_name"
+              formControlName="company_name"
+              class="form-control"
+              placeholder="Enter your company name"
+              required
+              [class.error-input]="
+                registerForm.get('company_name')?.invalid &&
+                registerForm.get('company_name')?.touched
+              "
+            />
+            <div
+              class="error-text"
+              *ngIf="
+                registerForm.get('company_name')?.invalid &&
+                registerForm.get('company_name')?.touched
+              "
+            >
+              Company name is required.
             </div>
+          </div>
 
-            <!-- Step 2: Contact Information -->
-            <div *ngIf="currentStep === 2" class="step-panel fade-in">
-                <div class="step-header">
-                    <h3 class="step-title">Contact Information</h3>
-                    <p class="step-subtitle">How can we reach your company?</p>
-                </div>
-                
-                <div class="form-fields">
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="username" class="form-label">
-                            Company Email <span class="required">*</span>
-                        </label>
-                        <input
-                            type="email"
-                            id="username"
-                            formControlName="username"
-                            class="form-control"
-                            placeholder="company@example.com"
-                            required
-                            [class.error-input]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-                        />
-                        <div class="error-text" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-                            <span *ngIf="registerForm.get('username')?.errors?.['required']">Email is required.</span>
-                            <span *ngIf="registerForm.get('username')?.errors?.['email']">Please enter a valid email address.</span>
-                        </div>
-                    </div>
+          <!-- Industry -->
+          <div class="form-group">
+            <label for="industry" class="form-label">Industry</label>
+            <select
+              id="industry"
+              formControlName="industry"
+              class="form-control select-field"
+              [disabled]="isLoadingChoices"
+            >
+              <option value="" *ngIf="!isLoadingChoices">Select industry (optional)</option>
+              <option value="" *ngIf="isLoadingChoices">Loading options...</option>
+              <option *ngFor="let industry of industryOptions" [value]="industry.value">
+                {{ industry.label }}
+              </option>
+            </select>
+          </div>
 
-                    <!-- Phone -->
-                    <div class="form-group">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            formControlName="phone"
-                            class="form-control"
-                            placeholder="+1 (555) 123-4567"
-                        />
-                    </div>
+          <!-- Company Size -->
+          <div class="form-group">
+            <label for="employee_count" class="form-label">Company Size</label>
+            <select
+              id="employee_count"
+              formControlName="employee_count"
+              class="form-control select-field"
+              [disabled]="isLoadingChoices"
+            >
+              <option value="" *ngIf="!isLoadingChoices">Select size (optional)</option>
+              <option value="" *ngIf="isLoadingChoices">Loading options...</option>
+              <option *ngFor="let option of employeeCountOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
 
-                    <!-- Website -->
-                    <div class="form-group">
-                        <label for="website" class="form-label">Website</label>
-                        <input
-                            type="url"
-                            id="website"
-                            formControlName="website"
-                            class="form-control"
-                            placeholder="https://yourcompany.com"
-                        />
-                    </div>
-                </div>
+          <!-- Description -->
+          <div class="form-group">
+            <label for="description" class="form-label">Company Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="form-control textarea-field"
+              placeholder="Brief description of your company (optional)"
+              rows="4"
+              maxlength="500"
+            ></textarea>
+            <div class="char-count">
+              {{ registerForm.get('description')?.value?.length || 0 }}/500
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Step 3: Account Security -->
-            <div *ngIf="currentStep === 3" class="step-panel fade-in">
-                <div class="step-header">
-                    <h3 class="step-title">Account Security</h3>
-                    <p class="step-subtitle">Create a secure password for your account</p>
-                </div>
-                
-                <div class="form-fields">
-                    <!-- Password -->
-                    <div class="form-group">
-                        <label for="password" class="form-label">
-                            Password <span class="required">*</span>
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            formControlName="password"
-                            class="form-control"
-                            placeholder="At least 8 characters"
-                            required
-                            [class.error-input]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                        />
-                        <div class="error-text" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-                            <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</span>
-                            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters long.</span>
-                        </div>
-                    </div>
-
-                    <!-- Confirm Password -->
-                    <div class="form-group">
-                        <label for="confirm_password" class="form-label">
-                            Confirm Password <span class="required">*</span>
-                        </label>
-                        <input
-                            type="password"
-                            id="confirm_password"
-                            formControlName="confirm_password"
-                            class="form-control"
-                            placeholder="Confirm your password"
-                            required
-                            [class.error-input]="registerForm.get('confirm_password')?.invalid && registerForm.get('confirm_password')?.touched"
-                        />
-                        <div class="error-text" *ngIf="registerForm.get('confirm_password')?.invalid && registerForm.get('confirm_password')?.touched">
-                            Confirmation password is required.
-                        </div>
-                        <div class="error-text" *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirm_password')?.touched">
-                            Passwords do not match.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 4: Terms and Completion -->
-            <div *ngIf="currentStep === 4" class="step-panel fade-in">
-                <div class="step-header">
-                    <h3 class="step-title">Review & Complete</h3>
-                    <p class="step-subtitle">Review your information and complete registration</p>
-                </div>
-                
-                <div class="form-fields">
-                    <!-- Review Summary -->
-                    <div class="review-summary">
-                        <div class="summary-section">
-                            <h4>Company Information</h4>
-                            <p><strong>Name:</strong> {{ registerForm.get('company_name')?.value }}</p>
-                            <p *ngIf="registerForm.get('industry')?.value"><strong>Industry:</strong> {{ registerForm.get('industry')?.value }}</p>
-                            <p *ngIf="registerForm.get('employee_count')?.value"><strong>Size:</strong> {{ registerForm.get('employee_count')?.value }}</p>
-                        </div>
-                        
-                        <div class="summary-section">
-                            <h4>Contact Information</h4>
-                            <p><strong>Email:</strong> {{ registerForm.get('username')?.value }}</p>
-                            <p *ngIf="registerForm.get('phone')?.value"><strong>Phone:</strong> {{ registerForm.get('phone')?.value }}</p>
-                            <p *ngIf="registerForm.get('website')?.value"><strong>Website:</strong> {{ registerForm.get('website')?.value }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Terms and Conditions -->
-                    <div class="terms-group">
-                        <label class="checkbox-container">
-                            <input
-                                type="checkbox"
-                                formControlName="agree_terms"
-                                required
-                            />
-                            <span class="checkmark"></span>
-                            <span class="checkbox-text">
-                                I agree to the <a href="#" class="terms-link">Terms and Conditions</a> and 
-                                <a href="#" class="terms-link">Privacy Policy</a>
-                            </span>
-                        </label>
-                        <div class="error-text" *ngIf="registerForm.get('agree_terms')?.invalid && registerForm.get('agree_terms')?.touched">
-                            You must agree to the terms and conditions.
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- Step 2: Contact Information -->
+      <div *ngIf="currentStep === 2" class="step-panel fade-in">
+        <div class="step-header">
+          <h3 class="step-title">Contact Information</h3>
+          <p class="step-subtitle">How can we reach your company?</p>
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="step-navigation">
-            <button 
-                type="button" 
-                class="nav-btn secondary"
-                *ngIf="currentStep > 1"
-                (click)="previousStep()"
+        <div class="form-fields">
+          <!-- Email -->
+          <div class="form-group">
+            <label for="username" class="form-label">
+              Company Email <span class="required">*</span>
+            </label>
+            <input
+              type="email"
+              id="username"
+              formControlName="username"
+              class="form-control"
+              placeholder="company@example.com"
+              required
+              [class.error-input]="
+                registerForm.get('username')?.invalid && registerForm.get('username')?.touched
+              "
+            />
+            <div
+              class="error-text"
+              *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
             >
-                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Previous
-            </button>
+              <span *ngIf="registerForm.get('username')?.errors?.['required']"
+                >Email is required.</span
+              >
+              <span *ngIf="registerForm.get('username')?.errors?.['email']"
+                >Please enter a valid email address.</span
+              >
+            </div>
+          </div>
 
-            <div class="nav-spacer"></div>
+          <!-- Phone -->
+          <div class="form-group">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              formControlName="phone"
+              class="form-control"
+              placeholder="+1 (555) 123-4567"
+            />
+          </div>
 
-            <button 
-                type="button" 
-                class="nav-btn primary"
-                *ngIf="currentStep < totalSteps"
-                [disabled]="!isCurrentStepValid()"
-                (click)="nextStep()"
-            >
-                Next
-                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
-
-            <button 
-                type="submit" 
-                class="nav-btn primary submit"
-                *ngIf="currentStep === totalSteps"
-                [disabled]="registerForm.invalid || isLoading"
-                [class.loading]="isLoading"
-            >
-                <span *ngIf="!isLoading" class="btn-content">
-                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Create Account
-                </span>
-                <span *ngIf="isLoading" class="loading-content">
-                    <span class="spinner"></span>
-                    Creating...
-                </span>
-            </button>
+          <!-- Website -->
+          <div class="form-group">
+            <label for="website" class="form-label">Website</label>
+            <input
+              type="url"
+              id="website"
+              formControlName="website"
+              class="form-control"
+              placeholder="https://yourcompany.com"
+            />
+          </div>
         </div>
-    </form>
+      </div>
+
+      <!-- Step 3: Account Security -->
+      <div *ngIf="currentStep === 3" class="step-panel fade-in">
+        <div class="step-header">
+          <h3 class="step-title">Account Security</h3>
+          <p class="step-subtitle">Create a secure password for your account</p>
+        </div>
+
+        <div class="form-fields">
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password" class="form-label">
+              Password <span class="required">*</span>
+            </label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              class="form-control"
+              placeholder="At least 8 characters"
+              required
+              [class.error-input]="
+                registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+              "
+            />
+            <div
+              class="error-text"
+              *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            >
+              <span *ngIf="registerForm.get('password')?.errors?.['required']"
+                >Password is required.</span
+              >
+              <span *ngIf="registerForm.get('password')?.errors?.['minlength']"
+                >Password must be at least 8 characters long.</span
+              >
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label for="confirm_password" class="form-label">
+              Confirm Password <span class="required">*</span>
+            </label>
+            <input
+              type="password"
+              id="confirm_password"
+              formControlName="confirm_password"
+              class="form-control"
+              placeholder="Confirm your password"
+              required
+              [class.error-input]="
+                registerForm.get('confirm_password')?.invalid &&
+                registerForm.get('confirm_password')?.touched
+              "
+            />
+            <div
+              class="error-text"
+              *ngIf="
+                registerForm.get('confirm_password')?.invalid &&
+                registerForm.get('confirm_password')?.touched
+              "
+            >
+              Confirmation password is required.
+            </div>
+            <div
+              class="error-text"
+              *ngIf="
+                registerForm.errors?.['passwordMismatch'] &&
+                registerForm.get('confirm_password')?.touched
+              "
+            >
+              Passwords do not match.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Terms and Completion -->
+      <div *ngIf="currentStep === 4" class="step-panel fade-in">
+        <div class="step-header">
+          <h3 class="step-title">Review & Complete</h3>
+          <p class="step-subtitle">Review your information and complete registration</p>
+        </div>
+
+        <div class="form-fields">
+          <!-- Review Summary -->
+          <div class="review-summary">
+            <div class="summary-section">
+              <h4>Company Information</h4>
+              <p><strong>Name:</strong> {{ registerForm.get('company_name')?.value }}</p>
+              <p *ngIf="registerForm.get('industry')?.value">
+                <strong>Industry:</strong> {{ registerForm.get('industry')?.value }}
+              </p>
+              <p *ngIf="registerForm.get('employee_count')?.value">
+                <strong>Size:</strong> {{ registerForm.get('employee_count')?.value }}
+              </p>
+            </div>
+
+            <div class="summary-section">
+              <h4>Contact Information</h4>
+              <p><strong>Email:</strong> {{ registerForm.get('username')?.value }}</p>
+              <p *ngIf="registerForm.get('phone')?.value">
+                <strong>Phone:</strong> {{ registerForm.get('phone')?.value }}
+              </p>
+              <p *ngIf="registerForm.get('website')?.value">
+                <strong>Website:</strong> {{ registerForm.get('website')?.value }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="terms-group">
+            <label class="checkbox-container">
+              <input type="checkbox" formControlName="agree_terms" required />
+              <span class="checkmark"></span>
+              <span class="checkbox-text">
+                I agree to the <a href="#" class="terms-link">Terms and Conditions</a> and
+                <a href="#" class="terms-link">Privacy Policy</a>
+              </span>
+            </label>
+            <div
+              class="error-text"
+              *ngIf="
+                registerForm.get('agree_terms')?.invalid && registerForm.get('agree_terms')?.touched
+              "
+            >
+              You must agree to the terms and conditions.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="step-navigation">
+      <button
+        type="button"
+        class="nav-btn secondary"
+        *ngIf="currentStep > 1"
+        (click)="previousStep()"
+      >
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Previous
+      </button>
+
+      <div class="nav-spacer"></div>
+
+      <button
+        type="button"
+        class="nav-btn primary"
+        *ngIf="currentStep < totalSteps"
+        [disabled]="!isCurrentStepValid()"
+        (click)="nextStep()"
+      >
+        Next
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <button
+        type="submit"
+        class="nav-btn primary submit"
+        *ngIf="currentStep === totalSteps"
+        [disabled]="registerForm.invalid || isLoading"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading" class="btn-content">
+          <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          Create Account
+        </span>
+        <span *ngIf="isLoading" class="loading-content">
+          <span class="spinner"></span>
+          Creating...
+        </span>
+      </button>
+    </div>
+  </form>
 </div>

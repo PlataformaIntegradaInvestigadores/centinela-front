@@ -9,11 +9,12 @@ import { UserDataService } from 'src/app/profile/domain/services/user_data.servi
 import { UserProfile, User } from 'src/app/profile/domain/entities/user.interfaces';
 import { AuthorService } from 'src/app/search-engine/domain/services/author.service';
 import { Author } from 'src/app/shared/interfaces/author.interface';
+import { FeedPost } from 'src/app/feeds/presentation/types/post.types';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   userId: string = '0';
@@ -23,7 +24,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   authorCentinela: Author | undefined;
   returnToResultsUrl: string | null = null;
   editModalVisible: boolean = false;
-  postToEdit: any = null;
+  postToEdit: FeedPost | null = null;
 
   @ViewChild('tabsTop') tabsTop?: ElementRef;
 
@@ -34,15 +35,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private userDataService: UserDataService,
     private titleService: Title,
     private authorService: AuthorService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
-    window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     this.returnToResultsUrl = returnUrl?.startsWith('/home') ? returnUrl : null;
 
-    this.routeSub = this.route.params.subscribe(params => {
+    this.routeSub = this.route.params.subscribe((params) => {
       this.userId = params['id'];
       this.loadUserData();
     });
@@ -52,14 +53,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // percibe como un "salto". Llevamos la vista al inicio de la barra de
     // pestanas para que el cambio de alto ocurra fuera del area visible.
     this.routeSub.add(
-      this.router.events
-        .pipe(filter(e => e instanceof NavigationEnd))
-        .subscribe((e) => {
-          const url = (e as NavigationEnd).urlAfterRedirects;
-          if (/\/(network|article|fingerprint|about-me|my-groups)(\/|$|\?)/.test(url)) {
-            this.tabsTop?.nativeElement?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-          }
-        })
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
+        const url = (e as NavigationEnd).urlAfterRedirects;
+        if (/\/(network|article|fingerprint|about-me|my-groups)(\/|$|\?)/.test(url)) {
+          this.tabsTop?.nativeElement?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        }
+      }),
     );
   }
 
@@ -85,7 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.userService.getUserById(this.userId).subscribe({
       next: (data: UserProfile) => {
         this.user = { ...data, id: this.userId, isOwnProfile: this.isOwnProfile };
-        this.authorCentinela = undefined;  // Limpiar datos del autor
+        this.authorCentinela = undefined; // Limpiar datos del autor
         this.checkIfOwnProfile();
         this.userDataService.setUser(this.user, this.authorCentinela);
         this.setTitle();
@@ -94,7 +93,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error fetching user data', err);
         this.loadAuthorData(); // Si ocurre un error, cargar los datos del autor
-      }
+      },
     });
   }
 
@@ -105,13 +104,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.authorService.getAuthorById(this.userId).subscribe({
       next: (data: Author) => {
         this.authorCentinela = data;
-        this.user = null;  // Limpiar datos del usuario
+        this.user = null; // Limpiar datos del usuario
         this.titleService.setTitle(`${data.first_name} ${data.last_name}`);
         console.log('Author data:', this.authorCentinela);
       },
       error: (err) => {
         console.error('Error fetching author data', err);
-      }
+      },
     });
   }
 
@@ -149,9 +148,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.postToEdit = null;
   }
 
-  saveEditPost(editData: { content: string, tags: string[] }): void {
+  saveEditPost(editData: { content: string; tags: string[] }): void {
     // Aquí deberías emitir un evento o llamar a un servicio para actualizar el post
     // y luego cerrar el modal. Puedes personalizar según tu lógica.
+    void editData;
     this.closeEditModal();
   }
 }

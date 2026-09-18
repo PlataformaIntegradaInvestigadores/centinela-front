@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { Job, JobCreate } from 'src/app/jobs/domain/entities/job.interface';
+import { JobCreate } from 'src/app/jobs/domain/entities/job.interface';
 
 @Component({
   selector: 'app-create-job-modal',
   templateUrl: './create-job-modal.component.html',
-  styleUrls: ['./create-job-modal.component.css']
+  styleUrls: ['./create-job-modal.component.css'],
 })
 export class CreateJobModalComponent {
-
   @Output() jobCreated = new EventEmitter<JobCreate>();
   @Output() closeModal = new EventEmitter<void>();
 
@@ -20,27 +19,29 @@ export class CreateJobModalComponent {
     requirements: [''],
     benefits: [''],
     remote: false,
-    applicationDeadline: ''
+    applicationDeadline: '',
   };
 
   jobTypes = ['full_time', 'part_time', 'contract', 'internship'];
 
-  constructor() { }
+  constructor() {}
 
   onSubmit(): void {
     if (this.isFormValid()) {
       const newJob: JobCreate = {
         title: this.jobForm.title,
         description: this.jobForm.description,
-        requirements: this.jobForm.requirements.filter(req => req.trim() !== '').join('\n'),
-        benefits: this.jobForm.benefits.filter(benefit => benefit.trim() !== '').join('\n'),
+        requirements: this.jobForm.requirements.filter((req) => req.trim() !== '').join('\n'),
+        benefits: this.jobForm.benefits.filter((benefit) => benefit.trim() !== '').join('\n'),
         location: this.jobForm.location,
         job_type: this.jobForm.type,
         experience_level: 'junior', // Default value, could be added to form
         is_remote: this.jobForm.remote,
         application_deadline: this.jobForm.applicationDeadline,
         salary_min: this.jobForm.salary ? parseInt(this.jobForm.salary.split('-')[0]) : undefined,
-        salary_max: this.jobForm.salary ? parseInt(this.jobForm.salary.split('-')[1] || this.jobForm.salary.split('-')[0]) : undefined,
+        salary_max: this.jobForm.salary
+          ? parseInt(this.jobForm.salary.split('-')[1] || this.jobForm.salary.split('-')[0])
+          : undefined,
       };
 
       this.jobCreated.emit(newJob);
@@ -84,8 +85,8 @@ export class CreateJobModalComponent {
       this.jobForm.salary.trim() &&
       this.jobForm.description.trim() &&
       this.jobForm.applicationDeadline &&
-      this.jobForm.requirements.some(req => req.trim() !== '') &&
-      this.jobForm.benefits.some(benefit => benefit.trim() !== '')
+      this.jobForm.requirements.some((req) => req.trim() !== '') &&
+      this.jobForm.benefits.some((benefit) => benefit.trim() !== '')
     );
   }
 
@@ -99,7 +100,7 @@ export class CreateJobModalComponent {
       requirements: [''],
       benefits: [''],
       remote: false,
-      applicationDeadline: ''
+      applicationDeadline: '',
     };
   }
 }

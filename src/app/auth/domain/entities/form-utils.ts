@@ -7,10 +7,10 @@ import { FormGroup } from '@angular/forms';
  */
 export function getFormValidationErrors(form: FormGroup): string[] {
   const messages: string[] = [];
-  Object.keys(form.controls).forEach(key => {
+  Object.keys(form.controls).forEach((key) => {
     const controlErrors = form.get(key)?.errors;
     if (controlErrors) {
-      Object.keys(controlErrors).forEach(keyError => {
+      Object.keys(controlErrors).forEach((keyError) => {
         switch (keyError) {
           case 'required':
             messages.push(`${getControlLabel(key)} is required.`);
@@ -20,7 +20,9 @@ export function getFormValidationErrors(form: FormGroup): string[] {
             break;
           case 'pattern':
             if (key === 'password') {
-              messages.push(`${getControlLabel(key)} must contain at least one uppercase letter, one lowercase letter, one number, and one special character.`);
+              messages.push(
+                `${getControlLabel(key)} must contain at least one uppercase letter, one lowercase letter, one number, and one special character.`,
+              );
             } else if (key === 'scopus_id') {
               messages.push(`${getControlLabel(key)} must be a positive number.`);
             }
@@ -55,7 +57,7 @@ function getControlLabel(controlName: string): string {
     confirm_password: 'Confirm Password',
     birthday: 'Birthday',
     scopus_id: 'Scopus ID',
-    agree_terms: 'Agree to Terms'
+    agree_terms: 'Agree to Terms',
   };
   return controlLabels[controlName] || controlName;
 }

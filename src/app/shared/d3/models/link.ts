@@ -1,4 +1,4 @@
-import {Node} from './';
+import { Node } from './';
 
 export class Link implements d3.SimulationLinkDatum<Node> {
   // optional - defining optional implementation properties - required for relevant typing assistance
@@ -8,14 +8,14 @@ export class Link implements d3.SimulationLinkDatum<Node> {
   source: Node;
   target: Node;
 
-  strokeWidth: number
+  strokeWidth: number;
 
   constructor(source: Node | string | number, target: Node | string | number, strokeWidth: number) {
-    // @ts-ignore
+    // @ts-expect-error source may be a string/number id before d3 resolves it to a Node instance
     this.source = source;
 
-    // @ts-ignore
+    // @ts-expect-error target may be a string/number id before d3 resolves it to a Node instance
     this.target = target;
-    this.strokeWidth = strokeWidth
+    this.strokeWidth = strokeWidth;
   }
 }

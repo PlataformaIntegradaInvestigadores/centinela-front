@@ -5,12 +5,12 @@ import { environment } from 'src/environments/environment';
 import { UserInfo } from '../entities/user.interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class InformationService {
   private apiUrl = environment.apiIdentity;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Obtiene los encabezados HTTP con el token de autorización.
@@ -20,8 +20,8 @@ export class InformationService {
     const token = localStorage.getItem('accessToken');
     return {
       headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
+        Authorization: `Bearer ${token}`,
+      }),
     };
   }
 
@@ -31,7 +31,10 @@ export class InformationService {
    * @returns Un Observable que emite la información del perfil del usuario.
    */
   getInformation(userId: string): Observable<UserInfo> {
-    return this.http.get<UserInfo>(`${this.apiUrl}/profile-information/${userId}/`, this.getHeaders());
+    return this.http.get<UserInfo>(
+      `${this.apiUrl}/profile-information/${userId}/`,
+      this.getHeaders(),
+    );
   }
 
   /**

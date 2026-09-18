@@ -1,29 +1,30 @@
 /* Modules */
-import {NgModule} from "@angular/core";
-import {SharedModule} from "../shared/shared.module";
-import {HomePageModule} from "../search-engine/presentation/home-page/home-page.module";
-import {VisualsService} from "../shared/domain/services/visuals.service";
+import { NgModule } from '@angular/core';
+import { SharedModule } from '../shared/shared.module';
+import { VisualsService } from '../shared/domain/services/visuals.service';
 import { GeneralComponent } from './presentation/pages/general/general.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  EvolutionLineChartComponent
-} from "../shared/components/visuals/evolution-line-chart/evolution-line-chart.component";
-import {LineChartModule} from "@swimlane/ngx-charts";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {LowerCasePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, TitleCasePipe} from "@angular/common";
+  LowerCasePipe,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  TitleCasePipe,
+} from '@angular/common';
 import { SearchBarComponent } from './presentation/components/shared/search-bar/search-bar.component';
-import {MatInputModule} from "@angular/material/input";
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AffiliationComponent } from './presentation/pages/affiliation/affiliation.component';
-import {MatIconModule} from "@angular/material/icon";
-import {DashboardRoutingModule} from "./dashboard-routing.module";
+import { MatIconModule } from '@angular/material/icon';
+import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TopicComponent } from './presentation/pages/topic/topic.component';
-import {RouterModule} from "@angular/router";
+import { RouterModule } from '@angular/router';
 import { DashboardPageComponent } from './presentation/pages/dashboard-page/dashboard-page.component';
-import {CountUpModule} from "ngx-countup";
-import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { CountUpModule } from 'ngx-countup';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AffiliationDashboardComponent } from './presentation/pages/affiliation-dashboard/affiliation-dashboard.component';
 import { TopicDashboardComponent } from './presentation/pages/topic-dashboard/topic-dashboard.component';
-
 
 @NgModule({
   declarations: [
@@ -39,7 +40,7 @@ import { TopicDashboardComponent } from './presentation/pages/topic-dashboard/to
     GeneralComponent,
     SearchBarComponent,
     AffiliationComponent,
-    AffiliationDashboardComponent
+    AffiliationDashboardComponent,
   ],
   imports: [
     DashboardRoutingModule,
@@ -59,8 +60,6 @@ import { TopicDashboardComponent } from './presentation/pages/topic-dashboard/to
     LowerCasePipe,
     TitleCasePipe,
   ],
-  providers: [VisualsService
-    ],
+  providers: [VisualsService],
 })
-export class DashboardModule {
-}
+export class DashboardModule {}

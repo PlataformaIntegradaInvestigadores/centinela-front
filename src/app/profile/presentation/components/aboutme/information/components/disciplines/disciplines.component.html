@@ -2,12 +2,19 @@
 <div class="container mx-auto mb-2 rounded-xl border p-6 shadow-md bg-white">
   <div class="flex justify-between items-start mb-2">
     <h2 class="text-2xl font-semibold text-gray-800">Disciplines</h2>
-    <img *ngIf="isOwnProfile" src="assets/pencil-solid.svg" alt="Edit" class="cursor-pointer w-4 h-4"
-      (click)="toggleEditDisciplines()">
+    <img
+      *ngIf="isOwnProfile"
+      src="assets/pencil-solid.svg"
+      alt="Edit"
+      class="cursor-pointer w-4 h-4"
+      (click)="toggleEditDisciplines()"
+    />
   </div>
   <div *ngIf="!isEditing">
     <div class="text-sm text-gray-700" *ngIf="disciplines.length > 0; else disciplinesPlaceholder">
-      <p *ngFor="let discipline of disciplines" class="block text-sm text-justify"> - {{ discipline }}</p>
+      <p *ngFor="let discipline of disciplines" class="block text-sm text-justify">
+        - {{ discipline }}
+      </p>
     </div>
     <ng-template #disciplinesPlaceholder>
       <p class="text-sm text-gray-500">Please add some disciplines to showcase your expertise.</p>
@@ -15,29 +22,57 @@
   </div>
   <div *ngIf="isEditing">
     <div class="text-sm text-gray-700">
-      <div class="flex items-center justify-between space-x-2 mb-2"
-        *ngFor="let discipline of editableDisciplines; let i = index">
+      <div
+        class="flex items-center justify-between space-x-2 mb-2"
+        *ngFor="let discipline of editableDisciplines; let i = index"
+      >
         <span class="block text-sm text-justify">{{ discipline }}</span>
-        <button (click)="removeDiscipline(i)"
-          class="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600">Remove</button>
+        <button
+          (click)="removeDiscipline(i)"
+          class="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+        >
+          Remove
+        </button>
       </div>
-      <input [(ngModel)]="newDiscipline" class="w-full border rounded p-3 mb-3" placeholder="Add new discipline"
-        [attr.aria-label]="'New Discipline'" />
-      <button (click)="addDiscipline()"
-        class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black">Add</button>
+      <input
+        [(ngModel)]="newDiscipline"
+        class="w-full border rounded p-3 mb-3"
+        placeholder="Add new discipline"
+        [attr.aria-label]="'New Discipline'"
+      />
+      <button
+        (click)="addDiscipline()"
+        class="px-4 py-2 rounded bg-primary_tailwind text-white hover:bg-black"
+      >
+        Add
+      </button>
     </div>
     <div class="flex space-x-3 mt-3">
-      <button (click)="save()" 
-        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5">
+      <button
+        (click)="save()"
+        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5"
+      >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          ></path>
         </svg>
         Save
       </button>
-      <button (click)="cancel()" 
-        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg border border-gray-300 shadow-sm hover:bg-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200">
+      <button
+        (click)="cancel()"
+        class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg border border-gray-300 shadow-sm hover:bg-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
+      >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
         </svg>
         Cancel
       </button>

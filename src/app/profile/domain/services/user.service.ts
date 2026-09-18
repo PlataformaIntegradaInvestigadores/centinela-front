@@ -5,12 +5,12 @@ import { environment } from 'src/environments/environment';
 import { UserProfile } from '../entities/user.interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private apiUrl = environment.apiIdentity;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Obtiene la información de un usuario por su ID.

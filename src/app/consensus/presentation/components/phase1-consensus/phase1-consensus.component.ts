@@ -1,27 +1,28 @@
-import { Component, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
-import { RecommendedTopic, TopicAddedUser } from 'src/app/consensus/domain/entities/topic.interface';
+import {
+  RecommendedTopic,
+  TopicAddedUser,
+} from 'src/app/consensus/domain/entities/topic.interface';
 import { TopicService } from 'src/app/consensus/domain/services/TopicDataService.service';
 import { WebSocketService } from 'src/app/consensus/domain/services/WebSocketService.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { initFlowbite } from 'flowbite';
-import { DebateService } from "../../../domain/services/debate.service";
-import { Debate } from "../../../domain/entities/debate.interface";
+import { DebateService } from '../../../domain/services/debate.service';
+import { Debate } from '../../../domain/entities/debate.interface';
 import { UserPostureService } from 'src/app/consensus/domain/services/user-posture.service';
 import { UserPosture } from 'src/app/consensus/domain/entities/user-posture.interface';
 import { SelectPostureComponent } from '../select-posture/select-posture.component';
 import { DebateStatisticsService } from 'src/app/consensus/domain/services/debate-statistics.service';
 
-
 @Component({
   selector: 'phase1-consensus',
   templateUrl: './phase1-consensus.component.html',
-  styleUrls: ['./phase1-consensus.component.css']
+  styleUrls: ['./phase1-consensus.component.css'],
 })
 export class Phase1ConsensusComponent implements OnInit, OnDestroy {
-
   rangeValues: number[] = [];
   showSliders: boolean = false;
   showLabel: boolean[] = [];
@@ -47,13 +48,11 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
   notifications: any[] = [];
 
-
   userPhase: number = 0;
 
   // Estados de los modales
   isModalOpenDebate: boolean = false;
   isModalOpenPosture: boolean = false;
-
 
   // Variables para el debate
   debateTitle: string = '';
@@ -62,9 +61,8 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
   durationMinutes: number = 0;
 
   // Debate activo y grupo
-  activeDebateId: number  = 0;
+  activeDebateId: number = 0;
   isDebateActive: boolean = false;
-
 
   // Subscripciones
   private subscriptions: Subscription[] = [];
@@ -83,23 +81,20 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private debateService: DebateService,
     private postureService: UserPostureService,
-    private debateStatisticsService: DebateStatisticsService
-  ) { }
+    private debateStatisticsService: DebateStatisticsService,
+  ) {}
 
   ngOnInit(): void {
-
-
     initFlowbite();
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.groupId = params.get('groupId') || '';
       this.checkUserPhase(); // Llama a esta función para verificar la fase del usuario
       this.validateDebateStatus(); // Llama a esta función para verificar el estado del debate
-
     });
 
     // Suscribirse a las notificaciones de la creacion de debates
 
-    this.webSocketService.notificationsReceived.subscribe(message => {
+    this.webSocketService.notificationsReceived.subscribe((message) => {
       if (message.type === 'debate_created') {
         console.log('Debate creado:', message);
         this.isDebateActive = true; // Actualiza el estado
@@ -110,7 +105,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
     // Suscribirse a las notificaciones del cierre de debates
 
-    this.webSocketService.notificationsReceived.subscribe(message => {
+    this.webSocketService.notificationsReceived.subscribe((message) => {
       if (message.type === 'debate_closed') {
         console.log('Debate cerrado:', message);
         this.isDebateActive = true; // Actualiza el estado
@@ -120,7 +115,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
     // Suscribirse a las notificaciones de la postura del usuario
 
-    this.webSocketService.notificationsReceived.subscribe(message => {
+    this.webSocketService.notificationsReceived.subscribe((message) => {
       if (message.type === 'posture_created') {
         console.log('Postura registrada:', message);
         this.isDebateActive = true; // Actualiza el estado
@@ -130,7 +125,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
     // Suscribirse a las notificaciones de la postura del usuario
 
-    this.webSocketService.notificationsReceived.subscribe(message => {
+    this.webSocketService.notificationsReceived.subscribe((message) => {
       if (message.type === 'posture_updated') {
         console.log('Postura Actualizada:', message);
         this.isDebateActive = true; // Actualiza el estado
@@ -142,38 +137,30 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
       this.validateDebateStatus();
     });
 
+    this.topicsSubscription = this.topicService.topics$.subscribe((topics) => {
+      this.addedTopics = topics;
+      this.cdr.detectChanges();
+    });
 
-
-    this.topicsSubscription = this.topicService.topics$.subscribe(
-      topics => {
-        this.addedTopics = topics;
-        this.cdr.detectChanges();
-      }
-    );
-
-    this.newTopicSubscription = this.webSocketService.newTopicReceived.subscribe(topic => {
-
-      if (!this.recommendedTopics.some(t => t.topic_name === topic.topic_name)) {
+    this.newTopicSubscription = this.webSocketService.newTopicReceived.subscribe((topic) => {
+      if (!this.recommendedTopics.some((t) => t.topic_name === topic.topic_name)) {
         this.recommendedTopics.push(topic);
         this.rangeValues = [...this.rangeValues, 0]; // Fix: Assign the value directly to the array
         this.cdr.detectChanges();
-      } else {
-
       }
-      if (!this.notifications.some(t => t.notification_message === topic.notification_message)) {
+      if (!this.notifications.some((t) => t.notification_message === topic.notification_message)) {
         this.notifications.push(topic);
         this.cdr.detectChanges();
       }
     });
 
-    this.newNotificationSubscription = this.webSocketService.notificationsReceived.subscribe(notification => {
-
-      this.notifications.push(notification);
-      this.cdr.detectChanges();
-    });
+    this.newNotificationSubscription = this.webSocketService.notificationsReceived.subscribe(
+      (notification) => {
+        this.notifications.push(notification);
+        this.cdr.detectChanges();
+      },
+    );
   }
-
-
 
   loadDebates(groupId: string): void {
     if (!groupId || groupId.trim() === '') {
@@ -188,10 +175,9 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error al cargar los debates:', err);
-      }
+      },
     });
   }
-
 
   /**
    * Enviar solicitud para crear un debate
@@ -203,8 +189,6 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
       title: this.debateTitle,
       description: this.debateDescription,
       end_time: end_time,
-
-
     };
 
     this.debateService.createDebate(this.groupId, newDebate).subscribe({
@@ -213,7 +197,12 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
         if (response.id !== undefined) {
           // Abre el modal de postura
-          this.openSelectPostureModal(Number(response.id), {} as UserPosture, Number(response.id), this.debateTitle, this.groupId); 
+          this.openSelectPostureModal(
+            Number(response.id),
+            {} as UserPosture,
+            Number(response.id),
+            this.debateTitle,
+          );
         } else {
           console.error('El ID del debate no está definido en la respuesta.');
         }
@@ -227,10 +216,10 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     });
   }
 
-  onPostureSaved(args: UserPosture){
+  onPostureSaved(args: UserPosture) {
     console.log('Postura guardada:', args);
     this.activeDebateId = args.debate;
-    this.openSelectPostureModal(args.debate, args, args.debate, this.debateTitle, this.groupId);
+    this.openSelectPostureModal(args.debate, args, args.debate, this.debateTitle);
   }
 
   toggleDebate() {
@@ -250,12 +239,22 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('Verificación de postura del usuario:', response);
 
-          this.openSelectPostureModal(activeDebate.id!, response, activeDebate.id!, activeDebate.title, this.groupId);
+          this.openSelectPostureModal(
+            activeDebate.id!,
+            response,
+            activeDebate.id!,
+            activeDebate.title,
+          );
         },
         error: (err) => {
           if (err.status === 404) {
             console.log('No se encontró postura existente, abriendo modal de selección...');
-            this.openSelectPostureModal(activeDebate.id, null, activeDebate.id!, activeDebate.title, this.groupId);
+            this.openSelectPostureModal(
+              activeDebate.id,
+              null,
+              activeDebate.id!,
+              activeDebate.title,
+            );
           } else {
             console.error('Error inesperado al verificar la postura del usuario:', err);
           }
@@ -266,12 +265,15 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  openSelectPostureModal(id: number | undefined, response: UserPosture | null, debateId: number, debateTitle: string, groupId: string ): void {
+  openSelectPostureModal(
+    id: number | undefined,
+    response: UserPosture | null,
+    debateId: number,
+    debateTitle: string,
+  ): void {
     this.isModalOpenPosture = true; // Muestra el modal
     this.activeDebateId = debateId; // Guarda el ID del debate activo
     this.debateTitle = debateTitle; // Asigna el título del debate
-    groupId = this.groupId; // Asigna el ID del grupo
 
     if (response) {
       // Caso: El usuario ya tiene una postura
@@ -293,19 +295,18 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   closePostureModal(args: any): void {
-    console.log('Cerrando modal de postura con argumentos:', args),
-    this.isModalOpenPosture = false; // Oculta el modal
+    (console.log('Cerrando modal de postura con argumentos:', args),
+      (this.isModalOpenPosture = false)); // Oculta el modal
   }
 
-
   private calculateInterval(hours: number, minutes: number): string {
-    const totalMinutes = (hours * 60) + minutes;
+    const totalMinutes = hours * 60 + minutes;
     const days = Math.floor(totalMinutes / 1440);
     const remainingMinutes = totalMinutes % 1440;
-    const formattedHours = Math.floor(remainingMinutes / 60).toString().padStart(2, '0');
+    const formattedHours = Math.floor(remainingMinutes / 60)
+      .toString()
+      .padStart(2, '0');
     const formattedMinutes = (remainingMinutes % 60).toString().padStart(2, '0');
 
     return days > 0
@@ -352,16 +353,16 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
 
   checkUserPhase(): void {
     this.topicService.getUserCurrentPhase(this.groupId).subscribe(
-      response => {
+      (response) => {
         this.userPhase = response.phase;
         if (this.userPhase === 0) {
           this.loadTopics();
           this.connectWebSocket();
         }
       },
-      error => {
+      (error) => {
         console.error('Error fetching user phase:', error);
-      }
+      },
     );
   }
 
@@ -378,7 +379,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
   loadTopics(): void {
     if (this.groupId) {
       this.topicService.getRecommendedTopicsByGroup(this.groupId).subscribe(
-        response => {
+        (response) => {
           if (response.length > 0) {
             this.recommendedTopics = response;
             //console.log('Recommended topics:', this.recommendedTopics);
@@ -387,55 +388,55 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
           }
           this.initializeProperties();
         },
-        error => {
+        (error) => {
           console.error('Error loading recommended topics:', error);
-        }
+        },
       );
 
       this.topicService.getTopicsAddedByGroup(this.groupId).subscribe(
-        response => {
+        (response) => {
           this.addedTopics = response;
         },
-        error => {
+        (error) => {
           console.error('Error loading added topics:', error);
-        }
+        },
       );
     }
   }
 
   getAndAssignRandomTopics(): void {
     this.topicService.getRandomRecommendedTopics(this.groupId).subscribe(
-      response => {
+      (response) => {
         this.recommendedTopics = response;
 
         this.initializeProperties();
       },
-      error => {
+      (error) => {
         console.error('Error assigning random topics:', error);
-      }
+      },
     );
   }
 
   connectWebSocket(): void {
     if (this.groupId) {
-
       const socket = this.webSocketService.connect(this.groupId);
-      this.socketSubscription = socket.subscribe(message => {
+      this.socketSubscription = socket.subscribe(
+        (message) => {
+          if (message.message.type === 'connection_count') {
+            this.activeConnections = message.message.active_connections;
+            this.cdr.detectChanges();
+          }
 
-        if (message.message.type === 'connection_count') {
-          this.activeConnections = message.message.active_connections;
-          this.cdr.detectChanges();
-        }
-
-        if (message.message.type === 'new_topic') {
-          const newTopic = message.message.topic_name;
-          this.topicService.updateTopics(newTopic);
-          this.cdr.detectChanges();
-        }
-
-      }, err => {
-        console.error(`WebSocket error for group ${this.groupId}:`, err);
-      },);
+          if (message.message.type === 'new_topic') {
+            const newTopic = message.message.topic_name;
+            this.topicService.updateTopics(newTopic);
+            this.cdr.detectChanges();
+          }
+        },
+        (err) => {
+          console.error(`WebSocket error for group ${this.groupId}:`, err);
+        },
+      );
     }
   }
 
@@ -454,7 +455,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     console.log('Inicio ADD tOPIC', this.newTopic.trim(), userId, this.groupId);
     if (this.newTopic.trim() && userId && this.groupId) {
       this.topicService.addNewTopic(this.groupId, this.newTopic.trim()).subscribe(
-        response => {
+        (response) => {
           this.newTopic = '';
           this.webSocketService.sendMessage(this.groupId, {
             type: 'new_topic',
@@ -463,19 +464,19 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
               topic: response.topic.topic_name,
               user_id: userId,
               group_id: this.groupId,
-              added_at: response.added_at
-            }
+              added_at: response.added_at,
+            },
           });
         },
-        error => {
+        (error) => {
           console.error('Error adding new topic:', error);
 
           if (error.status === 403) {
             this.errorMessage = error.error.error;
           } else if (error.status === 400) {
-            this.errorMessage = "This topic already exists in the group.";
+            this.errorMessage = 'This topic already exists in the group.';
           } else {
-            this.errorMessage = "An error occurred.";
+            this.errorMessage = 'An error occurred.';
           }
 
           this.showError = true;
@@ -490,8 +491,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
               this.cdr.detectChanges();
             }, 8000);
           }, 0);
-        }
-
+        },
       );
       console.log('Fin ADD tOPIC');
     }
@@ -510,6 +510,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     this.rangeValues = new Array(this.recommendedTopics.length).fill(0);
     this.showLabel = new Array(this.recommendedTopics.length).fill(false);
     this.showCheckTopics = new Array(this.recommendedTopics.length).fill(false);
+    this.combinedChecksState = new Array(this.recommendedTopics.length).fill(false);
   }
 
   showLabels(index: number) {
@@ -528,14 +529,14 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     this.showCheckTopics[index] = false;
   }
 
-  onSliderChange(index: number, event: any): void {
-    this.rangeValues[index] = event.target.value;
+  onSliderChange(index: number, event: Event): void {
+    this.rangeValues[index] = Number((event.target as HTMLInputElement).value);
   }
 
   getGradient(value: number): string {
     const hue = 227;
     const saturation = 65;
-    let lightness = 80 - (80 - 34) * (value / 100);
+    const lightness = 80 - (80 - 34) * (value / 100);
     return `linear-gradient(90deg, hsl(${hue}, ${saturation}%, ${lightness}%) 0%, hsl(${hue}, ${saturation}%, ${lightness}%) 100%)`;
   }
 
@@ -547,12 +548,12 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     const userId = this.authService.getUserId();
     if (this.groupId && topic.id && userId) {
       this.topicService.notifyTopicVisited(this.groupId, topic.id.toString(), userId).subscribe(
-        response => {
+        () => {
           //console.log('Topic visited notification sent:', response);
         },
-        error => {
+        (error) => {
           console.error('Error sending topic visited notification:', error);
-        }
+        },
       );
     }
   }
@@ -560,31 +561,29 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
   combinedSearch(): void {
     const selectedTopics = this.recommendedTopics
       .filter((_, index) => this.combinedChecksState[index])
-      .map(topic => topic);
+      .map((topic) => topic);
 
     if (selectedTopics.length > 0) {
-      const query = encodeURIComponent(selectedTopics.map(t => t.topic_name).join(' '));
+      const query = encodeURIComponent(selectedTopics.map((t) => t.topic_name).join(' '));
       const url = `https://scholar.google.com/scholar?q=${query}`;
       window.open(url, '_blank');
 
       const userId = this.authService.getUserId();
       if (this.groupId && selectedTopics.length > 0 && userId) {
-        const topicIds = selectedTopics.map(topic => topic.id.toString());
+        const topicIds = selectedTopics.map((topic) => topic.id.toString());
         this.topicService.notifyCombinedSearch(this.groupId, topicIds, userId).subscribe(
-          response => {
+          () => {
             //console.log('Combined search notification sent:', response);
           },
-          error => {
+          (error) => {
             console.error('Error sending combined search notification:', error);
-          }
+          },
         );
       }
     } else {
       alert('Please select at least one topic for a combined search.');
     }
   }
-
-
 
   checkAndCombinedSearch(): void {
     if (this.enableCombinedSearch) {
@@ -615,7 +614,7 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
     const userId = this.authService.getUserId();
     if (this.groupId && userId) {
       this.topicService.notifyPhaseOneCompleted(this.groupId, userId).subscribe(
-        response => {
+        () => {
           const phaseKey = `phase_${this.groupId}`;
           localStorage.setItem(phaseKey, '1');
           const currentUrl = this.router.url;
@@ -623,9 +622,9 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
           this.router.navigateByUrl(newUrl);
           this.closeModal();
         },
-        error => {
+        (error) => {
           console.error('Error sending consensus completed notification:', error);
-        }
+        },
       );
     }
   }
@@ -633,5 +632,4 @@ export class Phase1ConsensusComponent implements OnInit, OnDestroy {
   cancelPhaseCompletion(): void {
     this.closeModal();
   }
-
 }

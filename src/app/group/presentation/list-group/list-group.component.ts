@@ -7,25 +7,24 @@ import { LoadingService } from '../../domain/services/loadingService.service';
 import { GroupService } from '../../domain/entities/group.service';
 import { forkJoin, map } from 'rxjs';
 
-
 @Component({
   selector: 'list-group',
   templateUrl: './list-group.component.html',
-  styleUrls: ['./list-group.component.css']
+  styleUrls: ['./list-group.component.css'],
 })
 export class ListGroupComponent implements AfterViewInit, OnInit {
-
   userId: string | null = null;
-  groups : Group [] = []
+  groups: Group[] = [];
   modalOpen: boolean = false;
   isOwnerMap: { [key: string]: boolean } = {};
   loading$ = this.loadingService.loading$;
 
   constructor(
-    private groupService : GroupService,
+    private groupService: GroupService,
     private getGroupService: GetGroupsService,
-    private router:Router,
-    private loadingService: LoadingService) { }
+    private router: Router,
+    private loadingService: LoadingService,
+  ) {}
 
   ngAfterViewInit(): void {
     initFlowbite();
@@ -41,31 +40,31 @@ export class ListGroupComponent implements AfterViewInit, OnInit {
   loadGroups(): void {
     this.groupService.getGroups().subscribe({
       next: (groups) => {
-        const groupRequests = groups.map(group =>
+        const groupRequests = groups.map((group) =>
           this.groupService.getUserById(group.admin_id).pipe(
-            map(user => ({
+            map((user) => ({
               ...group,
               owner: `${user.first_name} ${user.last_name}`,
-              phase: '1/3'
-            }))
-          )
+              phase: '1/3',
+            })),
+          ),
         );
 
         forkJoin(groupRequests).subscribe(
-          groupsWithOwners => {
+          (groupsWithOwners) => {
             this.groups = groupsWithOwners;
             this.updateIsOwnerMap();
           },
-          error => console.error('Error fetching group owners:', error)
+          (error) => console.error('Error fetching group owners:', error),
         );
       },
-      error: (error) => console.error('Error fetching groups:', error)
+      error: (error) => console.error('Error fetching groups:', error),
     });
   }
 
   updateIsOwnerMap(): void {
     if (this.userId) {
-      this.groups.forEach(group => {
+      this.groups.forEach((group) => {
         this.isOwnerMap[group.id] = this.userId === group.admin_id;
         //console.log(`Group ID: ${group.id},Auth ID: ${this.userId}, Admin ID: ${group.admin_id}, isOwner: ${this.isOwnerMap[group.id]}`);
       });
@@ -79,30 +78,28 @@ export class ListGroupComponent implements AfterViewInit, OnInit {
     }
   }
 
-
   onModalOpenChange(open: boolean) {
     this.modalOpen = open;
   }
 
-
   onGroupDeleted(groupId: string) {
-    this.groups = this.groups.filter(group => group.id !== groupId);
+    this.groups = this.groups.filter((group) => group.id !== groupId);
     this.updateIsOwnerMap();
   }
 
   onGroupLeave(groupId: string) {
-    this.groups = this.groups.filter(group => group.id !== groupId);
+    this.groups = this.groups.filter((group) => group.id !== groupId);
     this.updateIsOwnerMap();
   }
 
   deleteGroup(groupId: string) {
     this.groupService.deleteGroup(groupId).subscribe(
       () => {
-        this.onGroupDeleted(groupId);  // Actualizar la lista localmente
+        this.onGroupDeleted(groupId); // Actualizar la lista localmente
       },
-      error => {
+      (error) => {
         console.error('Error deleting group', error);
-      }
+      },
     );
   }
 
@@ -110,11 +107,11 @@ export class ListGroupComponent implements AfterViewInit, OnInit {
     this.groupService.leaveGroup(groupId).subscribe(
       () => {
         //console.log('Left the group');
-        this.onGroupLeave(groupId);  // Actualizar la lista localmente
+        this.onGroupLeave(groupId); // Actualizar la lista localmente
       },
-      error => {
+      (error) => {
         console.error('Error leaving group', error);
-      }
+      },
     );
   }
 }

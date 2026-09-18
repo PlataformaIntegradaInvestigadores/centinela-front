@@ -1,17 +1,33 @@
 // header.component.ts
-import { Component, Input, HostListener } from '@angular/core';
+import { Component, Input, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { AuthModalService } from 'src/app/auth/domain/services/auth-modal.service';
 import { User } from 'src/app/group/presentation/user.interface';
-import { faSearch, faHome, faBell, faUser, faRss, faBriefcase, faChevronDown, faCog, faSignOutAlt, faUsers, faBuilding, faBars, faTimes, faChartBar, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSearch,
+  faHome,
+  faBell,
+  faUser,
+  faRss,
+  faBriefcase,
+  faChevronDown,
+  faCog,
+  faSignOutAlt,
+  faUsers,
+  faBuilding,
+  faBars,
+  faTimes,
+  faChartBar,
+  faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   navOpen: boolean = false;
   isActive: boolean = true;
   showLogin: boolean = false;
@@ -20,7 +36,7 @@ export class HeaderComponent {
   users: User[] = [];
   filteredUsers: User[] = [];
   searchQuery: string = '';
-  searchOpen: boolean = false;  // Variable para controlar la apertura del buscador
+  searchOpen: boolean = false; // Variable para controlar la apertura del buscador
   userMenuOpen: boolean = false; // Variable para controlar la apertura del menú de usuario
 
   // FontAwesome icons
@@ -43,8 +59,8 @@ export class HeaderComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private authModalService: AuthModalService
-  ) { }
+    private authModalService: AuthModalService,
+  ) {}
 
   toggleNav() {
     this.navOpen = !this.navOpen;
@@ -63,12 +79,12 @@ export class HeaderComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    
+
     // Close search dropdown if clicking outside
     if (!target.closest('.search-container')) {
       this.closeSearch();
     }
-    
+
     // Close user menu dropdown if clicking outside the user dropdown container
     const userDropdownContainer = target.closest('.nav-item.relative');
     if (!userDropdownContainer && this.userMenuOpen) {
@@ -94,7 +110,7 @@ export class HeaderComponent {
 
   ngOnInit(): void {
     this.showLogin = !this.authService.isLoggedIn();
-    if (!this.showLogin) {
+    if (!this.showLogin && this.authService.isUser()) {
       this.loadUsers();
     }
   }
@@ -135,19 +151,22 @@ export class HeaderComponent {
   }
 
   loadUsers(): void {
-    this.authService.getUsers().subscribe((users: User[]) => {
-      this.users = users;
-      this.filteredUsers = users;
-    }, () => {
-      this.users = [];
-      this.filteredUsers = [];
-    });
+    this.authService.getUsers().subscribe(
+      (users: User[]) => {
+        this.users = users;
+        this.filteredUsers = users;
+      },
+      () => {
+        this.users = [];
+        this.filteredUsers = [];
+      },
+    );
   }
 
   filterUsers(): void {
     const filterValue = this.searchQuery.toLowerCase();
-    this.filteredUsers = this.users.filter(user =>
-      `${user.first_name} ${user.last_name}`.toLowerCase().includes(filterValue)
+    this.filteredUsers = this.users.filter((user) =>
+      `${user.first_name} ${user.last_name}`.toLowerCase().includes(filterValue),
     );
   }
 
