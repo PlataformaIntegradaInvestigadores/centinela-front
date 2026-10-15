@@ -7,25 +7,44 @@ import {
   Inject,
   OnInit,
   OnChanges,
+  OnDestroy,
 } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  Observable,
+  of,
+  Subscription,
+  switchMap,
+  tap,
+  timeout,
+} from 'rxjs';
 import {
   Article,
   ArticleResult,
   PaginationArticleResult,
 } from '../../../../../shared/interfaces/article.interface';
 import { ArticleService } from '../../../../domain/services/article.service';
+import {
+  GenerateQaResponse,
+  LLMSearchService,
+  QaPair,
+} from '../../../../domain/services/llm_search.service';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 
 type PublicationDateFilter = 'any' | 'year0' | 'year1' | 'year2' | 'custom';
+
+/** Si el asistente no responde a tiempo, se retira la tarjeta en silencio (Criterio 3). */
+const QA_REQUEST_TIMEOUT_MS = 90_000;
 
 @Component({
   selector: 'app-article-information',
   templateUrl: './article-information.component.html',
   styleUrls: ['./article-information.component.css'],
 })
-export class ArticleInformationComponent implements OnInit, OnChanges {
+export class ArticleInformationComponent implements OnInit, OnChanges, OnDestroy {
   displayedColumns: string[] = [
     'title',
     'author_count',
@@ -71,8 +90,18 @@ export class ArticleInformationComponent implements OnInit, OnChanges {
   appliedEndYear: number | null = null;
   private hasSearchFilterYears = false;
 
+  qaPairs: QaPair[] = [];
+  qaStatus = '';
+  qaLoading = false;
+  private qaRequestSub: Subscription | null = null;
+
+  get showQaCard(): boolean {
+    return this.qaLoading || this.qaPairs.length > 0;
+  }
+
   constructor(
     private articleService: ArticleService,
+    private llmSearchService: LLMSearchService,
     private route: ActivatedRoute,
     @Inject(Router) private router: Router,
   ) {}
@@ -100,6 +129,13 @@ export class ArticleInformationComponent implements OnInit, OnChanges {
         if (this.setYears && response.years && !this.hasSearchFilterYears) {
           this.updateAvailableYears(response.years.map((year) => Number(year)));
         }
+
+        // Toy-example: render lista sin bloquear (FASE1 paso 7)
+
+        // Solo el top de la primera página alimenta al generador.
+        if (this.page === 1) {
+          this.requestQaGeneration(response.data || []);
+        }
       }),
       catchError((error) => {
         console.error('Error fetching data', error);
@@ -109,9 +145,14 @@ export class ArticleInformationComponent implements OnInit, OnChanges {
         this.isServerOnline = error?.status !== 0;
         this.loading.emit(false);
         this.total = 0;
+        this.resetQaState();
         return of({ data: [], total: 0 } as PaginationArticleResult);
       }),
     );
+  }
+
+  ngOnDestroy() {
+    this.qaRequestSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -122,26 +163,15 @@ export class ArticleInformationComponent implements OnInit, OnChanges {
       this.activeFilter = 'custom';
       this.showCustomRange = true;
       this.isFirstLoad = true;
+      this.resetQaState();
       this.refreshTable$.next({ page: this.page, size: this.size });
       this.updateQueryParams();
     }
   }
 
-  /*
-asi es como esta haciendo la paginacion 
-  onChangePagination(event: PageEvent) {
-    this.setYears = false
-    this.page = event.pageIndex + 1
-    this.size = event.pageSize
-    if (this.selectedType)
-      this.refreshTable$.next({page: this.page, size: this.size, type: this.selectedType, years: this.selectedYears})
-    else
-      this.refreshTable$.next({page: this.page, size: this.size})
-  }
-*/
   onChangePagination(event: PageEvent) {
     this.setYears = false;
-    this.page = event.pageIndex + 1; // Ya se está haciendo bien
+    this.page = event.pageIndex + 1;
     this.size = event.pageSize;
     const payload: { page: number; size: number; years?: number[] } = {
       page: this.page,
@@ -302,5 +332,50 @@ asi es como esta haciendo la paginacion
 
   seeMoreInformation(scopusId: string) {
     this.router.navigate(['home/article', scopusId]);
+  }
+
+  private resetQaState() {
+    this.qaRequestSub?.unsubscribe();
+    this.qaRequestSub = null;
+    this.qaPairs = [];
+    this.qaStatus = '';
+    this.qaLoading = false;
+  }
+
+  private requestQaGeneration(articles: ArticleResult[]) {
+    const documents = this.llmSearchService.documentsFromArticles(articles, 3);
+    if (!this.query || documents.length === 0) {
+      this.resetQaState();
+      return;
+    }
+
+    this.qaRequestSub?.unsubscribe();
+    this.qaLoading = true;
+    this.qaPairs = [];
+    this.qaStatus = '';
+
+    this.qaRequestSub = this.llmSearchService
+      .generateQa(this.query, documents)
+      .pipe(
+        timeout({ first: QA_REQUEST_TIMEOUT_MS }),
+        catchError((error) => {
+          // Fallo o demora: retirar tarjeta sin mensaje molesto.
+          console.error('Error generating QA', error);
+          this.resetQaState();
+          return EMPTY;
+        }),
+      )
+      .subscribe({
+        next: (response: GenerateQaResponse) => {
+          this.qaLoading = false;
+          this.qaStatus = response.status || '';
+          this.qaPairs = response.qa_pairs || [];
+          // Si falló o vino vacío: ocultar la tarjeta por completo.
+          if (!this.qaPairs.length) {
+            this.resetQaState();
+            return;
+          }
+        },
+      });
   }
 }

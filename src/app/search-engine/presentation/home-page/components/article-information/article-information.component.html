@@ -120,6 +120,32 @@
     </app-filters-sidebar>
   </div>
   <div class="flex-1 w-full flex flex-col">
+    <!-- Tarjeta QA (estilo overview): arriba, delgada; se oculta si falla -->
+    <section class="qa-overview-card mb-3 w-full" *ngIf="showQaCard" aria-live="polite">
+      <div class="qa-overview-inner">
+        <div class="qa-overview-header">
+          <span class="qa-overview-label">{{ qaLoading ? 'Generating' : 'Q&A overview' }}</span>
+          <span class="qa-overview-dots" *ngIf="qaLoading" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+
+        <div class="qa-skeleton" *ngIf="qaLoading">
+          <div class="qa-skeleton-line w-full"></div>
+          <div class="qa-skeleton-line w-11/12"></div>
+          <div class="qa-skeleton-line w-4/5"></div>
+          <div class="qa-skeleton-line w-2/3"></div>
+        </div>
+
+        <ul class="qa-pairs" *ngIf="!qaLoading && qaPairs.length > 0">
+          <li *ngFor="let pair of qaPairs; let i = index">
+            <p class="qa-question">{{ i + 1 }}. {{ pair.question }}</p>
+            <p class="qa-answer">{{ pair.answer }}</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <ng-container *ngIf="{ data: articles$ | async } as obs">
       <ng-container *ngIf="!(isFirstLoad || isFiltering || isPaginating); else loadingTpl">
         <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden w-full">

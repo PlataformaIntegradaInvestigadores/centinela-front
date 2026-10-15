@@ -1,18 +1,20 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, NEVER } from 'rxjs';
 import { ArticleInformationComponent } from './article-information.component';
 import { ArticleService } from '../../../../domain/services/article.service';
+import { LLMSearchService } from '../../../../domain/services/llm_search.service';
 import { PaginationArticleResult } from '../../../../../shared/interfaces/article.interface';
 
 describe('ArticleInformationComponent', () => {
   let component: ArticleInformationComponent;
   let articleServiceSpy: jasmine.SpyObj<ArticleService>;
+  let llmSearchServiceSpy: jasmine.SpyObj<LLMSearchService>;
   let routerSpy: jasmine.SpyObj<Router>;
 
   const page1: PaginationArticleResult = {
-    data: [{ title: 'A', abstract: '', scopus_id: 's1' }],
+    data: [{ title: 'A', abstract: 'abs', scopus_id: 's1' }],
     total: 1,
     total_results: 1,
     years: [2020, 2021],
@@ -30,6 +32,24 @@ describe('ArticleInformationComponent', () => {
     ]);
     articleServiceSpy.getMostRelevantArticlesByQuery.and.returnValue(of(page1));
     articleServiceSpy.getSearchFilters.and.returnValue(of({ years: [] }));
+    llmSearchServiceSpy = jasmine.createSpyObj('LLMSearchService', [
+      'generateQa',
+      'documentsFromArticles',
+    ]);
+    llmSearchServiceSpy.documentsFromArticles.and.callFake((articles: any[], limit = 3) =>
+      (articles || []).slice(0, limit).map((a) => ({
+        scopus_id: a.scopus_id,
+        title: a.title,
+        abstract: a.abstract || '',
+      })),
+    );
+    llmSearchServiceSpy.generateQa.and.returnValue(
+      of({
+        query: 'ai',
+        status: 'success',
+        qa_pairs: [{ question: 'Q1', answer: 'A1' }],
+      }),
+    );
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
@@ -37,6 +57,7 @@ describe('ArticleInformationComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: ArticleService, useValue: articleServiceSpy },
+        { provide: LLMSearchService, useValue: llmSearchServiceSpy },
         { provide: ActivatedRoute, useValue: buildRoute(queryParams) },
         { provide: Router, useValue: routerSpy },
       ],
@@ -61,6 +82,66 @@ describe('ArticleInformationComponent', () => {
         expect(component.total).toBe(1);
         expect(component.isFirstLoad).toBeFalse();
         expect(component.years).toEqual([2021, 2020]);
+        expect(llmSearchServiceSpy.generateQa).toHaveBeenCalled();
+        expect(component.qaPairs.length).toBe(1);
+        expect(component.showQaCard).toBeTrue();
+        done();
+      });
+    });
+
+    it('hides the QA card completely when generation fails', (done) => {
+      llmSearchServiceSpy.generateQa.and.returnValue(throwError(() => new Error('boom')));
+      component.ngOnInit();
+      component.articles$.subscribe(() => {
+        expect(component.qaLoading).toBeFalse();
+        expect(component.qaPairs).toEqual([]);
+        expect(component.showQaCard).toBeFalse();
+        done();
+      });
+    });
+
+    it('hides the QA card silently when the assistant never responds (timeout)', fakeAsync(() => {
+      llmSearchServiceSpy.generateQa.and.returnValue(NEVER);
+      component.ngOnInit();
+      component.articles$.subscribe();
+      expect(component.qaLoading).toBeTrue();
+      expect(component.showQaCard).toBeTrue();
+      tick(90_000);
+      expect(component.qaLoading).toBeFalse();
+      expect(component.showQaCard).toBeFalse();
+    }));
+
+    it('hides the QA card when generation returns no pairs', (done) => {
+      llmSearchServiceSpy.generateQa.and.returnValue(
+        of({ query: 'ai', status: 'error: empty', qa_pairs: [] }),
+      );
+      component.ngOnInit();
+      component.articles$.subscribe(() => {
+        expect(component.showQaCard).toBeFalse();
+        expect(component.qaPairs).toEqual([]);
+        done();
+      });
+    });
+
+    it('treats missing qa_pairs/status as empty and hides the card', (done) => {
+      llmSearchServiceSpy.generateQa.and.returnValue(
+        of({ query: 'ai' } as any),
+      );
+      component.ngOnInit();
+      component.articles$.subscribe(() => {
+        expect(component.qaStatus).toBe('');
+        expect(component.qaPairs).toEqual([]);
+        expect(component.showQaCard).toBeFalse();
+        done();
+      });
+    });
+
+    it('skips generateQa when the query is empty', (done) => {
+      component.query = '';
+      component.ngOnInit();
+      component.articles$.subscribe(() => {
+        expect(llmSearchServiceSpy.generateQa).not.toHaveBeenCalled();
+        expect(component.showQaCard).toBeFalse();
         done();
       });
     });
@@ -72,6 +153,7 @@ describe('ArticleInformationComponent', () => {
       component.ngOnInit();
       component.articles$.subscribe(() => {
         expect(component.total).toBe(7);
+        expect(llmSearchServiceSpy.generateQa).not.toHaveBeenCalled();
         done();
       });
     });
