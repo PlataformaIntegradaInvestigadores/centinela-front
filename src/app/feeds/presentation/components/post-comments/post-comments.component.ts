@@ -3,6 +3,11 @@ import { Subject, takeUntil, finalize } from 'rxjs';
 import { CommentService } from '../../../domain/services/comment.service';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { Comment, CreateCommentData } from '../../../domain/entities/feed.interface';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
+
+/** Reintentos para refrescar comentarios recién creados mientras se clasifican. */
+const PENDING_REFRESH_DELAYS_MS = [3000, 6000, 12000, 24000];
 
 @Component({
   selector: 'app-post-comments',
@@ -25,9 +30,18 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
   currentUserId: string | null = null;
   error: string | null = null;
 
+  revealedComments = new Set<string>();
+  reportingComment: Comment | null = null;
+  isReporting = false;
+  reportError: string | null = null;
+  reportFeedback: string | null = null;
+  private pendingRefreshAttempt = 0;
+  private pendingRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(
     private commentService: CommentService,
     private authService: AuthService,
+    private moderationService: ModerationService,
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +51,9 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.pendingRefreshTimer) {
+      clearTimeout(this.pendingRefreshTimer);
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -44,10 +61,10 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
   /**
    * Carga los comentarios del post
    */
-  loadComments(): void {
+  loadComments(silent = false): void {
     if (!this.postId) return;
 
-    this.isLoadingComments = true;
+    this.isLoadingComments = !silent;
     this.error = null;
 
     this.commentService
@@ -59,6 +76,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (comments) => {
           this.comments = comments;
+          this.schedulePendingRefresh();
 
           // Actualizar el contador de comentarios real
           // Solo emitimos la actualización si los comentarios devueltos son diferentes al contador actual
@@ -109,6 +127,10 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
           this.commentAdded.emit(newComment);
           this.commentsCountUpdated.emit(this.commentsCount);
 
+          // La clasificación corre en segundo plano: refrescamos para ver el resultado.
+          this.pendingRefreshAttempt = 0;
+          this.schedulePendingRefresh();
+
           console.log('Comentario creado:', newComment);
         },
         error: (error) => {
@@ -155,6 +177,89 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error deleting comment:', error);
           this.error = 'No se pudo eliminar el comentario.';
+        },
+      });
+  }
+
+  /**
+   * Si hay comentarios propios aún sin clasificar, vuelve a pedirlos con backoff
+   * para que una ocultación por moderación aparezca sin recargar la página.
+   */
+  private schedulePendingRefresh(): void {
+    const hasPending = this.comments.some(
+      (comment) => comment.moderation?.status === 'pending' && this.isOwnComment(comment),
+    );
+    if (!hasPending || this.pendingRefreshAttempt >= PENDING_REFRESH_DELAYS_MS.length) {
+      return;
+    }
+    if (this.pendingRefreshTimer) {
+      clearTimeout(this.pendingRefreshTimer);
+    }
+    const delay = PENDING_REFRESH_DELAYS_MS[this.pendingRefreshAttempt++];
+    this.pendingRefreshTimer = setTimeout(() => this.loadComments(true), delay);
+  }
+
+  isOwnComment(comment: Comment): boolean {
+    return this.currentUserId === comment.author.id;
+  }
+
+  isPending(comment: Comment): boolean {
+    return comment.moderation?.status === 'pending';
+  }
+
+  /** Oculto/bloqueado por moderación y aún no revelado por el usuario. */
+  isConcealed(comment: Comment): boolean {
+    return !!comment.moderation?.show_warning && !this.revealedComments.has(comment.id);
+  }
+
+  isBlocked(comment: Comment): boolean {
+    return !!comment.moderation?.is_blocked;
+  }
+
+  canReveal(comment: Comment): boolean {
+    return !this.isBlocked(comment) || comment.content !== BLOCKED_PLACEHOLDER;
+  }
+
+  revealComment(comment: Comment): void {
+    if (this.canReveal(comment)) {
+      this.revealedComments.add(comment.id);
+    }
+  }
+
+  canReportComment(comment: Comment): boolean {
+    return !!comment.moderation?.can_report && !this.isBlocked(comment);
+  }
+
+  openReport(comment: Comment): void {
+    this.reportingComment = comment;
+    this.reportError = null;
+    this.reportFeedback = null;
+  }
+
+  submitReport(reason: string): void {
+    const comment = this.reportingComment;
+    if (!comment) return;
+    this.isReporting = true;
+    this.reportError = null;
+    this.moderationService
+      .report('comment', comment.id, reason)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isReporting = false)),
+      )
+      .subscribe({
+        next: (result) => {
+          comment.moderation = result.moderation;
+          this.reportingComment = null;
+          this.reportFeedback = result.created
+            ? 'Gracias. Tu reporte fue enviado a moderación.'
+            : 'Ya habías reportado este comentario.';
+        },
+        error: (error) => {
+          this.reportError = this.moderationService.errorMessage(
+            error,
+            'No se pudo enviar el reporte.',
+          );
         },
       });
   }

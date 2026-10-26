@@ -1,14 +1,18 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { PostCommentsComponent } from './post-comments.component';
 import { CommentService } from '../../../domain/services/comment.service';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
-import { Comment } from '../../../domain/entities/feed.interface';
+import { Comment, ModerationInfo } from '../../../domain/entities/feed.interface';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
 
 describe('PostCommentsComponent', () => {
   let component: PostCommentsComponent;
   let commentServiceSpy: jasmine.SpyObj<CommentService>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let moderationServiceSpy: jasmine.SpyObj<ModerationService>;
 
   const makeComment = (over: Partial<Comment> = {}): Comment =>
     ({
@@ -31,11 +35,15 @@ describe('PostCommentsComponent', () => {
     authServiceSpy.getCurrentUserId.and.returnValue('u1');
     commentServiceSpy.getPostComments.and.returnValue(of([]));
 
+    moderationServiceSpy = jasmine.createSpyObj('ModerationService', ['report', 'errorMessage']);
+
     TestBed.configureTestingModule({
       declarations: [PostCommentsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: CommentService, useValue: commentServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
+        { provide: ModerationService, useValue: moderationServiceSpy },
       ],
     });
     component = TestBed.createComponent(PostCommentsComponent).componentInstance;
@@ -234,5 +242,136 @@ describe('PostCommentsComponent', () => {
 
   it('trackByCommentId returns the comment id', () => {
     expect(component.trackByCommentId(0, makeComment({ id: 'c9' }))).toBe('c9');
+  });
+
+  describe('moderation', () => {
+    const moderation = (over: Partial<ModerationInfo> = {}): ModerationInfo => ({
+      status: 'classified',
+      visibility: 'hidden',
+      show_warning: true,
+      is_blocked: false,
+      sort_last: true,
+      review_status: 'pending',
+      reasons: ['hidden_by_model'],
+      report_count: 0,
+      can_report: true,
+      ...over,
+    });
+
+    beforeEach(() => {
+      component.currentUserId = 'u1';
+    });
+
+    it('detects own and pending comments', () => {
+      const pending = makeComment({ moderation: moderation({ status: 'pending' }) });
+      expect(component.isOwnComment(pending)).toBeTrue();
+      expect(component.isPending(pending)).toBeTrue();
+      expect(component.isOwnComment(makeComment({ author: { id: 'u2' } as any }))).toBeFalse();
+      expect(component.isPending(makeComment())).toBeFalse();
+    });
+
+    it('conceals hidden comments until revealed', () => {
+      const hidden = makeComment({ moderation: moderation() });
+      expect(component.isConcealed(hidden)).toBeTrue();
+      component.revealComment(hidden);
+      expect(component.isConcealed(hidden)).toBeFalse();
+      expect(component.isConcealed(makeComment({ id: 'c2' }))).toBeFalse();
+    });
+
+    it('cannot reveal or report a redacted blocked comment', () => {
+      const blocked = makeComment({
+        content: BLOCKED_PLACEHOLDER,
+        moderation: moderation({ visibility: 'blocked', is_blocked: true }),
+      });
+      expect(component.isBlocked(blocked)).toBeTrue();
+      expect(component.canReveal(blocked)).toBeFalse();
+      expect(component.canReportComment(blocked)).toBeFalse();
+      component.revealComment(blocked);
+      expect(component.revealedComments.has(blocked.id)).toBeFalse();
+    });
+
+    it('allows reporting visible comments flagged as reportable', () => {
+      expect(component.canReportComment(makeComment({ moderation: moderation() }))).toBeTrue();
+      expect(component.canReportComment(makeComment())).toBeFalse();
+    });
+
+    it('opens the report dialog for a comment', () => {
+      const target = makeComment();
+      component.reportError = 'x';
+      component.openReport(target);
+      expect(component.reportingComment).toBe(target);
+      expect(component.reportError).toBeNull();
+    });
+
+    it('does nothing when submitting without a selected comment', () => {
+      component.submitReport('x');
+      expect(moderationServiceSpy.report).not.toHaveBeenCalled();
+    });
+
+    it('submits a report and updates the comment', () => {
+      const target = makeComment();
+      const updated = moderation({ report_count: 1, can_report: false });
+      moderationServiceSpy.report.and.returnValue(
+        of({ created: true, report_count: 1, threshold_reached: false, moderation: updated }),
+      );
+      component.openReport(target);
+      component.submitReport('odio');
+      expect(moderationServiceSpy.report).toHaveBeenCalledWith('comment', 'c1', 'odio');
+      expect(target.moderation).toEqual(updated);
+      expect(component.reportingComment).toBeNull();
+      expect(component.isReporting).toBeFalse();
+      expect(component.reportFeedback).toContain('Gracias');
+    });
+
+    it('reports duplicates and errors', () => {
+      moderationServiceSpy.report.and.returnValue(
+        of({ created: false, report_count: 1, threshold_reached: false, moderation: moderation() }),
+      );
+      component.openReport(makeComment());
+      component.submitReport('');
+      expect(component.reportFeedback).toContain('Ya habías reportado');
+
+      moderationServiceSpy.report.and.returnValue(throwError(() => new Error('boom')));
+      moderationServiceSpy.errorMessage.and.returnValue('No se pudo enviar el reporte.');
+      component.openReport(makeComment());
+      component.submitReport('');
+      expect(component.reportError).toBe('No se pudo enviar el reporte.');
+    });
+
+    it('refreshes silently while own comments are pending classification', fakeAsync(() => {
+      const pending = makeComment({ moderation: moderation({ status: 'pending' }) });
+      const done = makeComment({ moderation: moderation({ status: 'classified' }) });
+      commentServiceSpy.getPostComments.and.returnValues(of([pending]), of([done]));
+      component.loadComments();
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(1);
+      tick(3000);
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(2);
+      expect(component.comments).toEqual([done]);
+      tick(30000);
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(2);
+    }));
+
+    it('stops refreshing after the last backoff step and clears timers on destroy', fakeAsync(() => {
+      const pending = makeComment({ moderation: moderation({ status: 'pending' }) });
+      commentServiceSpy.getPostComments.and.returnValue(of([pending]));
+      component.loadComments();
+      tick(3000 + 6000 + 12000 + 24000);
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(5);
+      tick(60000);
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(5);
+      component.loadComments();
+      component.ngOnDestroy();
+    }));
+
+    it('ignores pending comments from other users', fakeAsync(() => {
+      const pending = makeComment({
+        author: { id: 'u2' } as any,
+        moderation: moderation({ status: 'pending' }),
+      });
+      commentServiceSpy.getPostComments.and.returnValue(of([pending]));
+      component.loadComments();
+      tick(3000);
+      expect(commentServiceSpy.getPostComments).toHaveBeenCalledTimes(1);
+    }));
   });
 });

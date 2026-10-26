@@ -64,4 +64,10 @@ describe('PostActionsComponent', () => {
     component.onCommentToggle();
     expect(emitted).toBeTrue();
   });
+
+  it('emits reportClick when the report button is used', () => {
+    const spy = spyOn(component.reportClick, 'emit');
+    component.onReportClick();
+    expect(spy).toHaveBeenCalled();
+  });
 });

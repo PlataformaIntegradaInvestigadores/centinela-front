@@ -60,5 +60,16 @@
       ></i>
       <span>Comentar</span>
     </button>
+
+    <button
+      class="flex-1 flex items-center justify-center py-1.5 mx-0.5 rounded-md text-[12px] font-semibold text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-amber-600 group"
+      *ngIf="canReport"
+      (click)="onReportClick()"
+    >
+      <i
+        class="far fa-flag mr-1.5 text-[14px] group-hover:scale-110 transition-transform duration-200"
+      ></i>
+      <span>Reportar</span>
+    </button>
   </div>
 </div>

@@ -1,0 +1,24 @@
+<div
+  class="flex items-center gap-3 rounded-lg border border-dashed"
+  [ngClass]="[
+    blocked ? 'border-red-200 bg-red-50' : 'border-amber-200 bg-amber-50',
+    compact ? 'px-3 py-2' : 'px-4 py-4',
+  ]"
+>
+  <i class="fas" [ngClass]="blocked ? 'fa-ban text-red-500' : 'fa-eye-slash text-amber-500'"></i>
+  <div class="flex-1 text-sm" [ngClass]="blocked ? 'text-red-800' : 'text-amber-900'">
+    <ng-container *ngIf="blocked && !canReveal">Contenido bloqueado por moderación.</ng-container>
+    <ng-container *ngIf="!blocked || canReveal">
+      Este contenido puede ser ofensivo. ¿Quieres verlo?
+    </ng-container>
+  </div>
+  <button
+    *ngIf="canReveal"
+    type="button"
+    class="shrink-0 px-3 py-1 rounded-md text-xs font-semibold bg-white border hover:bg-gray-50"
+    [ngClass]="blocked ? 'border-red-200 text-red-700' : 'border-amber-300 text-amber-800'"
+    (click)="reveal.emit(); $event.stopPropagation()"
+  >
+    Ver contenido
+  </button>
+</div>

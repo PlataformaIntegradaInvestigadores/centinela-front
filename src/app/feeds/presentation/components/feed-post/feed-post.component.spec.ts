@@ -6,12 +6,16 @@ import { FeedPostComponent } from './feed-post.component';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { FeedService } from '../../../domain/services/feed.service';
 import { FeedPost } from '../../types/post.types';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import { ModerationInfo } from '../../../domain/entities/feed.interface';
+import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
 
 describe('FeedPostComponent', () => {
   let component: FeedPostComponent;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let feedServiceSpy: jasmine.SpyObj<FeedService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let moderationServiceSpy: jasmine.SpyObj<ModerationService>;
 
   const makePost = (over: Partial<FeedPost> = {}): FeedPost =>
     ({
@@ -32,6 +36,7 @@ describe('FeedPostComponent', () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUserId']);
     feedServiceSpy = jasmine.createSpyObj('FeedService', ['recordUserInteraction']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    moderationServiceSpy = jasmine.createSpyObj('ModerationService', ['report', 'errorMessage']);
     authServiceSpy.getCurrentUserId.and.returnValue('u1');
     feedServiceSpy.recordUserInteraction.and.returnValue(of(undefined));
 
@@ -42,6 +47,7 @@ describe('FeedPostComponent', () => {
         { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: FeedService, useValue: feedServiceSpy },
+        { provide: ModerationService, useValue: moderationServiceSpy },
       ],
     });
     component = TestBed.createComponent(FeedPostComponent).componentInstance;
@@ -523,6 +529,93 @@ describe('FeedPostComponent', () => {
         poll: { ...poll, expires_at: new Date(Date.now() + 5 * 60000).toISOString() } as any,
       });
       expect(component.getTimeUntilExpiry()).toMatch(/^en \d+m$/);
+    });
+  });
+
+  describe('moderation', () => {
+    const moderation = (over: Partial<ModerationInfo> = {}): ModerationInfo => ({
+      status: 'classified',
+      visibility: 'hidden',
+      show_warning: true,
+      is_blocked: false,
+      sort_last: true,
+      review_status: 'pending',
+      reasons: ['hidden_by_model'],
+      report_count: 0,
+      can_report: true,
+      ...over,
+    });
+
+    it('conceals hidden content until the user reveals it', () => {
+      component.post = makePost({ moderation: moderation() });
+      expect(component.isContentConcealed).toBeTrue();
+      component.revealContent();
+      expect(component.contentRevealed).toBeTrue();
+      expect(component.isContentConcealed).toBeFalse();
+    });
+
+    it('does not conceal posts without moderation info', () => {
+      expect(component.isContentConcealed).toBeFalse();
+      expect(component.isBlocked).toBeFalse();
+      expect(component.canReportPost).toBeFalse();
+    });
+
+    it('cannot reveal a redacted blocked post', () => {
+      component.post = makePost({
+        content: BLOCKED_PLACEHOLDER,
+        moderation: moderation({ visibility: 'blocked', is_blocked: true }),
+      });
+      expect(component.canRevealContent).toBeFalse();
+      expect(component.canReportPost).toBeFalse();
+      component.revealContent();
+      expect(component.contentRevealed).toBeFalse();
+    });
+
+    it('lets moderators reveal the original text of a blocked post', () => {
+      component.post = makePost({
+        content: 'texto original',
+        moderation: moderation({ visibility: 'blocked', is_blocked: true }),
+      });
+      expect(component.canRevealContent).toBeTrue();
+    });
+
+    it('opens the report dialog with a clean state', () => {
+      component.reportError = 'x';
+      component.reportFeedback = 'y';
+      component.openReportDialog();
+      expect(component.showReportDialog).toBeTrue();
+      expect(component.reportError).toBeNull();
+      expect(component.reportFeedback).toBeNull();
+    });
+
+    it('submits a report and updates the moderation state', () => {
+      const updated = moderation({ report_count: 1, can_report: false });
+      moderationServiceSpy.report.and.returnValue(
+        of({ created: true, report_count: 1, threshold_reached: false, moderation: updated }),
+      );
+      component.showReportDialog = true;
+      component.submitReport('insulto');
+      expect(moderationServiceSpy.report).toHaveBeenCalledWith('post', 'p1', 'insulto');
+      expect(component.post.moderation).toEqual(updated);
+      expect(component.showReportDialog).toBeFalse();
+      expect(component.isReporting).toBeFalse();
+      expect(component.reportFeedback).toContain('Gracias');
+    });
+
+    it('tells the user when the report already existed', () => {
+      moderationServiceSpy.report.and.returnValue(
+        of({ created: false, report_count: 1, threshold_reached: false, moderation: moderation() }),
+      );
+      component.submitReport('');
+      expect(component.reportFeedback).toContain('Ya habías reportado');
+    });
+
+    it('shows an error when the report fails', () => {
+      moderationServiceSpy.report.and.returnValue(throwError(() => new Error('boom')));
+      moderationServiceSpy.errorMessage.and.returnValue('No se pudo enviar el reporte.');
+      component.submitReport('');
+      expect(component.isReporting).toBeFalse();
+      expect(component.reportError).toBe('No se pudo enviar el reporte.');
     });
   });
 });

@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 import { FeedPost } from '../../types/post.types';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { FeedService } from '../../../domain/services/feed.service';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
 
 @Component({
   selector: 'app-feed-post',
@@ -45,6 +47,11 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedMediaFile: any | null = null;
   selectedMediaIndex = 0;
   showFullMediaContent = false;
+  contentRevealed = false;
+  showReportDialog = false;
+  isReporting = false;
+  reportError: string | null = null;
+  reportFeedback: string | null = null;
 
   private observer: IntersectionObserver | null = null;
   private hasRecordedView = false;
@@ -54,7 +61,60 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private feedService: FeedService,
     private el: ElementRef,
+    private moderationService: ModerationService,
   ) {}
+
+  /** El post está oculto/bloqueado por moderación y el usuario no lo reveló. */
+  get isContentConcealed(): boolean {
+    return !!this.post.moderation?.show_warning && !this.contentRevealed;
+  }
+
+  get isBlocked(): boolean {
+    return !!this.post.moderation?.is_blocked;
+  }
+
+  /** Solo se revela lo que el backend no redactó (moderadores ven el original). */
+  get canRevealContent(): boolean {
+    return !this.isBlocked || this.post.content !== BLOCKED_PLACEHOLDER;
+  }
+
+  get canReportPost(): boolean {
+    return !!this.post.moderation?.can_report && !this.isBlocked;
+  }
+
+  revealContent(): void {
+    if (this.canRevealContent) {
+      this.contentRevealed = true;
+    }
+  }
+
+  openReportDialog(): void {
+    this.reportError = null;
+    this.reportFeedback = null;
+    this.showReportDialog = true;
+  }
+
+  submitReport(reason: string): void {
+    this.isReporting = true;
+    this.reportError = null;
+    this.moderationService.report('post', this.post.id, reason).subscribe({
+      next: (result) => {
+        this.isReporting = false;
+        this.showReportDialog = false;
+        this.post.moderation = result.moderation;
+        this.reportFeedback = result.created
+          ? 'Gracias. Tu reporte fue enviado a moderación.'
+          : 'Ya habías reportado esta publicación.';
+      },
+      error: (error) => {
+        this.isReporting = false;
+        this.reportError = this.moderationService.errorMessage(
+          error,
+          'No se pudo enviar el reporte.',
+        );
+      },
+    });
+  }
 
   ngOnInit(): void {
     // Solo obtener el currentUserId si no se ha pasado como input

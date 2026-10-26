@@ -10,32 +10,47 @@
   >
   </app-post-header>
 
-  <!-- Post Content -->
-  <app-post-content
-    [content]="post.content"
-    [displayContent]="displayContent"
-    [showFullContent]="showFullContent"
-    [shouldTruncateContent]="shouldTruncateContent"
-    [tags]="post.tags || []"
-    (toggleContent)="toggleFullContent()"
-  >
-  </app-post-content>
-
-  <!-- Poll Section -->
-  <div class="px-4">
-    <app-post-poll *ngIf="post.poll" [poll]="post.poll" (optionClick)="onPollOptionClick($event)">
-    </app-post-poll>
+  <!-- Moderación: advertencia en lugar del contenido oculto -->
+  <div class="px-4 pb-3" *ngIf="isContentConcealed; else postBody">
+    <app-moderation-warning
+      [blocked]="isBlocked"
+      [canReveal]="canRevealContent"
+      (reveal)="revealContent()"
+    ></app-moderation-warning>
   </div>
 
-  <!-- Post Files -->
-  <div class="px-4">
-    <app-post-files
-      [files]="post.files || []"
-      (fileOpen)="openFile($event)"
-      (fileDownload)="downloadFile($event)"
+  <ng-template #postBody>
+    <!-- Post Content -->
+    <app-post-content
+      [content]="post.content"
+      [displayContent]="displayContent"
+      [showFullContent]="showFullContent"
+      [shouldTruncateContent]="shouldTruncateContent"
+      [tags]="post.tags || []"
+      (toggleContent)="toggleFullContent()"
     >
-    </app-post-files>
-  </div>
+    </app-post-content>
+
+    <!-- Poll Section -->
+    <div class="px-4">
+      <app-post-poll *ngIf="post.poll" [poll]="post.poll" (optionClick)="onPollOptionClick($event)">
+      </app-post-poll>
+    </div>
+
+    <!-- Post Files -->
+    <div class="px-4">
+      <app-post-files
+        [files]="post.files || []"
+        (fileOpen)="openFile($event)"
+        (fileDownload)="downloadFile($event)"
+      >
+      </app-post-files>
+    </div>
+  </ng-template>
+
+  <p *ngIf="reportFeedback" class="px-4 pb-2 text-xs text-gray-500">
+    <i class="fas fa-flag text-amber-500 mr-1"></i>{{ reportFeedback }}
+  </p>
 
   <!-- Post Actions -->
   <app-post-actions
@@ -45,9 +60,20 @@
     [isLiking]="isLiking"
     [showCommentsSection]="showCommentsSection"
     (likeClick)="onLikeClick()"
+    [canReport]="canReportPost"
     (commentToggle)="showCommentsSection = !showCommentsSection"
+    (reportClick)="openReportDialog()"
   >
   </app-post-actions>
+
+  <app-report-dialog
+    [open]="showReportDialog"
+    subject="esta publicación"
+    [isSubmitting]="isReporting"
+    [error]="reportError"
+    (submitted)="submitReport($event)"
+    (cancelled)="showReportDialog = false"
+  ></app-report-dialog>
 
   <!-- Comments Section -->
   <div class="border-t border-gray-100 bg-gray-50" *ngIf="showCommentsSection">

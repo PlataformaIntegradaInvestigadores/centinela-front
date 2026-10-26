@@ -12,9 +12,11 @@ export class PostActionsComponent {
   @Input() showComments: boolean = true;
   @Input() isLiking: boolean = false;
   @Input() showCommentsSection: boolean = false;
+  @Input() canReport: boolean = false;
 
   @Output() likeClick = new EventEmitter<void>();
   @Output() commentToggle = new EventEmitter<void>();
+  @Output() reportClick = new EventEmitter<void>();
 
   constructor(private elementRef: ElementRef) {}
 
@@ -32,6 +34,10 @@ export class PostActionsComponent {
     }
 
     this.likeClick.emit();
+  }
+
+  onReportClick(): void {
+    this.reportClick.emit();
   }
 
   onCommentToggle(): void {

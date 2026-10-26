@@ -21,6 +21,8 @@ import { PostPollComponent } from './presentation/components/post-poll/post-poll
 import { PostFilesComponent } from './presentation/components/post-files/post-files.component';
 import { PostActionsComponent } from './presentation/components/post-actions/post-actions.component';
 import { PostEditorComponent } from './presentation/components/post-editor/post-editor.component';
+import { ReportDialogComponent } from './presentation/components/report-dialog/report-dialog.component';
+import { ModerationWarningComponent } from './presentation/components/moderation-warning/moderation-warning.component';
 
 // Services
 import { FeedService } from './domain/services/feed.service';
@@ -42,6 +44,8 @@ import { SharedModule } from '../shared/shared.module';
     PostFilesComponent,
     PostActionsComponent,
     PostEditorComponent,
+    ReportDialogComponent,
+    ModerationWarningComponent,
   ],
   imports: [
     CommonModule,

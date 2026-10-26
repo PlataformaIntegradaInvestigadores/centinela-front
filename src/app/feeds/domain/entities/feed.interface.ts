@@ -8,6 +8,25 @@ export interface TrendingMetadata {
 }
 
 /**
+ * Estado de moderación (discurso de odio) que expone social-service.
+ * p_hate, label y case_id solo llegan a moderadores.
+ */
+export interface ModerationInfo {
+  status: 'pending' | 'classified' | 'failed';
+  visibility: 'visible' | 'hidden' | 'blocked';
+  show_warning: boolean;
+  is_blocked: boolean;
+  sort_last: boolean;
+  review_status: 'none' | 'pending' | 'resolved';
+  reasons: string[];
+  report_count: number;
+  can_report: boolean;
+  p_hate?: number | null;
+  label?: string | null;
+  case_id?: number | null;
+}
+
+/**
  * Representa un post en el feed
  */
 export interface FeedPost {
@@ -25,6 +44,7 @@ export interface FeedPost {
   is_liked?: boolean;
   engagement_score?: number;
   trending_metadata?: TrendingMetadata;
+  moderation?: ModerationInfo;
 }
 
 /**
@@ -67,6 +87,7 @@ export interface Comment {
   created_at: Date;
   updated_at: Date;
   replies?: Comment[];
+  moderation?: ModerationInfo;
 }
 
 /**
