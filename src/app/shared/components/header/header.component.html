@@ -67,6 +67,13 @@
             <span>Jobs</span>
           </a>
         </div>
+        <!-- Moderación (solo staff) -->
+        <div class="nav-item" *ngIf="!showLogin && isModerator">
+          <a routerLink="/moderation" routerLinkActive="active" class="nav-link">
+            <fa-icon [icon]="faShieldAlt" class="nav-icon"></fa-icon>
+            <span>Moderación</span>
+          </a>
+        </div>
         <!-- Analytics -->
         <div class="nav-item" *ngIf="showInformation">
           <a routerLink="/home/analitica" routerLinkActive="active" class="nav-link">

@@ -3,6 +3,7 @@ import { Component, Input, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { AuthModalService } from 'src/app/auth/domain/services/auth-modal.service';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
 import { User } from 'src/app/group/presentation/user.interface';
 import {
   faSearch,
@@ -20,6 +21,7 @@ import {
   faTimes,
   faChartBar,
   faInfoCircle,
+  faShieldAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -55,11 +57,14 @@ export class HeaderComponent implements OnInit {
   faTimes = faTimes;
   faChartBar = faChartBar;
   faInfoCircle = faInfoCircle;
+  faShieldAlt = faShieldAlt;
+  isModerator = false;
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private authModalService: AuthModalService,
+    private moderationService: ModerationService,
   ) {}
 
   toggleNav() {
@@ -110,6 +115,11 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.showLogin = !this.authService.isLoggedIn();
+    if (!this.showLogin) {
+      this.moderationService
+        .isModerator()
+        .subscribe((isModerator) => (this.isModerator = isModerator));
+    }
     if (!this.showLogin && this.authService.isUser()) {
       this.loadUsers();
     }

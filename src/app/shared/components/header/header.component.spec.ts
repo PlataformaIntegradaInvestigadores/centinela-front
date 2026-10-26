@@ -5,12 +5,14 @@ import { of, throwError } from 'rxjs';
 import { HeaderComponent } from './header.component';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { AuthModalService } from 'src/app/auth/domain/services/auth-modal.service';
+import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let authModalSpy: jasmine.SpyObj<AuthModalService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let moderationServiceSpy: jasmine.SpyObj<ModerationService>;
 
   beforeEach(() => {
     authServiceSpy = jasmine.createSpyObj('AuthService', [
@@ -30,6 +32,9 @@ describe('HeaderComponent', () => {
     // never resolve it here so a real reload can't fire mid test-run.
     routerSpy.navigate.and.returnValue(new Promise<boolean>(() => {}));
 
+    moderationServiceSpy = jasmine.createSpyObj('ModerationService', ['isModerator']);
+    moderationServiceSpy.isModerator.and.returnValue(of(false));
+
     TestBed.configureTestingModule({
       declarations: [HeaderComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -37,6 +42,7 @@ describe('HeaderComponent', () => {
         { provide: AuthService, useValue: authServiceSpy },
         { provide: AuthModalService, useValue: authModalSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ModerationService, useValue: moderationServiceSpy },
       ],
     });
 
@@ -63,6 +69,21 @@ describe('HeaderComponent', () => {
       component.ngOnInit();
       expect(component.showLogin).toBeFalse();
       expect(authServiceSpy.getUsers).toHaveBeenCalled();
+    });
+
+    it('shows the moderation link only to moderators', () => {
+      authServiceSpy.isLoggedIn.and.returnValue(true);
+      authServiceSpy.isUser.and.returnValue(false);
+      moderationServiceSpy.isModerator.and.returnValue(of(true));
+      component.ngOnInit();
+      expect(component.isModerator).toBeTrue();
+    });
+
+    it('does not check moderator status when logged out', () => {
+      authServiceSpy.isLoggedIn.and.returnValue(false);
+      component.ngOnInit();
+      expect(moderationServiceSpy.isModerator).not.toHaveBeenCalled();
+      expect(component.isModerator).toBeFalse();
     });
 
     it('does not load users for a logged-in company', () => {

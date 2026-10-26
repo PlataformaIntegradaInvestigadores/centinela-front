@@ -1,0 +1,301 @@
+<div class="min-h-screen bg-[#f0f2f5]">
+  <app-header [showInformation]="true"></app-header>
+
+  <div class="w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">
+          <i class="fas fa-shield-alt text-blue-600 mr-2"></i>Moderación
+        </h1>
+        <p class="text-sm text-gray-500">
+          Cola de revisión de contenido ocultado por el modelo o reportado por usuarios.
+        </p>
+      </div>
+
+      <!-- Filtros -->
+      <div class="flex flex-wrap items-center gap-2 text-sm">
+        <select
+          [(ngModel)]="filters.status"
+          (ngModelChange)="loadQueue(true)"
+          class="border border-gray-300 rounded-md px-2 py-1.5 bg-white"
+          aria-label="Estado"
+        >
+          <option value="pending">Pendientes</option>
+          <option value="resolved">Resueltos</option>
+          <option value="all">Todos</option>
+        </select>
+        <select
+          [(ngModel)]="filters.reason"
+          (ngModelChange)="loadQueue(true)"
+          class="border border-gray-300 rounded-md px-2 py-1.5 bg-white"
+          aria-label="Motivo"
+        >
+          <option value="">Cualquier motivo</option>
+          <option value="hidden_by_model">Ocultado por el modelo</option>
+          <option value="reported">Reportado por usuarios</option>
+          <option value="deferred">Baja confianza</option>
+        </select>
+        <select
+          [(ngModel)]="filters.content_type"
+          (ngModelChange)="loadQueue(true)"
+          class="border border-gray-300 rounded-md px-2 py-1.5 bg-white"
+          aria-label="Tipo"
+        >
+          <option value="">Posts y comentarios</option>
+          <option value="post">Posts</option>
+          <option value="comment">Comentarios</option>
+        </select>
+        <button
+          type="button"
+          (click)="loadQueue()"
+          class="px-3 py-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
+        >
+          <i class="fas fa-sync-alt mr-1"></i>Actualizar
+        </button>
+      </div>
+    </div>
+
+    <div
+      *ngIf="error"
+      class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+    >
+      {{ error }}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-4">
+      <!-- Lista -->
+      <section>
+        <div class="flex justify-center py-8" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin text-gray-400"></i>
+          <span class="ml-2 text-gray-500 text-sm">Cargando casos...</span>
+        </div>
+
+        <div
+          *ngIf="!isLoading && !error && cases.length === 0"
+          class="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-500"
+        >
+          <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
+          <p class="text-sm">No hay casos en esta vista.</p>
+        </div>
+
+        <div class="space-y-3" *ngIf="!isLoading">
+          <article
+            *ngFor="let item of cases; trackBy: trackByCaseId"
+            class="bg-white rounded-lg border p-4 cursor-pointer transition-shadow hover:shadow-md"
+            [ngClass]="selected?.id === item.id ? 'border-blue-500' : 'border-gray-200'"
+            (click)="openCase(item)"
+          >
+            <div class="flex flex-wrap items-center gap-2 text-xs mb-2">
+              <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-medium">
+                {{ item.content_type === 'post' ? 'Post' : 'Comentario' }} #{{ item.id }}
+              </span>
+              <span
+                class="px-2 py-0.5 rounded-full font-semibold"
+                [ngClass]="pHateClass(item.p_hate)"
+              >
+                p(odio) {{ percent(item.p_hate) }}
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                Confianza {{ percent(item.confidence) }}
+              </span>
+              <span
+                *ngIf="item.report_count > 0"
+                class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700"
+              >
+                <i class="fas fa-flag mr-1"></i>{{ item.report_count }} reporte(s)
+              </span>
+              <span
+                *ngFor="let reason of item.reasons"
+                class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700"
+              >
+                {{ reasonLabel(reason) }}
+              </span>
+              <span class="ml-auto text-gray-500">
+                {{
+                  item.visibility === 'visible'
+                    ? 'Visible'
+                    : item.visibility === 'hidden'
+                      ? 'Oculto'
+                      : 'Bloqueado'
+                }}
+              </span>
+            </div>
+
+            <p class="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap break-words">
+              <ng-container *ngFor="let segment of segments(item)">
+                <mark
+                  *ngIf="segment.highlighted; else plain"
+                  class="xai-token text-gray-900"
+                  [ngStyle]="highlightStyle(segment)"
+                  >{{ segment.text }}</mark
+                >
+                <ng-template #plain>{{ segment.text }}</ng-template>
+              </ng-container>
+            </p>
+
+            <div class="mt-2 text-xs text-gray-500">
+              {{ authorName(item) }} · {{ item.created_at | date: 'short' }}
+              <span *ngIf="item.context && !item.context.exists" class="text-red-500">
+                · ya no existe en social
+              </span>
+            </div>
+          </article>
+        </div>
+
+        <div class="flex items-center justify-between mt-4 text-sm" *ngIf="total > 0">
+          <span class="text-gray-500"
+            >{{ filters.offset + 1 }}–{{ filters.offset + cases.length }} de {{ total }}</span
+          >
+          <div class="space-x-2">
+            <button
+              type="button"
+              class="px-3 py-1 rounded-md border border-gray-300 bg-white disabled:opacity-50"
+              [disabled]="!hasPrevious"
+              (click)="previousPage()"
+            >
+              Anterior
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 rounded-md border border-gray-300 bg-white disabled:opacity-50"
+              [disabled]="!hasNext"
+              (click)="nextPage()"
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detalle -->
+      <aside class="lg:sticky lg:top-4 self-start">
+        <div
+          *ngIf="!selected && !isLoadingDetail"
+          class="bg-white rounded-lg border border-gray-200 p-6 text-center text-sm text-gray-500"
+        >
+          Selecciona un caso para revisarlo.
+        </div>
+        <div
+          *ngIf="isLoadingDetail"
+          class="bg-white rounded-lg border border-gray-200 p-6 text-center text-sm text-gray-500"
+        >
+          <i class="fas fa-spinner fa-spin mr-1"></i> Cargando caso...
+        </div>
+
+        <div
+          *ngIf="selected && !isLoadingDetail"
+          class="bg-white rounded-lg border border-gray-200 p-4"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-semibold text-gray-900">Caso #{{ selected.id }}</h2>
+            <button type="button" class="text-gray-400 hover:text-gray-600" (click)="closeCase()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <p
+            class="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap break-words bg-gray-50 rounded-md p-3"
+          >
+            <ng-container *ngFor="let segment of segments(selected)">
+              <mark
+                *ngIf="segment.highlighted; else plainDetail"
+                class="xai-token text-gray-900"
+                [ngStyle]="highlightStyle(segment)"
+                >{{ segment.text }}</mark
+              >
+              <ng-template #plainDetail>{{ segment.text }}</ng-template>
+            </ng-container>
+          </p>
+
+          <dl class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs mt-3">
+            <dt class="text-gray-500">p(odio)</dt>
+            <dd class="font-semibold">{{ percent(selected.p_hate) }}</dd>
+            <dt class="text-gray-500">Confianza</dt>
+            <dd>{{ percent(selected.confidence) }}</dd>
+            <dt class="text-gray-500">Etiqueta / decisión</dt>
+            <dd>{{ selected.label || '—' }} / {{ selected.decision || '—' }}</dd>
+            <dt class="text-gray-500">Autor</dt>
+            <dd>{{ authorName(selected) }}</dd>
+            <dt class="text-gray-500">Reportes</dt>
+            <dd>{{ selected.report_count }}</dd>
+            <dt class="text-gray-500">Estado</dt>
+            <dd>{{ selected.visibility }} · {{ selected.review_status }}</dd>
+            <dt class="text-gray-500">Modelo</dt>
+            <dd class="truncate" [title]="selected.model_version || ''">
+              {{ selected.model_version || '—' }}
+            </dd>
+          </dl>
+
+          <div class="mt-3" *ngIf="selected.explanation.top_tokens.length > 0">
+            <h3 class="text-xs font-semibold text-gray-700 mb-1">
+              Palabras más influyentes ({{ selected.explanation.method || 'XAI' }})
+            </h3>
+            <div class="flex flex-wrap gap-1">
+              <span
+                *ngFor="let token of selected.explanation.top_tokens"
+                class="px-2 py-0.5 rounded-full text-xs bg-red-50 text-red-700"
+              >
+                {{ token.token }} · {{ token.saliency | number: '1.2-2' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-3" *ngIf="selected.report_reasons.length > 0">
+            <h3 class="text-xs font-semibold text-gray-700 mb-1">Motivos de los reportes</h3>
+            <ul class="list-disc list-inside text-xs text-gray-700 space-y-0.5">
+              <li *ngFor="let reason of selected.report_reasons">{{ reason }}</li>
+            </ul>
+          </div>
+
+          <div class="mt-3" *ngIf="selected.decisions.length > 0">
+            <h3 class="text-xs font-semibold text-gray-700 mb-1">Historial</h3>
+            <ul class="text-xs text-gray-600 space-y-1">
+              <li *ngFor="let decision of selected.decisions">
+                <span class="font-medium">{{ decisionLabel(decision.decision) }}</span>
+                · {{ decision.created_at | date: 'short' }}
+                <span *ngIf="decision.notes"> — {{ decision.notes }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-4 border-t border-gray-100 pt-3">
+            <textarea
+              [(ngModel)]="notes"
+              rows="2"
+              maxlength="2000"
+              placeholder="Notas (opcional)"
+              class="w-full p-2 text-sm bg-gray-100 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
+            ></textarea>
+            <div class="grid grid-cols-3 gap-2 mt-2">
+              <button
+                type="button"
+                class="px-2 py-2 rounded-md text-xs font-semibold bg-green-600 text-white hover:bg-green-700 disabled:opacity-60"
+                [disabled]="isDeciding"
+                (click)="decide('approve')"
+              >
+                <i class="fas fa-check mr-1"></i>Aprobar
+              </button>
+              <button
+                type="button"
+                class="px-2 py-2 rounded-md text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60"
+                [disabled]="isDeciding"
+                (click)="decide('keep_hidden')"
+              >
+                <i class="fas fa-eye-slash mr-1"></i>Mantener oculto
+              </button>
+              <button
+                type="button"
+                class="px-2 py-2 rounded-md text-xs font-semibold bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
+                [disabled]="isDeciding"
+                (click)="decide('block')"
+              >
+                <i class="fas fa-ban mr-1"></i>Bloquear
+              </button>
+            </div>
+            <p *ngIf="feedback" class="mt-2 text-xs text-gray-700">{{ feedback }}</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
