@@ -32,7 +32,10 @@ import { TeamRecommenderService } from '../../../domain/services/team-recommende
 
 export const SEARCH_DEBOUNCE_MS = 300;
 export const MIN_SEARCH_CHARS = 2;
-export const MAX_TEAM_SIZE = 10;
+/** Equipo semilla: más integrantes diluyen el centroide semántico del equipo. */
+export const MAX_TEAM_SIZE = 5;
+/** Formato de búsqueda sugerido, sin nombres reales de investigadores. */
+export const SEARCH_PLACEHOLDER = 'Ej: Apellido Nombre';
 export const TOP_K_OPTIONS = [5, 10, 20] as const;
 
 /** Resultado del autocompletado: null = consulta demasiado corta (no se busca). */
@@ -51,6 +54,7 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
   readonly searchControl = new FormControl('', { nonNullable: true });
   readonly topKOptions = TOP_K_OPTIONS;
   readonly maxTeamSize = MAX_TEAM_SIZE;
+  readonly searchPlaceholder = SEARCH_PLACEHOLDER;
   readonly skeletonRows = Array.from({ length: 5 }, (_, i) => i);
 
   readonly faMagnifyingGlass = faMagnifyingGlass;
@@ -124,9 +128,22 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
     return this.response !== null && this.response.recommendations.length > 0;
   }
 
-  /** Nombres del equipo de la última respuesta, p. ej. 'Piedrahita P., Freile J.F.'. */
+  /** Nombres del equipo de la última respuesta (nombre completo si se conoce, si no el de Scopus). */
   get responseTeamLabel(): string {
-    return (this.response?.team ?? []).map((m) => m.name || m.author_id).join(', ');
+    return (this.response?.team ?? [])
+      .map((m) => this.fullNameOf(m.author_id) || m.name || m.author_id)
+      .join(', ');
+  }
+
+  /** Nombre a mostrar: completo («Apellido, Nombre»), si no el de Scopus, si no el ID. */
+  displayName(author: AuthorSearchResult): string {
+    return author.full_name?.trim() || author.name?.trim() || `Autor ${author.author_id}`;
+  }
+
+  /** Nombre Scopus como dato secundario, solo cuando difiere del nombre mostrado. */
+  scopusName(author: AuthorSearchResult): string | null {
+    const scopus = author.name?.trim();
+    return scopus && scopus !== this.displayName(author) ? scopus : null;
   }
 
   isInTeam(author: AuthorSearchResult): boolean {
@@ -263,6 +280,10 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
     this.suggestions = outcome.results;
     this.searchFailed = outcome.error;
     this.showSuggestions = true;
+  }
+
+  private fullNameOf(authorId: string): string | null {
+    return this.team.find((member) => member.author_id === authorId)?.full_name?.trim() || null;
   }
 
   private markStale(): void {

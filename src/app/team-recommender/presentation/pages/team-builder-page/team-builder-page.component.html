@@ -26,7 +26,8 @@
             Equipo base
           </h2>
           <p class="mt-1 text-sm text-gray-500">
-            Busca por apellido o por ID Scopus y agrega hasta {{ maxTeamSize }} integrantes.
+            Busca por apellido y nombre (en cualquier orden) o por ID Scopus y agrega hasta
+            {{ maxTeamSize }} integrantes.
           </p>
 
           <!-- Autocompletado -->
@@ -46,7 +47,7 @@
               (focus)="openSuggestions()"
               (blur)="closeSuggestions()"
               [attr.disabled]="teamIsFull ? true : null"
-              [placeholder]="teamIsFull ? 'Equipo completo' : 'Ej.: Piedrahita, Freile…'"
+              [placeholder]="teamIsFull ? 'Equipo completo' : searchPlaceholder"
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-sm text-gray-900 focus:border-primary_tailwind focus:bg-white focus:ring-primary_tailwind disabled:cursor-not-allowed disabled:opacity-60"
               role="combobox"
               aria-autocomplete="list"
@@ -81,11 +82,18 @@
                 (click)="addMember(author)"
               >
                 <div class="min-w-0">
-                  <p class="truncate font-medium text-gray-900">
-                    {{ author.name || 'Autor ' + author.author_id }}
+                  <p class="suggestion-name truncate font-medium text-gray-900">
+                    {{ displayName(author) }}
                   </p>
-                  <p class="truncate text-xs text-gray-500">
+                  <p
+                    class="suggestion-institution text-xs leading-snug text-gray-600"
+                    [title]="author.institution | institutionName"
+                  >
                     {{ author.institution | institutionName }}
+                  </p>
+                  <p class="suggestion-scopus truncate text-[11px] text-gray-400">
+                    <span *ngIf="scopusName(author) as scopus">Scopus: {{ scopus }} · </span>ID
+                    {{ author.author_id }}
                   </p>
                 </div>
                 <div class="shrink-0 text-right text-xs text-gray-400">
@@ -130,17 +138,23 @@
                 "
               >
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm font-medium text-gray-900">
-                    {{ member.name || 'Autor ' + member.author_id }}
+                  <p
+                    class="truncate text-sm font-medium text-gray-900"
+                    [title]="displayName(member)"
+                  >
+                    {{ displayName(member) }}
                   </p>
-                  <p class="truncate text-xs text-gray-500">
+                  <p
+                    class="truncate text-xs text-gray-500"
+                    [title]="member.institution | institutionName"
+                  >
                     {{ member.institution | institutionName }}
                   </p>
                 </div>
                 <button
                   type="button"
                   class="remove-member rounded-full p-1 text-gray-400 hover:bg-white hover:text-rose-600"
-                  [attr.aria-label]="'Quitar a ' + (member.name || member.author_id)"
+                  [attr.aria-label]="'Quitar a ' + displayName(member)"
                   (click)="removeMember(member)"
                 >
                   <fa-icon [icon]="faXmark"></fa-icon>

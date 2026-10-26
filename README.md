@@ -77,6 +77,10 @@ que basta con levantar ese servicio (`python -m uvicorn infrastructure.api.main:
 `npm start`; no requiere `gateway-service`, `identity-service` ni sesión iniciada. En
 staging/producción falta la ruta equivalente en `gateway-service`.
 
+El equipo base admite hasta 5 integrantes (`MAX_TEAM_SIZE`): más integrantes diluyen el centroide
+semántico. El autocompletado acepta apellido y nombre en cualquier orden o el formato Scopus
+(`GET /api/v1/authors`, búsqueda flexible) y muestra nombre completo, institución y nombre/ID Scopus.
+
 Para trabajo aislado de UI/presentación, `ng serve` funciona sin ningún backend corriendo — las llamadas a la API simplemente devuelven 404.
 
 ## Variables de entorno

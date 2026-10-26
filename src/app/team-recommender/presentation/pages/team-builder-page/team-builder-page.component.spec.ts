@@ -9,6 +9,7 @@ import { Subject, of, throwError } from 'rxjs';
 import {
   MAX_TEAM_SIZE,
   SEARCH_DEBOUNCE_MS,
+  SEARCH_PLACEHOLDER,
   TeamBuilderPageComponent,
 } from './team-builder-page.component';
 import { InstitutionNamePipe } from '../../pipes/institution-name.pipe';
@@ -163,6 +164,36 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.team.length).toBe(1);
     }));
 
+    it('renders full name, institution and Scopus name of each suggestion', fakeAsync(() => {
+      service.searchAuthors.and.returnValue(
+        of([
+          { ...author('37026882700', 'Piedrahita P.'), full_name: 'Piedrahita, Paolo' },
+          author('2', null),
+        ]),
+      );
+      typeQuery('pablo piedrahita');
+      expect(service.searchAuthors).toHaveBeenCalledOnceWith('pablo piedrahita');
+      const [first, second] = Array.from(el().querySelectorAll('.suggestion'));
+      expect(first.querySelector('.suggestion-name')?.textContent?.trim()).toBe(
+        'Piedrahita, Paolo',
+      );
+      expect(first.querySelector('.suggestion-institution')?.textContent).toContain(
+        'Escuela Politécnica Nacional',
+      );
+      expect(first.querySelector('.suggestion-scopus')?.textContent).toContain(
+        'Scopus: Piedrahita P.',
+      );
+      expect(first.querySelector('.suggestion-scopus')?.textContent).toContain('37026882700');
+      expect(second.querySelector('.suggestion-name')?.textContent?.trim()).toBe('Autor 2');
+      expect(second.querySelector('.suggestion-scopus')?.textContent).not.toContain('Scopus:');
+    }));
+
+    it('uses a generic placeholder without real researcher names', () => {
+      const input = el().querySelector('#author-search') as HTMLInputElement;
+      expect(SEARCH_PLACEHOLDER).toBe('Ej: Apellido Nombre');
+      expect(input.placeholder).toBe('Ej: Apellido Nombre');
+    });
+
     it('opens suggestions on focus only when there are results', () => {
       component.suggestions = [];
       component.openSuggestions();
@@ -171,6 +202,32 @@ describe('TeamBuilderPageComponent', () => {
   });
 
   describe('team management', () => {
+    it('limits the base team to 5 members and says so in the help text', () => {
+      expect(MAX_TEAM_SIZE).toBe(5);
+      expect(el().textContent).toContain('agrega hasta 5 integrantes');
+      for (let i = 1; i <= 6; i++) {
+        component.addMember(author(String(i)));
+      }
+      fixture.detectChanges();
+      expect(component.team.length).toBe(5);
+      expect(el().querySelectorAll('.member-chip').length).toBe(5);
+      const input = el().querySelector('#author-search') as HTMLInputElement;
+      expect(input.disabled).toBeTrue();
+      expect(input.placeholder).toBe('Equipo completo');
+    });
+
+    it('shows the full name in chips and falls back to the Scopus name or id', () => {
+      const paolo = { ...author('1', 'Piedrahita P.'), full_name: 'Piedrahita, Paolo' };
+      component.addMember(paolo);
+      fixture.detectChanges();
+      expect(el().querySelector('.member-chip')?.textContent).toContain('Piedrahita, Paolo');
+      expect(component.displayName(paolo)).toBe('Piedrahita, Paolo');
+      expect(component.scopusName(paolo)).toBe('Piedrahita P.');
+      expect(component.displayName({ ...paolo, full_name: '  ' })).toBe('Piedrahita P.');
+      expect(component.scopusName({ ...paolo, full_name: null })).toBeNull();
+      expect(component.displayName(author('7', null))).toBe('Autor 7');
+    });
+
     it('adds members once, renders chips and enforces the size limit', () => {
       component.addMember(author('1', 'Piedrahita P.'));
       component.addMember(author('1', 'Piedrahita P.'));
@@ -222,6 +279,8 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.elapsedMs).not.toBeNull();
       expect(component.responseTeamLabel).toBe('Piedrahita P., 2');
       expect(el().querySelector('.team-label')?.textContent).toContain('Piedrahita P., 2');
+      component.team = [{ ...author('1'), full_name: 'Piedrahita, Paolo' }];
+      expect(component.responseTeamLabel).toBe('Piedrahita, Paolo, 2');
       expect(el().querySelectorAll('app-recommended-candidate-card').length).toBe(1);
       expect(el().querySelector('app-fairness-summary')).not.toBeNull();
       expect(el().querySelector('.initial-state')).toBeNull();

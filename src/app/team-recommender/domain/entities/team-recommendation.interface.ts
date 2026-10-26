@@ -11,6 +11,8 @@ export interface AuthorSearchResult {
   institution: string;
   low_visibility: boolean;
   article_count: number | null;
+  /** Nombre completo «Apellido, Nombre» (p. ej. a partir de first/last name de Scopus); null si no se conoce. */
+  full_name?: string | null;
 }
 
 export interface AuthorSearchResponse {
