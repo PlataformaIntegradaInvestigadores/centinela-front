@@ -250,6 +250,10 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           comment.moderation = result.moderation;
+          if (result.moderation?.sort_last) {
+            // Same ordering the API applies: hidden/blocked comments go last.
+            this.comments = [...this.comments.filter((c) => c !== comment), comment];
+          }
           this.reportingComment = null;
           this.reportFeedback = result.created
             ? 'Gracias. Tu reporte fue enviado a moderación.'

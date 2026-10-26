@@ -323,6 +323,19 @@ describe('PostCommentsComponent', () => {
       expect(component.reportFeedback).toContain('Gracias');
     });
 
+    it('moves a comment to the end when the report hides it', () => {
+      const target = makeComment({ id: 'c1' });
+      const other = makeComment({ id: 'c2' });
+      component.comments = [target, other];
+      const hidden = moderation({ visibility: 'hidden', show_warning: true, sort_last: true });
+      moderationServiceSpy.report.and.returnValue(
+        of({ created: true, report_count: 5, threshold_reached: true, moderation: hidden }),
+      );
+      component.openReport(target);
+      component.submitReport('odio');
+      expect(component.comments.map((c) => c.id)).toEqual(['c2', 'c1']);
+    });
+
     it('reports duplicates and errors', () => {
       moderationServiceSpy.report.and.returnValue(
         of({ created: false, report_count: 1, threshold_reached: false, moderation: moderation() }),

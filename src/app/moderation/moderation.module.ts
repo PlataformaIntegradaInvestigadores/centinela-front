@@ -7,6 +7,8 @@ import { ReviewQueuePageComponent } from './presentation/pages/review-queue/revi
 
 @NgModule({
   declarations: [ReviewQueuePageComponent],
-  imports: [CommonModule, FormsModule, SharedModule, ModerationRoutingModule],
+  // ModerationRoutingModule must come before SharedModule: SharedModule re-exports
+  // SharedRoutingModule, whose catch-all '' route would otherwise render the home page.
+  imports: [CommonModule, FormsModule, ModerationRoutingModule, SharedModule],
 })
 export class ModerationModule {}
