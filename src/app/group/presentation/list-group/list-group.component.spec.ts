@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { ListGroupComponent } from './list-group.component';
+import { ETHICAL_BUILDER_ANCHOR, ListGroupComponent } from './list-group.component';
 import { GroupService } from 'src/app/group/domain/entities/group.service';
 import { GetGroupsService } from 'src/app/group/domain/services/getGroupsUser.service';
 import { LoadingService } from 'src/app/group/domain/services/loadingService.service';
@@ -11,6 +11,7 @@ describe('ListGroupComponent', () => {
   let component: ListGroupComponent;
   let groupServiceSpy: jasmine.SpyObj<GroupService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let fixture: ComponentFixture<ListGroupComponent>;
 
   beforeEach(() => {
     localStorage.clear();
@@ -32,7 +33,8 @@ describe('ListGroupComponent', () => {
         { provide: LoadingService, useValue: { loading$: of(false) } },
       ],
     });
-    component = TestBed.createComponent(ListGroupComponent).componentInstance;
+    fixture = TestBed.createComponent(ListGroupComponent);
+    component = fixture.componentInstance;
   });
 
   afterEach(() => localStorage.clear());
@@ -160,5 +162,48 @@ describe('ListGroupComponent', () => {
       component.leaveGroup('g-1');
       expect(console.error).toHaveBeenCalled();
     });
+  });
+  describe('ethical team builder section', () => {
+    const el = () => fixture.nativeElement as HTMLElement;
+    const withFragment = (fragment: string | null) =>
+      ((component as unknown as { route: unknown }).route = { snapshot: { fragment } });
+
+    it('embeds the ethical recommender in the groups module, expanded by default', () => {
+      fixture.detectChanges();
+      const section = el().querySelector(`#${ETHICAL_BUILDER_ANCHOR}`);
+      expect(section?.textContent).toContain('Conformación ética de equipo');
+      expect(section?.querySelector('app-team-builder-page')).not.toBeNull();
+      expect(el().textContent).not.toContain('Recommended Groups');
+    });
+
+    it('collapses and expands the section', () => {
+      fixture.detectChanges();
+      (el().querySelector('.ethical-toggle') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(component.showEthicalBuilder).toBeFalse();
+      expect(el().querySelector('app-team-builder-page')).toBeNull();
+      component.toggleEthicalBuilder();
+      expect(component.showEthicalBuilder).toBeTrue();
+    });
+
+    it('opens and scrolls to the section when the route carries its fragment', fakeAsync(() => {
+      const target = jasmine.createSpyObj('HTMLElement', ['scrollIntoView']);
+      spyOn(document, 'getElementById').and.returnValue(target);
+      withFragment(ETHICAL_BUILDER_ANCHOR);
+      component.showEthicalBuilder = false;
+      component.ngAfterViewInit();
+      tick();
+      expect(component.showEthicalBuilder).toBeTrue();
+      expect(document.getElementById).toHaveBeenCalledWith(ETHICAL_BUILDER_ANCHOR);
+      expect(target.scrollIntoView).toHaveBeenCalled();
+    }));
+
+    it('does not scroll without the fragment', fakeAsync(() => {
+      spyOn(document, 'getElementById');
+      withFragment(null);
+      component.ngAfterViewInit();
+      tick();
+      expect(document.getElementById).not.toHaveBeenCalled();
+    }));
   });
 });

@@ -194,6 +194,27 @@ export class HeaderComponent implements OnInit {
   }
 
   /**
+   * «Conformar equipo»: el recomendador ético vive en el módulo de grupos del perfil
+   * (/profile/:id/my-groups#ethical-team-builder). Sin sesión de investigador (p. ej. demo
+   * local sin identity-service) se usa la página pública /home/team-builder.
+   */
+  get teamBuilderLink(): string[] {
+    const userId = this.researcherId();
+    return userId ? ['/profile', userId, 'my-groups'] : ['/home/team-builder'];
+  }
+
+  get teamBuilderFragment(): string | undefined {
+    return this.researcherId() ? 'ethical-team-builder' : undefined;
+  }
+
+  private researcherId(): string | null {
+    if (!this.authService.isLoggedIn() || !this.authService.isUser()) {
+      return null;
+    }
+    return this.authService.getUserId() || null;
+  }
+
+  /**
    * Check if current user is a company
    */
   isCompany(): boolean {

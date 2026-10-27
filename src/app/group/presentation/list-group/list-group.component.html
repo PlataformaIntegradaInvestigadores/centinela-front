@@ -65,22 +65,24 @@
           </div>
         </div>
       </div>
-      <div
+      <!-- Recommended members: recomendación ética de investigadores (TIC, ethical-recommender-service).
+           Reemplaza el placeholder deshabilitado «Recommended Groups». -->
+      <section
+        id="ethical-team-builder"
         class="editor flexi mx-auto flex flex-col text-gray-800 border-gray-300 mb-3 rounded-xl border p-3 shadow-md bg-white"
       >
-        <h2 id="accordion-flush-heading-2" class="mb-0">
+        <h2 class="mb-0">
           <button
             type="button"
-            class="cursor-not-allowed flex items-center justify-between w-full py-2 font-medium rtl:text-right text-gray-500 dark:border-gray-700 dark:text-gray-400 gap-3"
-            data-accordion-target="#accordion-flush-body-2"
-            aria-expanded="false"
-            aria-controls="accordion-flush-body-2"
-            disabled
+            class="ethical-toggle flex items-center justify-between w-full py-2 font-medium rtl:text-right text-gray-500 gap-3"
+            [attr.aria-expanded]="showEthicalBuilder"
+            aria-controls="ethical-team-builder-body"
+            (click)="toggleEthicalBuilder()"
           >
-            <span>Recommended Groups</span>
+            <span>Recommended Members · Conformación ética de equipo</span>
             <svg
-              data-accordion-icon
-              class="w-3 h-3 rotate-180 shrink-0"
+              class="w-3 h-3 shrink-0 transition-transform"
+              [class.rotate-180]="!showEthicalBuilder"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -96,14 +98,16 @@
             </svg>
           </button>
         </h2>
-        <div id="accordion-flush-body-2" class="hidden" aria-labelledby="accordion-flush-heading-2">
-          <div class="py-5 dark:border-gray-700">
-            <ng-container *ngFor="let group of groups">
-              <card-group [group]="group" (navigate)="navigateToGroup(group.id)"></card-group>
-            </ng-container>
-          </div>
+        <div *ngIf="showEthicalBuilder" id="ethical-team-builder-body" class="ethical-body my-3">
+          <p class="text-sm">
+            Before creating a group, build its seed team: add up to 5 researchers from the corpus
+            and Centinela suggests collaborators by topical affinity, re-ranked for institutional
+            diversity and emerging profiles. Candidates update automatically as the team changes;
+            invite the ones who are not on Centinela yet.
+          </p>
+          <app-team-builder-page [embedded]="true"></app-team-builder-page>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 </div>

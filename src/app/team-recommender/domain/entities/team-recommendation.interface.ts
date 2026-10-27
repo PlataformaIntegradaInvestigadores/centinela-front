@@ -60,6 +60,11 @@ export interface RecommendedProfile extends ResearcherOut {
   institution_novelty: number;
   final_score: number;
   selection_reason: SelectionReason;
+  /**
+   * ¿El investigador ya tiene cuenta activa en Centinela? El backend aún no lo informa
+   * (undefined): la tarjeta ofrece «Invitar al equipo» salvo que sea explícitamente true.
+   */
+  has_account?: boolean;
 }
 
 export interface FairnessMetrics {

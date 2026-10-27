@@ -1,11 +1,14 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Optional } from '@angular/core';
 import { initFlowbite } from 'flowbite';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Group } from '../../domain/entities/group.interface';
 import { GetGroupsService } from '../../domain/services/getGroupsUser.service';
 import { LoadingService } from '../../domain/services/loadingService.service';
 import { GroupService } from '../../domain/entities/group.service';
 import { forkJoin, map } from 'rxjs';
+
+/** Ancla de la sección del recomendador ético dentro de /profile/:id/my-groups. */
+export const ETHICAL_BUILDER_ANCHOR = 'ethical-team-builder';
 
 @Component({
   selector: 'list-group',
@@ -18,16 +21,32 @@ export class ListGroupComponent implements AfterViewInit, OnInit {
   modalOpen: boolean = false;
   isOwnerMap: { [key: string]: boolean } = {};
   loading$ = this.loadingService.loading$;
+  /** Sección «Recommended Members» (recomendador ético) desplegada. */
+  showEthicalBuilder = true;
 
   constructor(
     private groupService: GroupService,
     private getGroupService: GetGroupsService,
     private router: Router,
     private loadingService: LoadingService,
+    @Optional() private route?: ActivatedRoute,
   ) {}
 
   ngAfterViewInit(): void {
     initFlowbite();
+    // El menú «Conformar equipo» llega con #ethical-team-builder: abre y desplaza a la sección.
+    if (this.route?.snapshot?.fragment === ETHICAL_BUILDER_ANCHOR) {
+      this.showEthicalBuilder = true;
+      setTimeout(() =>
+        document
+          .getElementById(ETHICAL_BUILDER_ANCHOR)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      );
+    }
+  }
+
+  toggleEthicalBuilder(): void {
+    this.showEthicalBuilder = !this.showEthicalBuilder;
   }
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
-<div class="team-builder bg-gray-50/60">
-  <div class="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- Encabezado -->
-    <header class="mb-8">
+<div class="team-builder" [ngClass]="embedded ? 'team-builder--embedded' : 'bg-gray-50/60'">
+  <div [ngClass]="embedded ? 'py-2' : 'container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'">
+    <!-- Encabezado (solo como página propia; embebido lo pone el módulo anfitrión) -->
+    <header *ngIf="!embedded" class="page-header mb-8">
       <p class="text-xs font-semibold uppercase tracking-wider text-primary_tailwind">
         Recomendación ética de investigadores
       </p>
@@ -19,7 +19,8 @@
       <!-- Columna izquierda: equipo base -->
       <aside class="lg:col-span-4">
         <section
-          class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:sticky lg:top-6"
+          class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+          [ngClass]="embedded ? '' : 'lg:sticky lg:top-6'"
         >
           <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900">
             <fa-icon [icon]="faPeopleGroup" class="text-primary_tailwind"></fa-icon>
@@ -218,7 +219,13 @@
                 [icon]="loading ? faSpinner : faWandMagicSparkles"
                 [spin]="loading"
               ></fa-icon>
-              {{ loading ? 'Calculando recomendaciones…' : 'Recomendar colaboradores' }}
+              {{
+                loading
+                  ? 'Calculando recomendaciones…'
+                  : response
+                    ? 'Actualizar recomendaciones'
+                    : 'Recomendar colaboradores'
+              }}
             </button>
           </div>
         </section>
@@ -254,7 +261,7 @@
         </div>
 
         <!-- Cargando -->
-        <div *ngIf="loading" class="loading-state" aria-live="polite" aria-busy="true">
+        <div *ngIf="loading && !response" class="loading-state" aria-live="polite" aria-busy="true">
           <div class="mb-4 flex items-center gap-2 text-sm text-gray-600">
             <fa-icon [icon]="faSpinner" [spin]="true" class="text-primary_tailwind"></fa-icon>
             Calculando el centroide del equipo y aplicando el re-ranking de equidad…
@@ -284,35 +291,22 @@
           </div>
           <h2 class="mt-4 text-base font-semibold text-gray-900">
             {{
-              team.length === 0 ? 'Agrega investigadores al equipo base' : 'Listo para recomendar'
+              team.length === 0
+                ? 'Agrega investigadores al equipo base'
+                : 'Preparando recomendaciones…'
             }}
           </h2>
           <p class="mt-1 max-w-md text-sm text-gray-500">
             {{
               team.length === 0
-                ? 'Usa el buscador para seleccionar al menos un integrante. Las recomendaciones aparecerán aquí.'
-                : 'Pulsa «Recomendar colaboradores» para obtener los candidatos sugeridos.'
+                ? 'Usa el buscador para seleccionar al menos un integrante. Las recomendaciones aparecerán aquí y se actualizarán solas al cambiar el equipo.'
+                : 'Los candidatos se calculan automáticamente al agregar o quitar integrantes.'
             }}
           </p>
         </div>
 
         <!-- Resultados -->
-        <ng-container *ngIf="!loading && response">
-          <div
-            *ngIf="stale"
-            class="stale-banner mb-4 flex items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-900"
-          >
-            <span>El equipo o los parámetros cambiaron desde la última recomendación.</span>
-            <button
-              type="button"
-              class="font-semibold underline disabled:opacity-50"
-              [disabled]="!canRecommend"
-              (click)="recommend()"
-            >
-              Actualizar
-            </button>
-          </div>
-
+        <ng-container *ngIf="response">
           <app-fairness-summary
             *ngIf="hasResults"
             [metrics]="response.fairness_metrics"
@@ -331,6 +325,14 @@
                 <span class="font-medium text-gray-700">{{ responseTeamLabel }}</span>
               </p>
             </div>
+            <span
+              *ngIf="loading"
+              class="refreshing flex items-center gap-2 text-xs font-medium text-primary_tailwind"
+              aria-live="polite"
+            >
+              <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
+              Actualizando…
+            </span>
           </div>
 
           <div
@@ -340,7 +342,7 @@
             No se encontraron candidatos para este equipo.
           </div>
 
-          <div class="space-y-3">
+          <div class="results-list space-y-3 transition-opacity" [class.opacity-60]="loading">
             <app-recommended-candidate-card
               *ngFor="let candidate of response.recommendations; trackBy: trackByAuthorId"
               [candidate]="candidate"

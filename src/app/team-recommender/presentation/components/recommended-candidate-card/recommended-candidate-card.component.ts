@@ -1,8 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import {
   faArrowDown,
   faArrowUp,
   faBuildingColumns,
+  faCheck,
+  faEnvelope,
   faEye,
   faMinus,
   faScaleBalanced,
@@ -19,13 +21,23 @@ export interface CandidateBadge {
   classes: string;
 }
 
-/** Tarjeta de un candidato recomendado: rango, movimiento vs. línea base, relevancia y badges. */
+/** Tiempo que permanece visible el aviso «Enlace copiado…». */
+export const INVITE_FEEDBACK_MS = 3500;
+
+/** idle = sin acción; copied = enlace en el portapapeles; manual = modal para copiarlo a mano. */
+export type InviteState = 'idle' | 'copied' | 'manual';
+
+/**
+ * Tarjeta de un candidato recomendado: rango, movimiento vs. línea base, relevancia y badges.
+ * «Invitar al equipo» es un MOCK: copia un enlace de registro con el ID Scopus del candidato
+ * (sin API de invitaciones todavía); si el portapapeles no está disponible abre un modal.
+ */
 @Component({
   selector: 'app-recommended-candidate-card',
   templateUrl: './recommended-candidate-card.component.html',
   styleUrls: ['./recommended-candidate-card.component.css'],
 })
-export class RecommendedCandidateCardComponent {
+export class RecommendedCandidateCardComponent implements OnDestroy {
   @Input({ required: true }) candidate!: RecommendedProfile;
   /** Con el re-ranking desactivado no se muestra el movimiento respecto a la línea base. */
   @Input() fairnessEnabled = true;
@@ -34,6 +46,56 @@ export class RecommendedCandidateCardComponent {
   readonly faArrowUp = faArrowUp;
   readonly faArrowDown = faArrowDown;
   readonly faMinus = faMinus;
+  readonly faEnvelope = faEnvelope;
+  readonly faCheck = faCheck;
+
+  inviteState: InviteState = 'idle';
+  private feedbackTimer?: ReturnType<typeof setTimeout>;
+
+  ngOnDestroy(): void {
+    clearTimeout(this.feedbackTimer);
+  }
+
+  /** Sin dato de cuenta (mock) se asume que puede invitarse; se oculta solo si ya la tiene. */
+  get canInvite(): boolean {
+    return this.candidate.has_account !== true;
+  }
+
+  /** Enlace de invitación (mock): registro en Centinela con el ID Scopus del candidato. */
+  get inviteLink(): string {
+    const params = new URLSearchParams({ invite: this.candidate.author_id, ref: 'team-builder' });
+    return `${window.location.origin}/register?${params.toString()}`;
+  }
+
+  get inviteMessage(): string {
+    return `Enlace copiado para invitar a ${this.displayName}`;
+  }
+
+  /**
+   * Copia el enlace al portapapeles. Promise.resolve envuelve la promesa nativa del navegador
+   * para que el callback corra dentro de la zona de Angular (detección de cambios).
+   */
+  invite(): Promise<void> {
+    clearTimeout(this.feedbackTimer);
+    if (!navigator.clipboard?.writeText) {
+      this.inviteState = 'manual';
+      return Promise.resolve();
+    }
+    return Promise.resolve(navigator.clipboard.writeText(this.inviteLink)).then(
+      () => {
+        this.inviteState = 'copied';
+        this.feedbackTimer = setTimeout(() => (this.inviteState = 'idle'), INVITE_FEEDBACK_MS);
+      },
+      () => {
+        this.inviteState = 'manual';
+      },
+    );
+  }
+
+  closeInvite(): void {
+    clearTimeout(this.feedbackTimer);
+    this.inviteState = 'idle';
+  }
 
   get displayName(): string {
     return this.candidate.name?.trim() || `Autor Scopus ${this.candidate.author_id}`;

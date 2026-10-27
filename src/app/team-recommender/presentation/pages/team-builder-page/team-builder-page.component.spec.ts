@@ -8,6 +8,7 @@ import { Subject, of, throwError } from 'rxjs';
 
 import {
   MAX_TEAM_SIZE,
+  RECOMMEND_DEBOUNCE_MS,
   SEARCH_DEBOUNCE_MS,
   SEARCH_PLACEHOLDER,
   TeamBuilderPageComponent,
@@ -162,6 +163,8 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.showSuggestions).toBeFalse();
       component.onSearchKeydown(key('Enter'));
       expect(component.team.length).toBe(1);
+      service.recommend.and.returnValue(of(response()));
+      tick(RECOMMEND_DEBOUNCE_MS);
     }));
 
     it('renders full name, institution and Scopus name of each suggestion', fakeAsync(() => {
@@ -238,7 +241,9 @@ describe('TeamBuilderPageComponent', () => {
       expect(el().querySelector('.member-chip')?.textContent).toContain(
         'Escuela Politécnica Nacional',
       );
-      expect(el().querySelector('.initial-state')?.textContent).toContain('Listo para recomendar');
+      expect(el().querySelector('.initial-state')?.textContent).toContain(
+        'Preparando recomendaciones',
+      );
 
       for (let i = 2; i <= MAX_TEAM_SIZE + 2; i++) {
         component.addMember(author(String(i)));
@@ -260,12 +265,12 @@ describe('TeamBuilderPageComponent', () => {
 
   describe('recommendation', () => {
     beforeEach(() => {
+      service.recommend.and.returnValue(of(response()));
       component.addMember(author('1'));
       component.addMember(author('2'));
     });
 
     it('sends the team, top_k and fairness flag and renders the results', () => {
-      service.recommend.and.returnValue(of(response()));
       component.setTopK(20);
       component.recommend();
       fixture.detectChanges();
@@ -284,9 +289,12 @@ describe('TeamBuilderPageComponent', () => {
       expect(el().querySelectorAll('app-recommended-candidate-card').length).toBe(1);
       expect(el().querySelector('app-fairness-summary')).not.toBeNull();
       expect(el().querySelector('.initial-state')).toBeNull();
+      expect(el().querySelector('.recommend-button')?.textContent).toContain(
+        'Actualizar recomendaciones',
+      );
     });
 
-    it('shows the loading skeleton while waiting and cancels a previous request', () => {
+    it('shows the skeleton on the first load and cancels a request in flight', () => {
       const first = new Subject<RecommendResponse>();
       const second = new Subject<RecommendResponse>();
       service.recommend.and.returnValues(first, second);
@@ -307,6 +315,19 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.loading).toBeFalse();
     });
 
+    it('keeps the previous results visible while refreshing', () => {
+      component.recommend();
+      const pending = new Subject<RecommendResponse>();
+      service.recommend.and.returnValue(pending);
+      component.loading = false;
+      component.recommend();
+      fixture.detectChanges();
+      expect(el().querySelector('.loading-state')).toBeNull();
+      expect(el().querySelector('.refreshing')?.textContent).toContain('Actualizando');
+      expect(el().querySelector('.results-list.opacity-60')).not.toBeNull();
+      pending.complete();
+    });
+
     it('does nothing without team members', () => {
       component.clearTeam();
       component.recommend();
@@ -325,6 +346,7 @@ describe('TeamBuilderPageComponent', () => {
       fixture.detectChanges();
       expect(component.error).toBe(error);
       expect(component.response).toBeNull();
+      expect(component.loading).toBeFalse();
       expect(el().querySelector('.error-panel')?.textContent).toContain(
         'Servicio de recomendación no disponible',
       );
@@ -365,32 +387,118 @@ describe('TeamBuilderPageComponent', () => {
       expect(el().querySelector('app-fairness-summary')).toBeNull();
     });
 
-    it('marks results as stale when the team or parameters change and refreshes them', () => {
-      service.recommend.and.returnValue(of(response()));
-      component.recommend();
-      expect(component.stale).toBeFalse();
-      component.setTopK(10); // mismo valor: sin cambios
-      expect(component.stale).toBeFalse();
-      component.setTopK(5);
-      expect(component.stale).toBeTrue();
-      fixture.detectChanges();
-      const banner = el().querySelector('.stale-banner') as HTMLElement;
-      expect(banner).not.toBeNull();
-      (banner.querySelector('button') as HTMLButtonElement).click();
-      expect(service.recommend).toHaveBeenCalledTimes(2);
-      expect(component.stale).toBeFalse();
-      component.toggleFairness();
-      expect(component.fairnessEnabled).toBeFalse();
-      expect(component.appliedFairness).toBeTrue();
-      expect(component.stale).toBeTrue();
-      component.recommend();
-      expect(component.appliedFairness).toBeFalse();
-    });
-
-    it('does not mark stale before the first recommendation', () => {
-      component.toggleFairness();
-      expect(component.stale).toBeFalse();
+    it('does not compute anything before the first change settles', () => {
       expect(component.responseTeamLabel).toBe('');
+      expect(service.recommend).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dynamic refresh', () => {
+    beforeEach(() => service.recommend.and.returnValue(of(response())));
+
+    it('re-queries automatically after adding a member (debounced, coalesced)', fakeAsync(() => {
+      component.addMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS - 1);
+      component.addMember(author('2'));
+      tick(RECOMMEND_DEBOUNCE_MS - 1);
+      expect(service.recommend).not.toHaveBeenCalled();
+      tick(1);
+      expect(service.recommend).toHaveBeenCalledOnceWith({
+        author_ids: ['1', '2'],
+        top_k: 10,
+        fairness: { enabled: true },
+      });
+      fixture.detectChanges();
+      expect(el().querySelectorAll('app-recommended-candidate-card').length).toBe(1);
+    }));
+
+    it('re-queries automatically after removing a member', fakeAsync(() => {
+      component.addMember(author('1'));
+      component.addMember(author('2'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      component.removeMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(service.recommend).toHaveBeenCalledTimes(2);
+      expect(service.recommend.calls.mostRecent().args[0].author_ids).toEqual(['2']);
+    }));
+
+    it('re-queries when Top-K or the fairness toggle change', fakeAsync(() => {
+      component.addMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      component.setTopK(10); // mismo valor: sin cambios
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(service.recommend).toHaveBeenCalledTimes(1);
+      component.setTopK(5);
+      component.toggleFairness();
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(service.recommend).toHaveBeenCalledTimes(2);
+      expect(service.recommend.calls.mostRecent().args[0]).toEqual({
+        author_ids: ['1'],
+        top_k: 5,
+        fairness: { enabled: false },
+      });
+      expect(component.appliedFairness).toBeFalse();
+    }));
+
+    it('cancels the request in flight when the team changes again', fakeAsync(() => {
+      const inFlight = new Subject<RecommendResponse>();
+      service.recommend.and.returnValues(inFlight, of(response()));
+      component.addMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(component.loading).toBeTrue();
+      component.addMember(author('2'));
+      expect(inFlight.observed).toBeFalse();
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(service.recommend).toHaveBeenCalledTimes(2);
+      expect(component.loading).toBeFalse();
+      expect(component.hasResults).toBeTrue();
+    }));
+
+    it('clears the list without calling the backend when the team becomes empty', fakeAsync(() => {
+      component.addMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(component.response).not.toBeNull();
+      const inFlight = new Subject<RecommendResponse>();
+      service.recommend.and.returnValue(inFlight);
+      component.addMember(author('2'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(inFlight.observed).toBeTrue();
+
+      component.clearTeam();
+      expect(inFlight.observed).toBeFalse();
+      expect(component.response).toBeNull();
+      expect(component.error).toBeNull();
+      expect(component.loading).toBeFalse();
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(service.recommend).toHaveBeenCalledTimes(2);
+      fixture.detectChanges();
+      expect(el().querySelector('.initial-state')?.textContent).toContain(
+        'Agrega investigadores al equipo base',
+      );
+    }));
+
+    it('clears the list when the last member is removed', fakeAsync(() => {
+      component.addMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      component.removeMember(author('1'));
+      tick(RECOMMEND_DEBOUNCE_MS);
+      expect(component.response).toBeNull();
+      expect(service.recommend).toHaveBeenCalledTimes(1);
+    }));
+  });
+
+  describe('embedded mode', () => {
+    it('skips the page title and header when embedded in another module', () => {
+      const embedded = TestBed.createComponent(TeamBuilderPageComponent);
+      title.setTitle.calls.reset();
+      embedded.componentInstance.embedded = true;
+      embedded.detectChanges();
+      const root = embedded.nativeElement as HTMLElement;
+      expect(title.setTitle).not.toHaveBeenCalled();
+      expect(root.querySelector('.page-header')).toBeNull();
+      expect(root.querySelector('.team-builder--embedded')).not.toBeNull();
+      expect(el().querySelector('.page-header')).not.toBeNull();
+      embedded.destroy();
     });
   });
 

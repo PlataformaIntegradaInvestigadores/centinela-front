@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Observable, Subscription, of } from 'rxjs';
+import { EMPTY, Observable, Subject, Subscription, defer, of, timer } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +31,8 @@ import {
 import { TeamRecommenderService } from '../../../domain/services/team-recommender.service';
 
 export const SEARCH_DEBOUNCE_MS = 300;
+/** Espera tras un cambio del equipo o de los parámetros antes de volver a consultar. */
+export const RECOMMEND_DEBOUNCE_MS = 400;
 export const MIN_SEARCH_CHARS = 2;
 /** Equipo semilla: más integrantes diluyen el centroide semántico del equipo. */
 export const MAX_TEAM_SIZE = 5;
@@ -44,6 +46,13 @@ type SearchOutcome = { results: AuthorSearchResult[]; error: boolean } | null;
 /**
  * "Conformar equipo": el usuario arma un equipo base (a-priori) buscando autores del corpus
  * y recibe candidatos de ethical-recommender-service (centroide + K-NN y re-ranking R1).
+ *
+ * Los candidatos se reconsultan solos (debounce RECOMMEND_DEBOUNCE_MS) cada vez que cambia el
+ * equipo base, el Top-K o el re-ranking; switchMap cancela la consulta en vuelo y un equipo
+ * vacío limpia la lista sin llamar al backend.
+ *
+ * Se usa como página propia (/home/team-builder) y embebido (embedded=true) en el módulo de
+ * grupos del perfil (/profile/:id/my-groups).
  */
 @Component({
   selector: 'app-team-builder-page',
@@ -51,6 +60,9 @@ type SearchOutcome = { results: AuthorSearchResult[]; error: boolean } | null;
   styleUrls: ['./team-builder-page.component.css'],
 })
 export class TeamBuilderPageComponent implements OnInit, OnDestroy {
+  /** Embebido en otra pantalla: sin título de pestaña ni encabezado de página propio. */
+  @Input() embedded = false;
+
   readonly searchControl = new FormControl('', { nonNullable: true });
   readonly topKOptions = TOP_K_OPTIONS;
   readonly maxTeamSize = MAX_TEAM_SIZE;
@@ -80,8 +92,6 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
   loading = false;
   error: RecommenderError | null = null;
   response: RecommendResponse | null = null;
-  /** El equipo o los parámetros cambiaron después de la última recomendación. */
-  stale = false;
   elapsedMs: number | null = null;
   /** Valor del toggle con el que se calculó la respuesta mostrada. */
   appliedFairness = true;
@@ -89,6 +99,8 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
 
   private searchSubscription?: Subscription;
   private recommendSubscription?: Subscription;
+  /** Cada emisión es la espera (ms) antes de consultar; 0 = consulta inmediata. */
+  private readonly refresh$ = new Subject<number>();
 
   constructor(
     private recommender: TeamRecommenderService,
@@ -96,7 +108,21 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.title.setTitle('Conformar equipo');
+    if (!this.embedded) {
+      this.title.setTitle('Conformar equipo');
+    }
+    this.recommendSubscription = this.refresh$
+      .pipe(
+        switchMap((wait) => {
+          if (this.team.length === 0) {
+            return EMPTY;
+          }
+          return wait > 0
+            ? timer(wait).pipe(switchMap(() => this.fetchRecommendations()))
+            : this.fetchRecommendations();
+        }),
+      )
+      .subscribe();
     this.searchSubscription = this.searchControl.valueChanges
       .pipe(
         map((value) => value.trim()),
@@ -159,7 +185,7 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
       return;
     }
     this.team = [...this.team, author];
-    this.markStale();
+    this.scheduleRefresh();
     this.searchControl.setValue('');
     this.closeSuggestions();
   }
@@ -169,27 +195,24 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
     if (this.error?.kind === 'unknown_ids') {
       this.error = null;
     }
-    this.markStale();
+    this.scheduleRefresh();
   }
 
   clearTeam(): void {
     this.team = [];
-    this.response = null;
-    this.error = null;
-    this.stale = false;
-    this.elapsedMs = null;
+    this.scheduleRefresh();
   }
 
   setTopK(value: number): void {
     if (this.topK !== value) {
       this.topK = value;
-      this.markStale();
+      this.scheduleRefresh();
     }
   }
 
   toggleFairness(): void {
     this.fairnessEnabled = !this.fairnessEnabled;
-    this.markStale();
+    this.scheduleRefresh();
   }
 
   onSearchKeydown(event: KeyboardEvent): void {
@@ -222,36 +245,13 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
     this.activeSuggestion = 0;
   }
 
+  /** Consulta inmediata (botón): reintento tras un error o refresco manual. */
   recommend(): void {
     if (!this.canRecommend) {
       return;
     }
-    this.recommendSubscription?.unsubscribe();
-    this.loading = true;
-    this.error = null;
     this.closeSuggestions();
-    const fairness = this.fairnessEnabled;
-    const started = performance.now();
-    this.recommendSubscription = this.recommender
-      .recommend({
-        author_ids: this.team.map((member) => member.author_id),
-        top_k: this.topK,
-        fairness: { enabled: fairness },
-      })
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe({
-        next: (response) => {
-          this.response = response;
-          this.appliedFairness = fairness;
-          this.stale = false;
-          this.elapsedMs = performance.now() - started;
-        },
-        error: (err) => {
-          this.error = this.recommender.toRecommenderError(err);
-          this.response = null;
-          this.elapsedMs = null;
-        },
-      });
+    this.refresh$.next(0);
   }
 
   trackByAuthorId(_: number, author: { author_id: string }): string {
@@ -286,7 +286,46 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
     return this.team.find((member) => member.author_id === authorId)?.full_name?.trim() || null;
   }
 
-  private markStale(): void {
-    this.stale = this.response !== null;
+  /**
+   * Reprograma la consulta de candidatos tras un cambio. Con el equipo vacío limpia el
+   * resultado al instante y la emisión cancela cualquier consulta pendiente o en vuelo.
+   */
+  private scheduleRefresh(): void {
+    if (this.team.length === 0) {
+      this.response = null;
+      this.error = null;
+      this.elapsedMs = null;
+      this.loading = false;
+    }
+    this.refresh$.next(RECOMMEND_DEBOUNCE_MS);
+  }
+
+  private fetchRecommendations(): Observable<RecommendResponse> {
+    return defer(() => {
+      this.loading = true;
+      this.error = null;
+      const fairness = this.fairnessEnabled;
+      const started = performance.now();
+      return this.recommender
+        .recommend({
+          author_ids: this.team.map((member) => member.author_id),
+          top_k: this.topK,
+          fairness: { enabled: fairness },
+        })
+        .pipe(
+          tap((response) => {
+            this.response = response;
+            this.appliedFairness = fairness;
+            this.elapsedMs = performance.now() - started;
+          }),
+          catchError((err) => {
+            this.error = this.recommender.toRecommenderError(err);
+            this.response = null;
+            this.elapsedMs = null;
+            return EMPTY;
+          }),
+          finalize(() => (this.loading = false)),
+        );
+    });
   }
 }

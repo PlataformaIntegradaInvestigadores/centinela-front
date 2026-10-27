@@ -81,9 +81,15 @@
             <span>Group Recommendations</span>
           </a>
         </div>
-        <!-- Conformar equipo (recomendación ética de investigadores) -->
+        <!-- Conformar equipo (recomendación ética de investigadores): con sesión de investigador
+             abre el módulo de grupos del perfil; sin sesión, la página pública /home/team-builder -->
         <div class="nav-item" *ngIf="!isCompany()">
-          <a routerLink="/home/team-builder" routerLinkActive="active" class="nav-link">
+          <a
+            [routerLink]="teamBuilderLink"
+            [fragment]="teamBuilderFragment"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <fa-icon [icon]="faPeopleGroup" class="nav-icon"></fa-icon>
             <span>Conformar equipo</span>
           </a>

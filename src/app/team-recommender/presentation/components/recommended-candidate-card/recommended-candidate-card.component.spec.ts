@@ -1,9 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  flush,
+  flushMicrotasks,
+  tick,
+} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowDown, faArrowUp, faMinus } from '@fortawesome/free-solid-svg-icons';
 
-import { RecommendedCandidateCardComponent } from './recommended-candidate-card.component';
+import {
+  INVITE_FEEDBACK_MS,
+  RecommendedCandidateCardComponent,
+} from './recommended-candidate-card.component';
 import { InstitutionNamePipe } from '../../pipes/institution-name.pipe';
 import { RecommendedProfile } from '../../../domain/entities/team-recommendation.interface';
 
@@ -109,5 +119,79 @@ describe('RecommendedCandidateCardComponent', () => {
     expect(component.relevancePercent).toBe(0);
     render({ relevance_norm: NaN });
     expect(component.relevancePercent).toBe(0);
+  });
+  describe('invite to the team (mock)', () => {
+    const inviteButton = (el: HTMLElement) =>
+      el.querySelector('.invite-button') as HTMLButtonElement | null;
+
+    it('shows «Invitar al equipo» unless the candidate already has an account', () => {
+      let el = render();
+      expect(inviteButton(el)?.textContent).toContain('Invitar al equipo');
+      expect(inviteButton(el)?.getAttribute('aria-label')).toBe(
+        'Invitar al equipo a Astudillo-Sánchez E.',
+      );
+      el = render({ has_account: false });
+      expect(inviteButton(el)).not.toBeNull();
+      el = render({ has_account: true });
+      expect(inviteButton(el)).toBeNull();
+    });
+
+    it('builds a registration link with the Scopus id', () => {
+      render();
+      expect(component.inviteLink).toBe(
+        `${window.location.origin}/register?invite=57190000001&ref=team-builder`,
+      );
+    });
+
+    it('copies the link and confirms it, then hides the notice', fakeAsync(() => {
+      const write = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve());
+      const el = render();
+      inviteButton(el)!.click();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(write).toHaveBeenCalledOnceWith(component.inviteLink);
+      expect(component.inviteState).toBe('copied');
+      expect(el.querySelector('.invite-feedback')?.textContent).toContain(
+        'Enlace copiado para invitar a Astudillo-Sánchez E.',
+      );
+      tick(INVITE_FEEDBACK_MS);
+      fixture.detectChanges();
+      expect(component.inviteState).toBe('idle');
+      expect(el.querySelector('.invite-feedback')).toBeNull();
+    }));
+
+    it('opens a small modal with the link when copying fails', fakeAsync(() => {
+      spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.reject(new Error('denied')));
+      const el = render();
+      component.invite();
+      flush();
+      fixture.detectChanges();
+      expect(component.inviteState).toBe('manual');
+      const modal = el.querySelector('.invite-modal') as HTMLElement;
+      expect(modal.textContent).toContain('Invitar a Astudillo-Sánchez E.');
+      const input = modal.querySelector('.invite-link') as HTMLInputElement;
+      expect(input.value).toBe(component.inviteLink);
+      input.dispatchEvent(new Event('focus'));
+      (modal.querySelector('.invite-close') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(el.querySelector('.invite-modal')).toBeNull();
+    }));
+
+    it('falls back to the modal without a clipboard API and closes on backdrop click', fakeAsync(() => {
+      spyOnProperty(Navigator.prototype, 'clipboard', 'get').and.returnValue(
+        undefined as unknown as Clipboard,
+      );
+      const el = render();
+      component.invite();
+      flush();
+      fixture.detectChanges();
+      expect(component.inviteState).toBe('manual');
+      (el.querySelector('.invite-modal > div') as HTMLElement).click();
+      fixture.detectChanges();
+      expect(component.inviteState).toBe('manual');
+      (el.querySelector('.invite-modal') as HTMLElement).click();
+      expect(component.inviteState).toBe('idle');
+      component.ngOnDestroy();
+    }));
   });
 });
