@@ -24,7 +24,7 @@ const REASON_LABELS: Record<string, string> = {
   hidden_by_model: 'Hidden by model',
   reported: 'Reported by users',
   deferred: 'Low confidence (τ-deferred)',
-  review_band: 'Review band (p 0.65–0.80)',
+  review_band: 'Review band (0.65–0.80)',
 };
 
 const DECISION_LABELS: Record<string, string> = {
@@ -69,7 +69,7 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
     {
       value: 'review_band',
       label: 'Review band',
-      hint: 'p(hate) between 0.65 and 0.80: still visible, queued for a human check',
+      hint: 'p(hate) between 0.65 and 0.80; visible, pending review',
     },
   ];
 
@@ -291,7 +291,7 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
   reasonClass(reason: string): string {
     if (reason === 'reported') return 'bg-purple-100 text-purple-700';
     if (reason === 'deferred') return 'bg-sky-100 text-sky-700';
-    if (reason === 'review_band') return 'bg-orange-100 text-orange-700';
+    if (reason === 'review_band') return 'bg-amber-100 text-amber-800';
     if (reason === 'hidden_by_model') return 'bg-indigo-100 text-indigo-700';
     return 'bg-gray-100 text-gray-700';
   }

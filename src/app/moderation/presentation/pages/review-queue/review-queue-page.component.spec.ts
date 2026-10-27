@@ -173,7 +173,7 @@ describe('ReviewQueuePageComponent', () => {
     expect(component.percent(null)).toBe('—');
     expect(component.percent(undefined)).toBe('—');
     expect(component.reasonLabel('reported')).toBe('Reported by users');
-    expect(component.reasonLabel('review_band')).toBe('Review band (p 0.65–0.80)');
+    expect(component.reasonLabel('review_band')).toBe('Review band (0.65–0.80)');
     expect(component.reasonLabel('uncertain_band')).toBe('Uncertain band');
     expect(component.reasonLabel('')).toBe('Other');
     expect(component.decisionLabel('keep_hidden')).toBe('Kept hidden');
@@ -245,7 +245,7 @@ describe('ReviewQueuePageComponent', () => {
     expect(component.reasonClass('reported')).toContain('purple');
     expect(component.reasonClass('deferred')).toContain('sky');
     expect(component.reasonClass('hidden_by_model')).toContain('indigo');
-    expect(component.reasonClass('review_band')).toContain('orange');
+    expect(component.reasonClass('review_band')).toContain('amber');
     expect(component.reasonClass('something_new')).toContain('gray');
   });
 
