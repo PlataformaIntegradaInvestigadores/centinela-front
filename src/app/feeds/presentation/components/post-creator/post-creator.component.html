@@ -4,7 +4,7 @@
   <div class="flex items-start gap-3 sm:gap-4">
     <img
       [src]="userAvatar"
-      [alt]="userName || 'Tu foto'"
+      [alt]="userName || 'Your photo'"
       class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border border-gray-100"
     />
 
@@ -114,7 +114,7 @@
         (click)="addTag()"
         class="text-blue-600 hover:text-blue-800 text-sm font-medium px-2"
       >
-        Añadir
+        Add
       </button>
     </div>
   </div>
@@ -191,7 +191,7 @@
         class="p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50"
         (click)="onOptionClick('photo')"
         [disabled]="isLoading"
-        title="Agregar fotos"
+        title="Add photos"
       >
         <i class="fas fa-image text-lg"></i>
       </button>
@@ -200,7 +200,7 @@
         class="p-2 text-green-500 hover:bg-green-50 rounded-full transition-colors disabled:opacity-50"
         (click)="onOptionClick('video')"
         [disabled]="isLoading"
-        title="Agregar videos"
+        title="Add videos"
       >
         <i class="fas fa-video text-lg"></i>
       </button>
@@ -209,7 +209,7 @@
         class="p-2 text-purple-500 hover:bg-purple-50 rounded-full transition-colors disabled:opacity-50"
         (click)="onOptionClick('file')"
         [disabled]="isLoading"
-        title="Agregar archivos"
+        title="Add files"
       >
         <i class="fas fa-file-alt text-lg"></i>
       </button>

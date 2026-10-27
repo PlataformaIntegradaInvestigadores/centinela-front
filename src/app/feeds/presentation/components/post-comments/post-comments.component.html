@@ -10,7 +10,7 @@
 
   <!-- Write a comment section -->
   <div class="flex items-start space-x-3 mb-4">
-    <img src="/assets/profile.png" alt="Tu foto" class="w-8 h-8 rounded-full object-cover" />
+    <img src="/assets/profile.png" alt="Your photo" class="w-8 h-8 rounded-full object-cover" />
 
     <div class="flex-1">
       <div class="relative">
@@ -50,7 +50,7 @@
     >
       <img
         [src]="comment.author.profile_picture || '/assets/profile.png'"
-        [alt]="comment.author.first_name || 'Usuario'"
+        [alt]="comment.author.first_name || 'User'"
         class="w-8 h-8 rounded-full object-cover"
       />
 

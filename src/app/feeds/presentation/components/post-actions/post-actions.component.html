@@ -13,9 +13,7 @@
           <i class="fas fa-heart text-red-500 text-[8px]"></i>
         </div>
         <span class="font-medium text-gray-700">{{ post.likes_count }}</span>
-        <span>{{
-          post.likes_count === 1 ? 'persona le gusta esto' : 'personas les gusta esto'
-        }}</span>
+        <span>{{ post.likes_count === 1 ? 'person likes this' : 'people like this' }}</span>
       </div>
 
       <div
@@ -24,7 +22,7 @@
         (click)="onCommentToggle()"
       >
         <span class="font-medium text-gray-700">{{ post.comments_count }}</span>
-        <span>{{ post.comments_count === 1 ? 'comentario' : 'comentarios' }}</span>
+        <span>{{ post.comments_count === 1 ? 'comment' : 'comments' }}</span>
       </div>
     </div>
   </div>
