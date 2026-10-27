@@ -278,6 +278,13 @@ describe('PostCommentsComponent', () => {
       expect(component.isConcealed(makeComment({ id: 'c2' }))).toBeFalse();
     });
 
+    it('conceals blocked comments even though show_warning is false', () => {
+      const blocked = makeComment({
+        moderation: moderation({ visibility: 'blocked', is_blocked: true, show_warning: false }),
+      });
+      expect(component.isConcealed(blocked)).toBeTrue();
+    });
+
     it('cannot reveal or report a redacted blocked comment', () => {
       const blocked = makeComment({
         content: BLOCKED_PLACEHOLDER,

@@ -69,7 +69,8 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /** El post está oculto/bloqueado por moderación y el usuario no lo reveló. */
   get isContentConcealed(): boolean {
-    return !!this.post.moderation?.show_warning && !this.contentRevealed;
+    const moderation = this.post.moderation;
+    return !!(moderation?.show_warning || moderation?.is_blocked) && !this.contentRevealed;
   }
 
   get isBlocked(): boolean {

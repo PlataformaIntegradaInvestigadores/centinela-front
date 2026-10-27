@@ -212,7 +212,11 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
 
   /** Oculto/bloqueado por moderación y aún no revelado por el usuario. */
   isConcealed(comment: Comment): boolean {
-    return !!comment.moderation?.show_warning && !this.revealedComments.has(comment.id);
+    const moderation = comment.moderation;
+    return (
+      !!(moderation?.show_warning || moderation?.is_blocked) &&
+      !this.revealedComments.has(comment.id)
+    );
   }
 
   isBlocked(comment: Comment): boolean {

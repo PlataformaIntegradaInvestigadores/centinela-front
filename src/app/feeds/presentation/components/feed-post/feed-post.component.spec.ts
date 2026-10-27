@@ -569,10 +569,12 @@ describe('FeedPostComponent', () => {
     it('cannot reveal a redacted blocked post', () => {
       component.post = makePost({
         content: BLOCKED_PLACEHOLDER,
-        moderation: moderation({ visibility: 'blocked', is_blocked: true }),
+        moderation: moderation({ visibility: 'blocked', is_blocked: true, show_warning: false }),
       });
       expect(component.canRevealContent).toBeFalse();
       expect(component.canReportPost).toBeFalse();
+      // blocked posts come with show_warning false but still need the warning
+      expect(component.isContentConcealed).toBeTrue();
       component.revealContent();
       expect(component.contentRevealed).toBeFalse();
     });
