@@ -73,24 +73,24 @@ describe('PostPollComponent', () => {
       expect(component.getTimeUntilExpiry()).toBe('');
     });
 
-    it('returns "expirada" when the expiry is in the past', () => {
+    it('returns "expired" when the expiry is in the past', () => {
       component.poll = { expires_at: new Date(NOW - 1000).toISOString() };
-      expect(component.getTimeUntilExpiry()).toBe('expirada');
+      expect(component.getTimeUntilExpiry()).toBe('expired');
     });
 
     it('formats days and hours remaining', () => {
       component.poll = { expires_at: new Date(NOW + 2 * 86400000 + 3 * 3600000).toISOString() };
-      expect(component.getTimeUntilExpiry()).toBe('en 2d 3h');
+      expect(component.getTimeUntilExpiry()).toBe('in 2d 3h');
     });
 
     it('formats hours remaining when under a day', () => {
       component.poll = { expires_at: new Date(NOW + 5 * 3600000).toISOString() };
-      expect(component.getTimeUntilExpiry()).toBe('en 5h');
+      expect(component.getTimeUntilExpiry()).toBe('in 5h');
     });
 
     it('formats minutes remaining when under an hour', () => {
       component.poll = { expires_at: new Date(NOW + 10 * 60000).toISOString() };
-      expect(component.getTimeUntilExpiry()).toBe('en 10m');
+      expect(component.getTimeUntilExpiry()).toBe('in 10m');
     });
   });
 });

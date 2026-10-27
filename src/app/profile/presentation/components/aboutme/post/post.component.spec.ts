@@ -52,7 +52,9 @@ describe('PostComponent', () => {
   describe('ngOnInit', () => {
     it('uses getCurrentUserPosts for the logged-in user themselves', () => {
       component.user = { id: 'u1' } as User;
-      feedServiceSpy.getCurrentUserPosts.and.returnValue(of({ posts: [], has_next: false, total_count: 0 }));
+      feedServiceSpy.getCurrentUserPosts.and.returnValue(
+        of({ posts: [], has_next: false, total_count: 0 }),
+      );
       component.ngOnInit();
       expect(feedServiceSpy.getCurrentUserPosts).toHaveBeenCalledWith(20);
       expect(component.isLoggedIn).toBeTrue();
@@ -60,7 +62,9 @@ describe('PostComponent', () => {
 
     it('uses getUserPosts for another user', () => {
       component.user = { id: 'u2' } as User;
-      feedServiceSpy.getUserPosts.and.returnValue(of({ posts: [], has_next: false, total_count: 0 }));
+      feedServiceSpy.getUserPosts.and.returnValue(
+        of({ posts: [], has_next: false, total_count: 0 }),
+      );
       component.ngOnInit();
       expect(feedServiceSpy.getUserPosts).toHaveBeenCalledWith('u2', 20);
     });
@@ -86,7 +90,7 @@ describe('PostComponent', () => {
     it('sets an error message on failure', () => {
       feedServiceSpy.getUserPosts.and.returnValue(throwError(() => new Error('boom')));
       component.loadPosts('u2');
-      expect(component.error).toBe('No se pudieron cargar las publicaciones');
+      expect(component.error).toBe('Could not load the posts.');
       expect(component.isLoading).toBeFalse();
     });
   });
@@ -101,7 +105,7 @@ describe('PostComponent', () => {
 
       expect(component.posts[0]).toBe(newPost);
       expect(component.isSubmittingPost).toBeFalse();
-      expect(component.success).toBe('Post publicado exitosamente!');
+      expect(component.success).toBe('Post published.');
 
       setTimeout(() => {
         expect(component.success).toBeNull();
@@ -112,7 +116,7 @@ describe('PostComponent', () => {
     it('sets a friendly error message on failure', () => {
       feedServiceSpy.createPost.and.returnValue(throwError(() => new Error('boom')));
       component.onPostSubmitted({ content: 'x', tags: [], files: [] } as any);
-      expect(component.error).toContain('No se pudo crear');
+      expect(component.error).toContain('Could not create');
       expect(component.isSubmittingPost).toBeFalse();
     });
   });
@@ -170,14 +174,14 @@ describe('PostComponent', () => {
       component.onDeletePost('p1');
 
       expect(component.posts.map((p) => p.id)).toEqual(['p2']);
-      expect(component.success).toBe('Post eliminado exitosamente!');
+      expect(component.success).toBe('Post deleted.');
     });
 
     it('sets a friendly error message on failure', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       feedServiceSpy.deletePost.and.returnValue(throwError(() => new Error('boom')));
       component.onDeletePost('p1');
-      expect(component.error).toContain('No se pudo eliminar');
+      expect(component.error).toContain('Could not delete');
     });
   });
 
@@ -221,7 +225,7 @@ describe('PostComponent', () => {
       component.saveEditPost({ content: 'updated', tags: [] });
 
       expect(component.posts[0]).toBe(updated);
-      expect(component.success).toBe('Post editado exitosamente!');
+      expect(component.success).toBe('Post updated.');
       expect(component.editModalVisible).toBeFalse();
       expect(component.isSubmittingPost).toBeFalse();
     });
@@ -233,7 +237,7 @@ describe('PostComponent', () => {
 
       component.saveEditPost({ content: 'x', tags: [] });
 
-      expect(component.error).toContain('No se pudo editar');
+      expect(component.error).toContain('Could not edit');
       expect(component.editModalVisible).toBeFalse();
       expect(component.isSubmittingPost).toBeFalse();
     });

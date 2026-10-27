@@ -108,7 +108,7 @@ describe('PostCommentsComponent', () => {
     it('sets error message on failure', () => {
       commentServiceSpy.getPostComments.and.returnValue(throwError(() => new Error('boom')));
       component.loadComments();
-      expect(component.error).toBe('No se pudieron cargar los comentarios.');
+      expect(component.error).toBe('Could not load the comments.');
       expect(component.isLoadingComments).toBeFalse();
     });
   });
@@ -152,7 +152,7 @@ describe('PostCommentsComponent', () => {
       commentServiceSpy.createComment.and.returnValue(throwError(() => new Error('boom')));
       component.newCommentContent = 'hello';
       component.submitComment();
-      expect(component.error).toBe('No se pudo enviar el comentario. Intenta de nuevo.');
+      expect(component.error).toBe('Could not send the comment. Please try again.');
     });
   });
 
@@ -196,7 +196,7 @@ describe('PostCommentsComponent', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       commentServiceSpy.deleteComment.and.returnValue(throwError(() => new Error('boom')));
       component.deleteComment(makeComment());
-      expect(component.error).toBe('No se pudo eliminar el comentario.');
+      expect(component.error).toBe('Could not delete the comment.');
     });
   });
 
@@ -215,8 +215,8 @@ describe('PostCommentsComponent', () => {
   });
 
   describe('formatDate', () => {
-    it('formats seconds-old as "ahora"', () => {
-      expect(component.formatDate(new Date())).toBe('ahora');
+    it('formats seconds-old as "now"', () => {
+      expect(component.formatDate(new Date())).toBe('now');
     });
 
     it('formats minutes-old', () => {

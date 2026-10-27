@@ -34,18 +34,18 @@ export class PostPollComponent {
     const expiryDate = new Date(this.poll.expires_at);
     const diffMs = expiryDate.getTime() - now.getTime();
 
-    if (diffMs <= 0) return 'expirada';
+    if (diffMs <= 0) return 'expired';
 
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     if (diffDays > 0) {
-      return `en ${diffDays}d ${diffHours}h`;
+      return `in ${diffDays}d ${diffHours}h`;
     } else if (diffHours > 0) {
-      return `en ${diffHours}h`;
+      return `in ${diffHours}h`;
     } else {
       const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      return `en ${diffMins}m`;
+      return `in ${diffMins}m`;
     }
   }
 }

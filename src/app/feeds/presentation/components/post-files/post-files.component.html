@@ -28,7 +28,7 @@
         <!-- Imagen -->
         <img
           [src]="file._imageUrl"
-          [alt]="file.original_filename || 'Imagen del post'"
+          [alt]="file.original_filename || 'Post image'"
           class="post-media-image w-full object-contain bg-gray-50"
           (load)="onImageLoad(file, $event)"
           (error)="onImageError(file)"
@@ -42,9 +42,9 @@
         >
           <div class="text-center p-4">
             <i class="fas fa-image text-4xl mb-2"></i>
-            <p class="text-sm font-medium">Error al cargar imagen</p>
-            <p class="text-xs text-gray-400 mt-1">{{ file.original_filename || 'Imagen' }}</p>
-            <p class="text-xs text-blue-500 mt-2">Haz clic para ver en grande</p>
+            <p class="text-sm font-medium">Could not load the image</p>
+            <p class="text-xs text-gray-400 mt-1">{{ file.original_filename || 'Image' }}</p>
+            <p class="text-xs text-blue-500 mt-2">Click to view it larger</p>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@
           class="post-media-video w-full object-contain bg-black"
           preload="metadata"
         >
-          Tu navegador no soporta videos.
+          Your browser does not support video.
         </video>
       </div>
 
@@ -82,7 +82,7 @@
           <button
             class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
             (click)="onFileOpen(file)"
-            title="Ver archivo"
+            title="View file"
           >
             <i class="fas fa-eye"></i>
           </button>

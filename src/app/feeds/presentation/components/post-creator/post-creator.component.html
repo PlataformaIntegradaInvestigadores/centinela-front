@@ -14,7 +14,7 @@
         [(ngModel)]="newPostContent"
         (ngModelChange)="onContentChanged()"
         (input)="autoGrowTextArea($event)"
-        [placeholder]="placeholder || '¿Qué estás pensando?'"
+        [placeholder]="placeholder || 'What are you thinking about?'"
         class="expanding-textarea w-full bg-transparent border-none resize-none focus:ring-0 outline-none text-gray-800 placeholder-gray-500 text-base sm:text-lg leading-relaxed min-h-[88px] sm:min-h-[96px] max-h-[280px] overflow-hidden p-0"
         rows="3"
         [disabled]="isLoading"
@@ -105,7 +105,7 @@
         [(ngModel)]="newTag"
         (keydown.enter)="addTag($event)"
         (keydown.space)="addTag($event)"
-        placeholder="Añadir etiquetas (presiona Enter o Espacio)"
+        placeholder="Add tags (press Enter or Space)"
         class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-700 placeholder-gray-400 outline-none p-0"
         [disabled]="isLoading"
       />
@@ -125,7 +125,7 @@
     *ngIf="showPollCreator"
   >
     <div class="flex items-center justify-between mb-3">
-      <h4 class="font-medium text-gray-800 text-sm">Crear Encuesta</h4>
+      <h4 class="font-medium text-gray-800 text-sm">Create poll</h4>
       <button (click)="cancelPoll()" class="text-gray-400 hover:text-gray-600">
         <i class="fas fa-times"></i>
       </button>
@@ -134,7 +134,7 @@
     <div class="space-y-3">
       <input
         [(ngModel)]="pollQuestion"
-        placeholder="Escribe tu pregunta..."
+        placeholder="Write your question..."
         class="w-full p-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm transition-all"
         [disabled]="isLoading"
       />
@@ -147,7 +147,7 @@
           <input
             [value]="pollOptions[i]"
             (input)="onPollOptionInput($event, i)"
-            [placeholder]="'Opción ' + (i + 1)"
+            [placeholder]="'Option ' + (i + 1)"
             class="flex-1 p-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm transition-all"
             [disabled]="isLoading"
             [id]="'poll-option-' + i"
@@ -168,14 +168,14 @@
         class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1.5 transition-colors"
       >
         <i class="fas fa-plus"></i>
-        Agregar opción
+        Add option
       </button>
 
       <!-- Validación visual de la encuesta -->
       <div class="mt-3 text-xs" *ngIf="showPollCreator">
         <div class="flex items-center gap-1.5 text-gray-500">
           <i class="fas fa-info-circle"></i>
-          <span>Se necesita una pregunta y al menos 2 opciones válidas.</span>
+          <span>A question and at least 2 valid options are required.</span>
         </div>
       </div>
     </div>
@@ -218,7 +218,7 @@
         class="p-2 text-orange-500 hover:bg-orange-50 rounded-full transition-colors disabled:opacity-50"
         (click)="onOptionClick('poll')"
         [disabled]="isLoading"
-        title="Crear encuesta"
+        title="Create poll"
       >
         <i class="fas fa-poll text-lg"></i>
       </button>
@@ -227,7 +227,7 @@
         class="p-2 text-pink-500 hover:bg-pink-50 rounded-full transition-colors disabled:opacity-50"
         (click)="onOptionClick('tag')"
         [disabled]="isLoading"
-        title="Añadir etiquetas"
+        title="Add tags"
       >
         <i class="fas fa-hashtag text-lg"></i>
       </button>
@@ -239,7 +239,7 @@
       (click)="submitPost()"
       [disabled]="isLoading"
     >
-      <span *ngIf="!isLoading">{{ buttonText || 'Publicar' }}</span>
+      <span *ngIf="!isLoading">{{ buttonText || 'Post' }}</span>
       <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
     </button>
   </div>

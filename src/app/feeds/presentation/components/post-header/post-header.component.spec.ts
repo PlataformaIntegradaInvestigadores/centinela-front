@@ -99,18 +99,18 @@ describe('PostHeaderComponent', () => {
     it('rates low engagement and includes like/comment counts', () => {
       component.post = { engagement_score: 2, likes_count: 3, comments_count: 1 } as any;
       const tooltip = component.getEngagementTooltip();
-      expect(tooltip).toContain('Engagement bajo: 2.0');
-      expect(tooltip).toContain('Likes: 3, Comentarios: 1');
+      expect(tooltip).toContain('Low engagement: 2.0');
+      expect(tooltip).toContain('Likes: 3, Comments: 1');
     });
 
     it('rates medium engagement above 5', () => {
       component.post = { engagement_score: 7 } as any;
-      expect(component.getEngagementTooltip()).toContain('Engagement medio');
+      expect(component.getEngagementTooltip()).toContain('Medium engagement');
     });
 
     it('rates high engagement above 10', () => {
       component.post = { engagement_score: 15 } as any;
-      expect(component.getEngagementTooltip()).toContain('Engagement alto');
+      expect(component.getEngagementTooltip()).toContain('High engagement');
     });
 
     it('appends trending metadata when present', () => {
@@ -119,8 +119,8 @@ describe('PostHeaderComponent', () => {
         trending_metadata: { hours_old: 2.5, engagement_score: 1, trending_rank: 3 },
       } as any;
       const tooltip = component.getEngagementTooltip();
-      expect(tooltip).toContain('Publicado hace: 2.5 horas');
-      expect(tooltip).toContain('Ranking de tendencia: 3.0');
+      expect(tooltip).toContain('Posted: 2.5 hours ago');
+      expect(tooltip).toContain('Trending rank: 3.0');
     });
   });
 });

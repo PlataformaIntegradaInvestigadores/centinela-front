@@ -184,9 +184,9 @@ describe('FeedPostComponent', () => {
   });
 
   describe('formattedDate', () => {
-    it('formats seconds-old as "Ahora"', () => {
+    it('formats seconds-old as "Now"', () => {
       component.post = makePost({ created_at: new Date() });
-      expect(component.formattedDate).toBe('Ahora');
+      expect(component.formattedDate).toBe('Now');
     });
 
     it('formats minutes-old', () => {
@@ -503,11 +503,11 @@ describe('FeedPostComponent', () => {
       expect(component.getTimeUntilExpiry()).toBe('');
     });
 
-    it('getTimeUntilExpiry returns "expirada" for a past date', () => {
+    it('getTimeUntilExpiry returns "expired" for a past date', () => {
       component.post = makePost({
         poll: { ...poll, expires_at: new Date(Date.now() - 1000).toISOString() } as any,
       });
-      expect(component.getTimeUntilExpiry()).toBe('expirada');
+      expect(component.getTimeUntilExpiry()).toBe('expired');
     });
 
     it('getTimeUntilExpiry formats days/hours remaining', () => {
@@ -517,7 +517,7 @@ describe('FeedPostComponent', () => {
           expires_at: new Date(Date.now() + 2 * 86400000 + 3 * 3600000).toISOString(),
         } as any,
       });
-      expect(component.getTimeUntilExpiry()).toMatch(/^en \d+d \d+h$/);
+      expect(component.getTimeUntilExpiry()).toMatch(/^in \d+d \d+h$/);
     });
 
     it('getTimeUntilExpiry formats hours/minutes when under a day', () => {
@@ -527,14 +527,14 @@ describe('FeedPostComponent', () => {
           expires_at: new Date(Date.now() + 3 * 3600000 + 5 * 60000).toISOString(),
         } as any,
       });
-      expect(component.getTimeUntilExpiry()).toMatch(/^en \d+h \d+m$/);
+      expect(component.getTimeUntilExpiry()).toMatch(/^in \d+h \d+m$/);
     });
 
     it('getTimeUntilExpiry formats minutes only when under an hour', () => {
       component.post = makePost({
         poll: { ...poll, expires_at: new Date(Date.now() + 5 * 60000).toISOString() } as any,
       });
-      expect(component.getTimeUntilExpiry()).toMatch(/^en \d+m$/);
+      expect(component.getTimeUntilExpiry()).toMatch(/^in \d+m$/);
     });
   });
 

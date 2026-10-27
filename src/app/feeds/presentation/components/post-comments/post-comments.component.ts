@@ -95,7 +95,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading comments:', error);
-          this.error = 'No se pudieron cargar los comentarios.';
+          this.error = 'Could not load the comments.';
         },
       });
   }
@@ -138,7 +138,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error creating comment:', error);
-          this.error = 'No se pudo enviar el comentario. Intenta de nuevo.';
+          this.error = 'Could not send the comment. Please try again.';
         },
       });
   }
@@ -165,7 +165,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
    * Elimina un comentario
    */
   deleteComment(comment: Comment): void {
-    if (!confirm('¿Estás seguro de que quieres eliminar este comentario?')) {
+    if (!confirm('Are you sure you want to delete this comment?')) {
       return;
     }
 
@@ -179,7 +179,7 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error deleting comment:', error);
-          this.error = 'No se pudo eliminar el comentario.';
+          this.error = 'Could not delete the comment.';
         },
       });
   }
@@ -289,11 +289,11 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMins < 1) return 'ahora';
+    if (diffMins < 1) return 'now';
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays < 7) return `${diffDays}d`;
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('en-US');
   }
 
   /**

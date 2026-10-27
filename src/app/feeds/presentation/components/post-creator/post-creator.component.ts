@@ -114,13 +114,13 @@ export class PostCreatorComponent implements AfterViewInit {
     // Validación específica para encuestas
     if (this.showPollCreator) {
       if (!this.pollQuestion.trim()) {
-        alert('Por favor, escriba una pregunta para la encuesta.');
+        alert('Please write a question for the poll.');
         return;
       }
 
       const validOptions = this.pollOptions.filter((option) => option.trim() !== '');
       if (validOptions.length < 2) {
-        alert('Por favor, proporcione al menos 2 opciones válidas para la encuesta.');
+        alert('Please provide at least 2 valid options for the poll.');
         return;
       }
     }
@@ -154,25 +154,25 @@ export class PostCreatorComponent implements AfterViewInit {
 
     if (!this.newPostContent.trim()) {
       this.validationMessage =
-        'Escribe una descripción para publicar. Puedes agregar imágenes o archivos, pero el texto es obligatorio.';
+        'Write a description to post. You can add images or files, but text is required.';
       this.focusPostInput();
       return false;
     }
 
     if (this.newPostContent.trim().length > 5000) {
-      this.validationMessage = 'La descripción no puede superar los 5000 caracteres.';
+      this.validationMessage = 'The description cannot exceed 5000 characters.';
       this.focusPostInput();
       return false;
     }
 
     if (this.showPollCreator) {
       if (!this.pollQuestion.trim()) {
-        this.validationMessage = 'Escribe una pregunta para la encuesta.';
+        this.validationMessage = 'Write a question for the poll.';
         return false;
       }
 
       if (this.validPollOptionsCount < 2) {
-        this.validationMessage = 'Agrega al menos dos opciones válidas para la encuesta.';
+        this.validationMessage = 'Add at least two valid options to the poll.';
         return false;
       }
     }
@@ -237,7 +237,7 @@ export class PostCreatorComponent implements AfterViewInit {
         newFiles.map((f) => f.name),
       );
       if (!this.newPostContent.trim()) {
-        this.validationMessage = 'Agrega una descripción antes de publicar el archivo.';
+        this.validationMessage = 'Add a description before posting the file.';
       }
     }
 

@@ -14,7 +14,9 @@ describe('PostCreatorComponent', () => {
     };
     (component as any).imageInput = { nativeElement: { click: jasmine.createSpy(), value: 'x' } };
     (component as any).videoInput = { nativeElement: { click: jasmine.createSpy(), value: 'x' } };
-    (component as any).documentInput = { nativeElement: { click: jasmine.createSpy(), value: 'x' } };
+    (component as any).documentInput = {
+      nativeElement: { click: jasmine.createSpy(), value: 'x' },
+    };
   });
 
   it('should create', () => {
@@ -98,7 +100,7 @@ describe('PostCreatorComponent', () => {
       component.submitPost();
       expect(window.alert).not.toHaveBeenCalled();
       expect(emitted).toBeFalse();
-      expect(component.validationMessage).toContain('pregunta');
+      expect(component.validationMessage).toContain('question');
     });
 
     it('does not alert or submit for fewer than 2 valid poll options (blocked earlier by validateBeforeSubmit)', () => {
@@ -112,7 +114,7 @@ describe('PostCreatorComponent', () => {
       component.submitPost();
       expect(window.alert).not.toHaveBeenCalled();
       expect(emitted).toBeFalse();
-      expect(component.validationMessage).toContain('opciones');
+      expect(component.validationMessage).toContain('options');
     });
 
     it('emits postSubmitted with content, tags, files', () => {
@@ -140,7 +142,7 @@ describe('PostCreatorComponent', () => {
       component.postSubmitted.subscribe(() => (emitted = true));
       component.submitPost();
       expect(emitted).toBeFalse();
-      expect(component.validationMessage).toContain('descripción');
+      expect(component.validationMessage).toContain('description');
     });
   });
 
@@ -148,7 +150,7 @@ describe('PostCreatorComponent', () => {
     it('fails for blank content and sets a message', () => {
       component.newPostContent = '   ';
       expect(component.validateBeforeSubmit()).toBeFalse();
-      expect(component.validationMessage).toContain('descripción');
+      expect(component.validationMessage).toContain('description');
     });
 
     it('fails for content over 5000 chars', () => {
@@ -231,7 +233,7 @@ describe('PostCreatorComponent', () => {
       const file = new File(['a'], 'a.png');
       const target: any = { files: [file], value: 'x' };
       component.onFileSelected({ target });
-      expect(component.validationMessage).toContain('descripción');
+      expect(component.validationMessage).toContain('description');
     });
 
     it('does nothing when files is falsy', () => {
@@ -316,13 +318,21 @@ describe('PostCreatorComponent', () => {
 
   describe('getFileIcon', () => {
     it('maps image/video/pdf/word/excel/powerpoint types', () => {
-      expect(component.getFileIcon(new File(['x'], 'a.png', { type: 'image/png' }))).toBe('fas fa-image');
-      expect(component.getFileIcon(new File(['x'], 'a.mp4', { type: 'video/mp4' }))).toBe('fas fa-video');
+      expect(component.getFileIcon(new File(['x'], 'a.png', { type: 'image/png' }))).toBe(
+        'fas fa-image',
+      );
+      expect(component.getFileIcon(new File(['x'], 'a.mp4', { type: 'video/mp4' }))).toBe(
+        'fas fa-video',
+      );
       expect(component.getFileIcon(new File(['x'], 'a.pdf', { type: 'application/pdf' }))).toBe(
         'fas fa-file-pdf',
       );
-      expect(component.getFileIcon(new File(['x'], 'a.docx', { type: '' }))).toBe('fas fa-file-word');
-      expect(component.getFileIcon(new File(['x'], 'a.xlsx', { type: '' }))).toBe('fas fa-file-excel');
+      expect(component.getFileIcon(new File(['x'], 'a.docx', { type: '' }))).toBe(
+        'fas fa-file-word',
+      );
+      expect(component.getFileIcon(new File(['x'], 'a.xlsx', { type: '' }))).toBe(
+        'fas fa-file-excel',
+      );
       expect(component.getFileIcon(new File(['x'], 'a.pptx', { type: '' }))).toBe(
         'fas fa-file-powerpoint',
       );

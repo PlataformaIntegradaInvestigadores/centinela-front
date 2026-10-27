@@ -17,7 +17,14 @@ describe('FeedPageComponent', () => {
   let routerSpy: jasmine.SpyObj<Router>;
 
   const makePost = (over: Partial<FeedPost> = {}): FeedPost =>
-    ({ id: 'p1', content: 'x', tags: [], is_public: true, author: { id: 'u1' } as any, ...over }) as FeedPost;
+    ({
+      id: 'p1',
+      content: 'x',
+      tags: [],
+      is_public: true,
+      author: { id: 'u1' } as any,
+      ...over,
+    }) as FeedPost;
 
   const emptyFeed: FeedResponse = { posts: [], has_next: false, total_count: 0 };
 
@@ -41,7 +48,9 @@ describe('FeedPageComponent', () => {
     authServiceSpy.isUser.and.returnValue(true);
     feedServiceSpy.getFeed.and.returnValue(of(emptyFeed));
     feedServiceSpy.getUserFeedStats.and.returnValue(of({} as any));
-    userServiceSpy.getUserById.and.returnValue(of({ first_name: 'A', last_name: 'B' } as UserProfile));
+    userServiceSpy.getUserById.and.returnValue(
+      of({ first_name: 'A', last_name: 'B' } as UserProfile),
+    );
     feedServiceSpy.getFriendlyErrorMessage.and.callFake((_e: any, fallback: string) => fallback);
 
     TestBed.configureTestingModule({
@@ -83,7 +92,12 @@ describe('FeedPageComponent', () => {
 
   describe('loadFeed', () => {
     it('populates posts on success', () => {
-      const resp: FeedResponse = { posts: [makePost()], has_next: true, next_cursor: 'c1', total_count: 1 };
+      const resp: FeedResponse = {
+        posts: [makePost()],
+        has_next: true,
+        next_cursor: 'c1',
+        total_count: 1,
+      };
       feedServiceSpy.getFeed.and.returnValue(of(resp));
       component.loadFeed();
       expect(component.posts.length).toBe(1);
@@ -104,7 +118,7 @@ describe('FeedPageComponent', () => {
     it('sets a friendly error message on failure', () => {
       feedServiceSpy.getFeed.and.returnValue(throwError(() => new Error('boom')));
       component.loadFeed();
-      expect(component.error).toBe('No se pudo cargar el feed. Intenta de nuevo.');
+      expect(component.error).toBe('Could not load the feed. Please try again.');
     });
   });
 
@@ -202,7 +216,7 @@ describe('FeedPageComponent', () => {
     it('sets a friendly error on failure', () => {
       feedServiceSpy.toggleLikePost.and.returnValue(throwError(() => new Error('boom')));
       component.onToggleLike(makePost());
-      expect(component.error).toBe('No se pudo procesar el like. Intenta de nuevo.');
+      expect(component.error).toBe('Could not process the like. Please try again.');
     });
   });
 
@@ -265,16 +279,22 @@ describe('FeedPageComponent', () => {
       expect(component.posts[0].poll).toBe(response as any);
     });
 
-    it('sets a specific error message from the response', () => {
-      feedServiceSpy.votePoll.and.returnValue(throwError(() => ({ error: { error: 'nope' } })));
+    it('maps the response error through the friendly error helper', () => {
+      const err = { error: { error: 'Ya has votado en esta encuesta' } };
+      feedServiceSpy.votePoll.and.returnValue(throwError(() => err));
+      feedServiceSpy.getFriendlyErrorMessage.and.returnValue('You already voted in this poll.');
       component.onVotePoll({ pollId: 'poll1', optionId: 'o1', isMultipleChoice: false });
-      expect(component.error).toBe('nope');
+      expect(feedServiceSpy.getFriendlyErrorMessage).toHaveBeenCalledWith(
+        err,
+        'Could not register the vote. Please try again.',
+      );
+      expect(component.error).toBe('You already voted in this poll.');
     });
 
     it('falls back to a default error message', () => {
       feedServiceSpy.votePoll.and.returnValue(throwError(() => ({})));
       component.onVotePoll({ pollId: 'poll1', optionId: 'o1', isMultipleChoice: false });
-      expect(component.error).toBe('No se pudo registrar el voto. Intenta de nuevo.');
+      expect(component.error).toBe('Could not register the vote. Please try again.');
     });
   });
 

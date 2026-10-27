@@ -9,7 +9,7 @@ import { FeedPost } from '../../types/post.types';
 export class PostListComponent {
   @Input() posts: FeedPost[] = [];
   @Input() isLoading: boolean = false;
-  @Input() emptyMessage: string = 'No hay publicaciones disponibles';
+  @Input() emptyMessage: string = 'No posts available';
   @Input() showEmptyState: boolean = true;
   @Input() showActions: boolean = true;
   @Input() currentUserId: string | null = null;

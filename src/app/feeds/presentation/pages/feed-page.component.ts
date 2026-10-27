@@ -118,7 +118,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
           console.error('FeedPageComponent: Error loading feed:', error);
           this.error = this.feedService.getFriendlyErrorMessage(
             error,
-            'No se pudo cargar el feed. Intenta de nuevo.',
+            'Could not load the feed. Please try again.',
           );
         },
       });
@@ -231,7 +231,7 @@ export class FeedPageComponent implements OnInit, OnDestroy {
           console.error('Error toggling like:', error);
           this.error = this.feedService.getFriendlyErrorMessage(
             error,
-            'No se pudo procesar el like. Intenta de nuevo.',
+            'Could not process the like. Please try again.',
           );
         },
       });
@@ -326,9 +326,10 @@ export class FeedPageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error voting in poll:', error);
-          const errorMessage =
-            error.error?.error || 'No se pudo registrar el voto. Intenta de nuevo.';
-          this.error = errorMessage;
+          this.error = this.feedService.getFriendlyErrorMessage(
+            error,
+            'Could not register the vote. Please try again.',
+          );
         },
       });
   }

@@ -210,12 +210,12 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Ahora';
+    if (diffMins < 1) return 'Now';
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays < 7) return `${diffDays}d`;
 
-    return postDate.toLocaleDateString('es-ES', {
+    return postDate.toLocaleDateString('en-US', {
       day: '2-digit',
       month: 'short',
       year: postDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
@@ -533,7 +533,7 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     const diffMs = expiryDate.getTime() - now.getTime();
 
     if (diffMs <= 0) {
-      return 'expirada';
+      return 'expired';
     }
 
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -541,11 +541,11 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
     const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (diffDays > 0) {
-      return `en ${diffDays}d ${diffHours}h`;
+      return `in ${diffDays}d ${diffHours}h`;
     } else if (diffHours > 0) {
-      return `en ${diffHours}h ${diffMins}m`;
+      return `in ${diffHours}h ${diffMins}m`;
     } else {
-      return `en ${diffMins}m`;
+      return `in ${diffMins}m`;
     }
   }
 }

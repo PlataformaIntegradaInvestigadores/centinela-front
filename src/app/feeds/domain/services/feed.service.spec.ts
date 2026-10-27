@@ -193,62 +193,95 @@ describe('FeedService', () => {
   });
 
   describe('getFriendlyErrorMessage', () => {
+    it('maps known Spanish backend messages to English', () => {
+      expect(
+        service.getFriendlyErrorMessage({
+          status: 400,
+          error: { error: 'Ya has votado en esta encuesta' },
+        }),
+      ).toBe('You already voted in this poll.');
+      expect(
+        service.getFriendlyErrorMessage({
+          status: 400,
+          error: { content: ['La descripción de la publicación es obligatoria.'] },
+        }),
+      ).toBe('Write a description before posting.');
+    });
+
+    it('hides unmapped Spanish backend text behind the fallback', () => {
+      expect(
+        service.getFriendlyErrorMessage(
+          { status: 400, error: { error: 'Algo falló en la operación' } },
+          'Fallback',
+        ),
+      ).toBe('Fallback');
+    });
+
+    it('keeps unmapped English backend text', () => {
+      expect(
+        service.getFriendlyErrorMessage({
+          status: 400,
+          error: { error: 'Cannot like deleted comment' },
+        }),
+      ).toBe('Cannot like deleted comment');
+    });
+
     it('returns the fallback when there is no error', () => {
       expect(service.getFriendlyErrorMessage(null)).toBe(
-        'No se pudo completar la acción. Intenta de nuevo.',
+        'The action could not be completed. Please try again.',
       );
     });
 
     it('detects a connectivity failure (status 0)', () => {
-      expect(service.getFriendlyErrorMessage({ status: 0 })).toContain('No hay conexión');
+      expect(service.getFriendlyErrorMessage({ status: 0 })).toContain('Cannot reach the server');
     });
 
     it('detects an empty-content validation error', () => {
       const msg = service.getFriendlyErrorMessage({
         error: { detail: 'Content cannot be empty' },
       });
-      expect(msg).toBe('Escribe una descripción antes de publicar.');
+      expect(msg).toBe('Write a description before posting.');
     });
 
     it('detects a content-blank validation error', () => {
       const msg = service.getFriendlyErrorMessage({
         error: { detail: 'content must not be blank' },
       });
-      expect(msg).toBe('Escribe una descripción antes de publicar.');
+      expect(msg).toBe('Write a description before posting.');
     });
 
     it('detects a max-length (5000) error', () => {
       const msg = service.getFriendlyErrorMessage({
         error: { detail: 'Ensure this field has no more than 5000 characters' },
       });
-      expect(msg).toBe('La descripción no puede superar los 5000 caracteres.');
+      expect(msg).toBe('The description cannot exceed 5000 characters.');
     });
 
     it('detects an oversized-file error', () => {
       const msg = service.getFriendlyErrorMessage({ error: { detail: 'File size exceeds 10MB' } });
-      expect(msg).toContain('archivos supera el tamaño');
+      expect(msg).toContain('files is too large');
     });
 
     it('detects a too-many-files error', () => {
       const msg = service.getFriendlyErrorMessage({
         error: { detail: 'You cannot attach more than 10 files' },
       });
-      expect(msg).toBe('Puedes adjuntar hasta 10 archivos por publicación.');
+      expect(msg).toBe('You can attach up to 10 files per post.');
     });
 
     it('detects a permission error by message', () => {
       const msg = service.getFriendlyErrorMessage({ error: { detail: 'permission denied' } });
-      expect(msg).toBe('No tienes permisos para realizar esta acción.');
+      expect(msg).toBe('You do not have permission to do this.');
     });
 
     it('detects a permission error by status 403', () => {
       const msg = service.getFriendlyErrorMessage({ status: 403, error: {} });
-      expect(msg).toBe('No tienes permisos para realizar esta acción.');
+      expect(msg).toBe('You do not have permission to do this.');
     });
 
     it('detects an expired-session error (401)', () => {
       const msg = service.getFriendlyErrorMessage({ status: 401 });
-      expect(msg).toBe('Tu sesión expiró. Inicia sesión nuevamente.');
+      expect(msg).toBe('Your session expired. Please sign in again.');
     });
 
     it('returns the raw server message when nothing else matches', () => {
@@ -258,14 +291,14 @@ describe('FeedService', () => {
 
     it('falls back when the extracted message is the literal [object Object]', () => {
       const msg = service.getFriendlyErrorMessage({ error: {} });
-      expect(msg).toBe('No se pudo completar la acción. Intenta de nuevo.');
+      expect(msg).toBe('The action could not be completed. Please try again.');
     });
 
     it('joins nested field-error arrays recursively', () => {
       const msg = service.getFriendlyErrorMessage({
         error: { content: ['too many 5000 chars'] },
       });
-      expect(msg).toBe('La descripción no puede superar los 5000 caracteres.');
+      expect(msg).toBe('The description cannot exceed 5000 characters.');
     });
 
     it('falls back to error.message when the payload has no usable shape', () => {
@@ -274,9 +307,7 @@ describe('FeedService', () => {
     });
 
     it('accepts a custom fallback', () => {
-      expect(service.getFriendlyErrorMessage(undefined, 'custom fallback')).toBe(
-        'custom fallback',
-      );
+      expect(service.getFriendlyErrorMessage(undefined, 'custom fallback')).toBe('custom fallback');
     });
 
     it('returns a string payload verbatim', () => {
@@ -358,7 +389,12 @@ describe('FeedService', () => {
       expect(req.request.params.get('page')).toBe('2');
       expect(req.request.params.get('limit')).toBe('15');
       req.flush([
-        { id: 'c', content: 'x', created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
+        {
+          id: 'c',
+          content: 'x',
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
       ]);
     });
 

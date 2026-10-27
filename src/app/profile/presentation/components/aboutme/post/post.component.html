@@ -15,8 +15,8 @@
   <!-- Formulario para crear post (solo si es el propio perfil) -->
   <div *ngIf="user.isOwnProfile && isLoggedIn">
     <app-post-creator
-      [placeholder]="'Comparte tu conocimiento y experiencias académicas...'"
-      [buttonText]="'Publicar en tu perfil'"
+      [placeholder]="'Share your knowledge and academic experience...'"
+      [buttonText]="'Post to your profile'"
       [showOptions]="true"
       [userAvatar]="user.profile_picture || '/assets/profile.png'"
       [userName]="user.first_name + ' ' + user.last_name"
@@ -30,7 +30,7 @@
   <app-post-list
     [posts]="posts"
     [isLoading]="isLoading"
-    [emptyMessage]="'No hay publicaciones en este perfil'"
+    [emptyMessage]="'No posts on this profile yet'"
     [showActions]="isLoggedIn"
     [currentUserId]="currentUserId"
     (toggleLike)="onToggleLike($event)"

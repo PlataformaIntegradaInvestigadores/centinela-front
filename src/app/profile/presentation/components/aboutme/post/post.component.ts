@@ -60,7 +60,7 @@ export class PostComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading posts:', error);
-        this.error = 'No se pudieron cargar las publicaciones';
+        this.error = 'Could not load the posts.';
         this.isLoading = false;
       },
     });
@@ -87,7 +87,7 @@ export class PostComponent implements OnInit {
         // Agregar el nuevo post al inicio de la lista
         this.posts = [newPost, ...this.posts];
         this.isSubmittingPost = false;
-        this.success = 'Post publicado exitosamente!';
+        this.success = 'Post published.';
 
         // Limpiar mensaje de éxito después de 3 segundos
         setTimeout(() => {
@@ -98,7 +98,7 @@ export class PostComponent implements OnInit {
         console.error('Error creando post:', error);
         this.error = this.feedService.getFriendlyErrorMessage(
           error,
-          'No se pudo crear la publicación. Revisa la descripción y los archivos adjuntos.',
+          'Could not create the post. Please check the description and attached files.',
         );
         this.isSubmittingPost = false;
       },
@@ -149,24 +149,21 @@ export class PostComponent implements OnInit {
    * @param postId - El ID de la publicación a eliminar.
    */
   onDeletePost(postId: string): void {
-    if (!confirm('¿Estás seguro de que quieres eliminar este post?')) {
+    if (!confirm('Are you sure you want to delete this post?')) {
       return;
     }
 
     this.feedService.deletePost(postId).subscribe({
       next: () => {
         this.posts = this.posts.filter((post) => post.id !== postId);
-        this.success = 'Post eliminado exitosamente!';
+        this.success = 'Post deleted.';
         setTimeout(() => {
           this.success = null;
         }, 3000);
       },
       error: (error) => {
         console.error('Error deleting post:', error);
-        this.error = this.feedService.getFriendlyErrorMessage(
-          error,
-          'No se pudo eliminar la publicación.',
-        );
+        this.error = this.feedService.getFriendlyErrorMessage(error, 'Could not delete the post.');
       },
     });
   }
@@ -210,7 +207,7 @@ export class PostComponent implements OnInit {
             this.posts[postIndex] = updatedPost;
           }
           this.isSubmittingPost = false;
-          this.success = 'Post editado exitosamente!';
+          this.success = 'Post updated.';
           setTimeout(() => {
             this.success = null;
           }, 3000);
@@ -220,7 +217,7 @@ export class PostComponent implements OnInit {
           console.error('Error editando post:', error);
           this.error = this.feedService.getFriendlyErrorMessage(
             error,
-            'No se pudo editar la publicación. Intenta de nuevo.',
+            'Could not edit the post. Please try again.',
           );
           this.isSubmittingPost = false;
           this.closeEditModal();

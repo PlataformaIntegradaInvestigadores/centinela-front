@@ -12,6 +12,35 @@ import {
   UserFeedStats,
 } from '../entities/feed.interface';
 
+/**
+ * Spanish messages that social-service can return, matched on lowercase
+ * fragments and mapped to the English text shown in the UI.
+ */
+export const BACKEND_MESSAGES: ReadonlyArray<[string, string]> = [
+  ['descripción de la publicación es obligatoria', 'Write a description before posting.'],
+  ['no puede superar los 5000', 'The description cannot exceed 5000 characters.'],
+  ['más de 10 archivos', 'You can attach up to 10 files per post.'],
+  ['no puede superar 50 mb', 'The files cannot exceed 50 MB in total.'],
+  ['como máximo 10 mb', 'Each file can be at most 10 MB.'],
+  ['no se pudo crear el comentario', 'Could not create the comment.'],
+  ['encuesta ya no está activa', 'This poll is no longer active.'],
+  ['encuesta no está activa', 'This poll is no longer active.'],
+  ['encuesta ha expirado', 'This poll has expired.'],
+  ['seleccionar al menos una opción', 'Select at least one option.'],
+  ['solo puede seleccionar una opción', 'You can only select one option in this poll.'],
+  ['ya has votado', 'You already voted in this poll.'],
+  ['opciones no son válidas', 'One or more options are not valid.'],
+  ['no se pueden modificar votos', 'Votes in this poll cannot be changed.'],
+  ['no tienes votos', 'You have no votes in this poll.'],
+  ['pregunta no puede estar vacía', 'The poll question cannot be empty.'],
+  ['más de 10 opciones', 'A poll cannot have more than 10 options.'],
+  ['al menos 2 opciones válidas', 'A poll needs at least 2 valid options.'],
+  ['error interno del servidor', 'Something went wrong on the server. Please try again.'],
+];
+
+/** Heuristic for backend text that is still in Spanish and has no mapping. */
+const SPANISH_TEXT = /[áéíóúñ¿¡]|\b(no se|debe|puede|esta|este|tienes|encuesta|publicación)\b/i;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -135,27 +164,31 @@ export class FeedService {
 
   getFriendlyErrorMessage(
     error: any,
-    fallback: string = 'No se pudo completar la acción. Intenta de nuevo.',
+    fallback: string = 'The action could not be completed. Please try again.',
   ): string {
     if (!error) return fallback;
 
     if (error.status === 0) {
-      return 'No hay conexión con el servidor. Verifica tu conexión e intenta nuevamente.';
+      return 'Cannot reach the server. Check your connection and try again.';
     }
 
     const payload = error.error;
     const rawMessage = this.extractErrorMessage(payload) || error.message || '';
     const normalized = rawMessage.toLowerCase();
 
+    // social-service still answers some errors in Spanish; show them in English.
+    const known = BACKEND_MESSAGES.find(([pattern]) => normalized.includes(pattern));
+    if (known) return known[1];
+
     if (
       normalized.includes('content cannot be empty') ||
       (normalized.includes('content') && normalized.includes('blank'))
     ) {
-      return 'Escribe una descripción antes de publicar.';
+      return 'Write a description before posting.';
     }
 
     if (normalized.includes('5000')) {
-      return 'La descripción no puede superar los 5000 caracteres.';
+      return 'The description cannot exceed 5000 characters.';
     }
 
     if (
@@ -163,22 +196,22 @@ export class FeedService {
       normalized.includes('50mb') ||
       normalized.includes('10mb')
     ) {
-      return 'Uno de los archivos supera el tamaño permitido. Usa archivos de hasta 10 MB y un total máximo de 50 MB.';
+      return 'One of the files is too large. Use files up to 10 MB each and 50 MB in total.';
     }
 
     if (normalized.includes('more than 10 files')) {
-      return 'Puedes adjuntar hasta 10 archivos por publicación.';
+      return 'You can attach up to 10 files per post.';
     }
 
     if (normalized.includes('permission') || error.status === 403) {
-      return 'No tienes permisos para realizar esta acción.';
+      return 'You do not have permission to do this.';
     }
 
     if (error.status === 401) {
-      return 'Tu sesión expiró. Inicia sesión nuevamente.';
+      return 'Your session expired. Please sign in again.';
     }
 
-    if (rawMessage && rawMessage !== '[object Object]') {
+    if (rawMessage && rawMessage !== '[object Object]' && !SPANISH_TEXT.test(rawMessage)) {
       return rawMessage;
     }
 
@@ -250,7 +283,7 @@ export class FeedService {
     let params = new HttpParams().set('q', query);
 
     if (tags && tags.length > 0) {
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         params = params.append('tags', tag);
       });
     }

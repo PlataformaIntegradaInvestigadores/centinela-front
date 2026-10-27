@@ -20,7 +20,7 @@ describe('PostListComponent', () => {
   it('defaults every input', () => {
     expect(component.posts).toEqual([]);
     expect(component.isLoading).toBeFalse();
-    expect(component.emptyMessage).toBe('No hay publicaciones disponibles');
+    expect(component.emptyMessage).toBe('No posts available');
     expect(component.showEmptyState).toBeTrue();
     expect(component.showActions).toBeTrue();
     expect(component.currentUserId).toBeNull();
@@ -28,7 +28,12 @@ describe('PostListComponent', () => {
 
   it('each handler emits its corresponding output with the given payload', () => {
     const post = { id: 'p-1' } as any;
-    let toggleLike: any, deletePost: any, sharePost: any, viewProfile: any, editPost: any, votePoll: any;
+    let toggleLike: any,
+      deletePost: any,
+      sharePost: any,
+      viewProfile: any,
+      editPost: any,
+      votePoll: any;
 
     component.toggleLike.subscribe((v: any) => (toggleLike = v));
     component.deletePost.subscribe((v: any) => (deletePost = v));

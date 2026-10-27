@@ -16,7 +16,7 @@
       <div class="relative">
         <textarea
           [(ngModel)]="newCommentContent"
-          placeholder="Escribe un comentario..."
+          placeholder="Write a comment..."
           class="w-full p-3 pr-12 bg-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm"
           rows="1"
           (keyup.enter)="submitComment()"
@@ -39,7 +39,7 @@
   <!-- Loading state -->
   <div class="flex justify-center py-4" *ngIf="isLoadingComments">
     <i class="fas fa-spinner fa-spin text-gray-400"></i>
-    <span class="ml-2 text-gray-500 text-sm">Cargando comentarios...</span>
+    <span class="ml-2 text-gray-500 text-sm">Loading comments...</span>
   </div>
 
   <!-- Comments list -->
@@ -84,7 +84,7 @@
           >
             <i [class]="comment.is_liked ? 'fas fa-heart' : 'far fa-heart'" class="mr-1"></i>
             {{ comment.likes_count > 0 ? comment.likes_count : '' }}
-            {{ comment.is_liked ? 'Te gusta' : 'Me gusta' }}
+            {{ comment.is_liked ? 'Liked' : 'Like' }}
           </button>
 
           <span>{{ formatDate(comment.created_at) }}</span>
@@ -110,7 +110,7 @@
             (click)="deleteComment(comment)"
             class="text-red-500 hover:text-red-700 font-medium"
           >
-            Eliminar
+            Delete
           </button>
         </div>
       </div>
@@ -133,6 +133,6 @@
   <!-- Empty state -->
   <div *ngIf="!isLoadingComments && comments.length === 0" class="text-center py-6 text-gray-500">
     <i class="fas fa-comment text-2xl mb-2"></i>
-    <p class="text-sm">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+    <p class="text-sm">No comments yet. Be the first to comment!</p>
   </div>
 </div>

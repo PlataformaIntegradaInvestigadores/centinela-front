@@ -108,7 +108,7 @@
         <button
           type="button"
           class="media-close media-close-mobile"
-          aria-label="Cerrar imagen"
+          aria-label="Close image"
           (click)="closeMediaViewer()"
         >
           <i class="fas fa-times"></i>
@@ -118,7 +118,7 @@
           *ngIf="hasMultipleImages"
           type="button"
           class="media-nav media-nav-prev"
-          aria-label="Imagen anterior"
+          aria-label="Previous image"
           (click)="showPreviousMedia()"
         >
           <i class="fas fa-chevron-left"></i>
@@ -126,7 +126,7 @@
 
         <img
           [src]="getSelectedMediaUrl()"
-          [alt]="selectedMediaFile.original_filename || 'Imagen de la publicación'"
+          [alt]="selectedMediaFile.original_filename || 'Post image'"
           class="media-viewer-image"
         />
 
@@ -134,7 +134,7 @@
           *ngIf="hasMultipleImages"
           type="button"
           class="media-nav media-nav-next"
-          aria-label="Siguiente imagen"
+          aria-label="Next image"
           (click)="showNextMedia()"
         >
           <i class="fas fa-chevron-right"></i>
@@ -161,7 +161,7 @@
           <button
             type="button"
             class="media-close"
-            aria-label="Cerrar imagen"
+            aria-label="Close image"
             (click)="closeMediaViewer()"
           >
             <i class="fas fa-times"></i>
@@ -179,7 +179,7 @@
               class="media-see-more"
               (click)="toggleMediaContent()"
             >
-              {{ showFullMediaContent ? 'Ver menos' : 'Ver más' }}
+              {{ showFullMediaContent ? 'Show less' : 'Show more' }}
             </button>
           </div>
 
@@ -217,7 +217,7 @@
         <div class="media-context-actions" *ngIf="showActions">
           <button type="button" [class.media-action-active]="post.is_liked" (click)="onLikeClick()">
             <i [ngClass]="post.is_liked ? 'fas fa-heart' : 'far fa-heart'"></i>
-            Me gusta
+            Like
           </button>
         </div>
       </aside>
