@@ -3,7 +3,10 @@ import { Subject, takeUntil, finalize } from 'rxjs';
 import { CommentService } from '../../../domain/services/comment.service';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { Comment, CreateCommentData } from '../../../domain/entities/feed.interface';
-import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import {
+  ModerationService,
+  REPORT_ERROR_MESSAGES,
+} from 'src/app/moderation/domain/services/moderation.service';
 import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
 
 /** Reintentos para refrescar comentarios recién creados mientras se clasifican. */
@@ -256,13 +259,14 @@ export class PostCommentsComponent implements OnInit, OnDestroy {
           }
           this.reportingComment = null;
           this.reportFeedback = result.created
-            ? 'Gracias. Tu reporte fue enviado a moderación.'
-            : 'Ya habías reportado este comentario.';
+            ? 'Thanks. Your report was sent to moderation.'
+            : 'You already reported this comment.';
         },
         error: (error) => {
           this.reportError = this.moderationService.errorMessage(
             error,
-            'No se pudo enviar el reporte.',
+            'The report could not be sent.',
+            REPORT_ERROR_MESSAGES,
           );
         },
       });

@@ -1,10 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+/**
+ * Text social-service puts in `content` when a blocked post/comment is redacted
+ * for non-moderators. It is a protocol sentinel (must match the backend), never
+ * shown to users: the warning below renders its own English message instead.
+ */
 export const BLOCKED_PLACEHOLDER = 'Contenido bloqueado por moderación.';
 
 /**
- * Advertencia que tapa un post o comentario ocultado por moderación.
- * El contenido sigue disponible: el usuario decide si lo ve.
+ * Soft-censorship warning covering a post or comment hidden by moderation.
+ * The content is still available: the user decides whether to see it.
  */
 @Component({
   selector: 'app-moderation-warning',

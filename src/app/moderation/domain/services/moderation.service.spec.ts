@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { ModerationService } from './moderation.service';
+import { ModerationService, REPORT_ERROR_MESSAGES } from './moderation.service';
 
 describe('ModerationService', () => {
   let service: ModerationService;
@@ -126,16 +126,31 @@ describe('ModerationService', () => {
 
     it('explains a 503 from the moderation backend', () => {
       const error = new HttpErrorResponse({ status: 503 });
-      expect(service.errorMessage(error, 'fallback')).toContain('no está disponible');
+      expect(service.errorMessage(error, 'fallback')).toContain('unavailable');
     });
 
-    it('uses the backend detail when present', () => {
+    it('maps known statuses to English instead of the backend detail', () => {
+      const forbidden = new HttpErrorResponse({
+        status: 403,
+        error: { detail: 'Solo moderadores' },
+      });
+      expect(service.errorMessage(forbidden, 'fallback')).toBe(
+        'You do not have permission to do this.',
+      );
+      expect(service.errorMessage(new HttpErrorResponse({ status: 404 }), 'fallback')).toBe(
+        'This content no longer exists.',
+      );
+    });
+
+    it('uses caller overrides, e.g. self-reports', () => {
+      const error = new HttpErrorResponse({ status: 400, error: { detail: 'No puedes…' } });
+      expect(service.errorMessage(error, 'fallback', REPORT_ERROR_MESSAGES)).toBe(
+        "You can't report your own content.",
+      );
+    });
+
+    it('falls back for unmapped statuses', () => {
       const error = new HttpErrorResponse({ status: 400, error: { detail: 'Ya reportado' } });
-      expect(service.errorMessage(error, 'fallback')).toBe('Ya reportado');
-    });
-
-    it('falls back when there is no detail', () => {
-      const error = new HttpErrorResponse({ status: 400, error: {} });
       expect(service.errorMessage(error, 'fallback')).toBe('fallback');
     });
   });

@@ -320,7 +320,7 @@ describe('PostCommentsComponent', () => {
       expect(target.moderation).toEqual(updated);
       expect(component.reportingComment).toBeNull();
       expect(component.isReporting).toBeFalse();
-      expect(component.reportFeedback).toContain('Gracias');
+      expect(component.reportFeedback).toContain('Thanks');
     });
 
     it('moves a comment to the end when the report hides it', () => {
@@ -342,13 +342,13 @@ describe('PostCommentsComponent', () => {
       );
       component.openReport(makeComment());
       component.submitReport('');
-      expect(component.reportFeedback).toContain('Ya habías reportado');
+      expect(component.reportFeedback).toContain('You already reported');
 
       moderationServiceSpy.report.and.returnValue(throwError(() => new Error('boom')));
-      moderationServiceSpy.errorMessage.and.returnValue('No se pudo enviar el reporte.');
+      moderationServiceSpy.errorMessage.and.returnValue('The report could not be sent.');
       component.openReport(makeComment());
       component.submitReport('');
-      expect(component.reportError).toBe('No se pudo enviar el reporte.');
+      expect(component.reportError).toBe('The report could not be sent.');
     });
 
     it('refreshes silently while own comments are pending classification', fakeAsync(() => {

@@ -7,7 +7,7 @@ describe('ModerationWarningComponent', () => {
     const fixture = TestBed.createComponent(ModerationWarningComponent);
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.textContent).toContain('Este contenido puede ser ofensivo');
+    expect(element.textContent).toContain('This content may be offensive');
     const spy = spyOn(fixture.componentInstance.reveal, 'emit');
     element.querySelector('button')?.click();
     expect(spy).toHaveBeenCalled();

@@ -12,9 +12,14 @@ import {
   ReviewQueuePage,
 } from '../entities/moderation.interface';
 
+/** Extra messages for report errors (social-service rejects self-reports with 400). */
+export const REPORT_ERROR_MESSAGES: Partial<Record<number, string>> = {
+  400: "You can't report your own content.",
+};
+
 /**
- * Moderación de discurso de odio. Todo pasa por social-service: el front
- * nunca habla con hatespeech-service directamente.
+ * Hate-speech moderation. Everything goes through social-service: the front
+ * never talks to hatespeech-service directly.
  */
 @Injectable({
   providedIn: 'root',
@@ -34,7 +39,7 @@ export class ModerationService {
     });
   }
 
-  /** ¿El usuario actual puede usar la cola de revisión? (cacheado por token) */
+  /** Can the current user use the review queue? (cached per access token) */
   isModerator(): Observable<boolean> {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -96,15 +101,27 @@ export class ModerationService {
     });
   }
 
-  /** Mensaje legible para errores del backend (503 si el modelo no está disponible). */
-  errorMessage(error: unknown, fallback: string): string {
+  /**
+   * User-facing English message for a backend error. social-service details
+   * are not shown verbatim (they are in Spanish), so the status code decides;
+   * callers can override the text for specific statuses.
+   */
+  errorMessage(
+    error: unknown,
+    fallback: string,
+    overrides: Partial<Record<number, string>> = {},
+  ): string {
     if (!(error instanceof HttpErrorResponse)) {
       return fallback;
     }
-    if (error.status === 503) {
-      return 'El servicio de moderación no está disponible. Intenta más tarde.';
-    }
-    const detail = error.error?.detail;
-    return typeof detail === 'string' && detail ? detail : fallback;
+    const messages: Record<number, string> = {
+      0: 'Could not reach the server. Check your connection and try again.',
+      403: 'You do not have permission to do this.',
+      404: 'This content no longer exists.',
+      409: 'This case was already resolved.',
+      503: 'The moderation service is unavailable. Please try again later.',
+      ...overrides,
+    };
+    return messages[error.status] ?? fallback;
   }
 }

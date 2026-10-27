@@ -13,7 +13,10 @@ import { Router } from '@angular/router';
 import { FeedPost } from '../../types/post.types';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { FeedService } from '../../../domain/services/feed.service';
-import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
+import {
+  ModerationService,
+  REPORT_ERROR_MESSAGES,
+} from 'src/app/moderation/domain/services/moderation.service';
 import { BLOCKED_PLACEHOLDER } from '../moderation-warning/moderation-warning.component';
 
 @Component({
@@ -103,14 +106,15 @@ export class FeedPostComponent implements OnInit, OnDestroy, AfterViewInit {
         this.showReportDialog = false;
         this.post.moderation = result.moderation;
         this.reportFeedback = result.created
-          ? 'Gracias. Tu reporte fue enviado a moderación.'
-          : 'Ya habías reportado esta publicación.';
+          ? 'Thanks. Your report was sent to moderation.'
+          : 'You already reported this post.';
       },
       error: (error) => {
         this.isReporting = false;
         this.reportError = this.moderationService.errorMessage(
           error,
-          'No se pudo enviar el reporte.',
+          'The report could not be sent.',
+          REPORT_ERROR_MESSAGES,
         );
       },
     });

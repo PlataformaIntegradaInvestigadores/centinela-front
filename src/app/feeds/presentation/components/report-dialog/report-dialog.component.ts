@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 /**
- * Diálogo para reportar un post o comentario con un motivo opcional.
+ * Dialog to report a post or comment with an optional reason.
  */
 @Component({
   selector: 'app-report-dialog',
@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ReportDialogComponent {
   @Input() open = false;
-  @Input() subject = 'esta publicación';
+  @Input() subject = 'this post';
   @Input() isSubmitting = false;
   @Input() error: string | null = null;
 

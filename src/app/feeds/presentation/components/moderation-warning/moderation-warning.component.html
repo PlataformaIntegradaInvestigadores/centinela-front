@@ -7,9 +7,11 @@
 >
   <i class="fas" [ngClass]="blocked ? 'fa-ban text-red-500' : 'fa-eye-slash text-amber-500'"></i>
   <div class="flex-1 text-sm" [ngClass]="blocked ? 'text-red-800' : 'text-amber-900'">
-    <ng-container *ngIf="blocked && !canReveal">Contenido bloqueado por moderación.</ng-container>
+    <ng-container *ngIf="blocked && !canReveal"
+      >This content was blocked by moderation.</ng-container
+    >
     <ng-container *ngIf="!blocked || canReveal">
-      Este contenido puede ser ofensivo. ¿Quieres verlo?
+      This content may be offensive. Do you want to see it?
     </ng-container>
   </div>
   <button
@@ -19,6 +21,6 @@
     [ngClass]="blocked ? 'border-red-200 text-red-700' : 'border-amber-300 text-amber-800'"
     (click)="reveal.emit(); $event.stopPropagation()"
   >
-    Ver contenido
+    Show content
   </button>
 </div>

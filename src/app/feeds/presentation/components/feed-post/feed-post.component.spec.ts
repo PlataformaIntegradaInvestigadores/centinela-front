@@ -512,14 +512,20 @@ describe('FeedPostComponent', () => {
 
     it('getTimeUntilExpiry formats days/hours remaining', () => {
       component.post = makePost({
-        poll: { ...poll, expires_at: new Date(Date.now() + 2 * 86400000 + 3 * 3600000).toISOString() } as any,
+        poll: {
+          ...poll,
+          expires_at: new Date(Date.now() + 2 * 86400000 + 3 * 3600000).toISOString(),
+        } as any,
       });
       expect(component.getTimeUntilExpiry()).toMatch(/^en \d+d \d+h$/);
     });
 
     it('getTimeUntilExpiry formats hours/minutes when under a day', () => {
       component.post = makePost({
-        poll: { ...poll, expires_at: new Date(Date.now() + 3 * 3600000 + 5 * 60000).toISOString() } as any,
+        poll: {
+          ...poll,
+          expires_at: new Date(Date.now() + 3 * 3600000 + 5 * 60000).toISOString(),
+        } as any,
       });
       expect(component.getTimeUntilExpiry()).toMatch(/^en \d+h \d+m$/);
     });
@@ -599,7 +605,7 @@ describe('FeedPostComponent', () => {
       expect(component.post.moderation).toEqual(updated);
       expect(component.showReportDialog).toBeFalse();
       expect(component.isReporting).toBeFalse();
-      expect(component.reportFeedback).toContain('Gracias');
+      expect(component.reportFeedback).toContain('Thanks');
     });
 
     it('tells the user when the report already existed', () => {
@@ -607,15 +613,15 @@ describe('FeedPostComponent', () => {
         of({ created: false, report_count: 1, threshold_reached: false, moderation: moderation() }),
       );
       component.submitReport('');
-      expect(component.reportFeedback).toContain('Ya habías reportado');
+      expect(component.reportFeedback).toContain('You already reported');
     });
 
     it('shows an error when the report fails', () => {
       moderationServiceSpy.report.and.returnValue(throwError(() => new Error('boom')));
-      moderationServiceSpy.errorMessage.and.returnValue('No se pudo enviar el reporte.');
+      moderationServiceSpy.errorMessage.and.returnValue('The report could not be sent.');
       component.submitReport('');
       expect(component.isReporting).toBeFalse();
-      expect(component.reportError).toBe('No se pudo enviar el reporte.');
+      expect(component.reportError).toBe('The report could not be sent.');
     });
   });
 });

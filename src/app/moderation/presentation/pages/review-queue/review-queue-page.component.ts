@@ -14,16 +14,34 @@ export interface TextSegment {
   highlighted: boolean;
 }
 
+export interface ReasonTab {
+  value: string;
+  label: string;
+  hint: string;
+}
+
 const REASON_LABELS: Record<string, string> = {
-  hidden_by_model: 'Ocultado por el modelo',
-  reported: 'Reportado por usuarios',
-  deferred: 'Baja confianza del modelo',
+  hidden_by_model: 'Hidden by model',
+  reported: 'Reported by users',
+  deferred: 'Low confidence (τ-deferred)',
 };
 
 const DECISION_LABELS: Record<string, string> = {
-  approve: 'Aprobado',
-  keep_hidden: 'Mantener oculto',
-  block: 'Bloqueado',
+  approve: 'Approved',
+  keep_hidden: 'Kept hidden',
+  block: 'Blocked',
+};
+
+const VISIBILITY_LABELS: Record<string, string> = {
+  visible: 'Visible',
+  hidden: 'Hidden',
+  blocked: 'Blocked',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  none: 'Not queued',
+  pending: 'Pending',
+  resolved: 'Resolved',
 };
 
 @Component({
@@ -33,6 +51,21 @@ const DECISION_LABELS: Record<string, string> = {
 })
 export class ReviewQueuePageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+
+  readonly reasonTabs: ReasonTab[] = [
+    { value: '', label: 'All', hint: 'Every case in the queue' },
+    {
+      value: 'hidden_by_model',
+      label: 'Hidden by model',
+      hint: 'p(hate) ≥ threshold, hidden automatically',
+    },
+    { value: 'reported', label: 'Reported', hint: 'Reported by users' },
+    {
+      value: 'deferred',
+      label: 'Low confidence',
+      hint: 'Model confidence below τ, deferred to a human',
+    },
+  ];
 
   filters: ReviewQueueFilters = {
     status: 'pending',
@@ -83,9 +116,26 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.cases = [];
           this.total = 0;
-          this.error = this.moderationService.errorMessage(error, 'No se pudo cargar la cola.');
+          this.error = this.moderationService.errorMessage(
+            error,
+            'The review queue could not be loaded.',
+          );
         },
       });
+  }
+
+  setReason(reason: string): void {
+    if (this.filters.reason === reason) return;
+    this.filters.reason = reason;
+    this.loadQueue(true);
+  }
+
+  get rangeStart(): number {
+    return this.total ? this.filters.offset + 1 : 0;
+  }
+
+  get rangeEnd(): number {
+    return Math.min(this.filters.offset + this.filters.limit, this.total);
   }
 
   get hasPrevious(): boolean {
@@ -121,7 +171,10 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (detail) => (this.selected = detail),
         error: (error) =>
-          (this.error = this.moderationService.errorMessage(error, 'No se pudo abrir el caso.')),
+          (this.error = this.moderationService.errorMessage(
+            error,
+            'The case could not be opened.',
+          )),
       });
   }
 
@@ -142,7 +195,7 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.feedback = `Decisión registrada: ${this.decisionLabel(decision)}.`;
+          this.feedback = `Decision saved: ${this.decisionLabel(decision)}.`;
           this.notes = '';
           this.loadQueue();
           this.openCase({ id: caseId } as ReviewCase, true);
@@ -150,14 +203,14 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
         error: (error) =>
           (this.feedback = this.moderationService.errorMessage(
             error,
-            'No se pudo registrar la decisión.',
+            'The decision could not be saved.',
           )),
       });
   }
 
   /**
-   * Parte el texto en segmentos usando los offsets de los tokens más
-   * salientes (XAI). Se renderiza con interpolación, nunca con innerHTML.
+   * Splits the text into segments using the offsets of the most salient
+   * tokens (XAI). Rendered with interpolation, never with innerHTML.
    */
   segments(item: ReviewCase): TextSegment[] {
     const text = item.text || '';
@@ -186,8 +239,53 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
   }
 
   highlightStyle(segment: TextSegment): Record<string, string> {
-    const alpha = 0.2 + 0.6 * segment.saliency;
-    return { 'background-color': `rgba(239, 68, 68, ${alpha.toFixed(2)})` };
+    // Light-to-strong amber keeps dark text readable at every intensity.
+    const alpha = 0.25 + 0.55 * segment.saliency;
+    return {
+      'background-color': `rgba(251, 191, 36, ${alpha.toFixed(2)})`,
+      'box-shadow': `inset 0 -2px 0 rgba(217, 119, 6, ${(0.4 + 0.6 * segment.saliency).toFixed(2)})`,
+    };
+  }
+
+  /** Top salient tokens sorted by influence, for the legend chips. */
+  topTokens(item: ReviewCase, limit = 5): { token: string; weight: number }[] {
+    const tokens = [...(item.explanation?.top_tokens || [])]
+      .filter((t) => t.saliency > 0)
+      .sort((a, b) => b.saliency - a.saliency)
+      .slice(0, limit);
+    const max = tokens.length ? tokens[0].saliency : 0;
+    return tokens.map((t) => ({ token: t.token, weight: max ? t.saliency / max : 0 }));
+  }
+
+  barWidth(value: number | null | undefined): string {
+    return value === null || value === undefined ? '0%' : `${Math.round(value * 100)}%`;
+  }
+
+  barClass(value: number | null): string {
+    if (value === null) return 'bg-gray-300';
+    if (value >= 0.8) return 'bg-red-500';
+    if (value >= 0.5) return 'bg-amber-500';
+    return 'bg-green-500';
+  }
+
+  visibilityLabel(visibility: string): string {
+    return VISIBILITY_LABELS[visibility] || visibility;
+  }
+
+  visibilityClass(visibility: string): string {
+    if (visibility === 'blocked') return 'bg-red-100 text-red-700 ring-red-200';
+    if (visibility === 'hidden') return 'bg-amber-100 text-amber-800 ring-amber-200';
+    return 'bg-green-100 text-green-700 ring-green-200';
+  }
+
+  statusLabel(status: string): string {
+    return STATUS_LABELS[status] || status;
+  }
+
+  reasonClass(reason: string): string {
+    if (reason === 'reported') return 'bg-purple-100 text-purple-700';
+    if (reason === 'deferred') return 'bg-sky-100 text-sky-700';
+    return 'bg-indigo-100 text-indigo-700';
   }
 
   percent(value: number | null | undefined): string {
@@ -204,9 +302,9 @@ export class ReviewQueuePageComponent implements OnInit, OnDestroy {
 
   authorName(item: ReviewCase): string {
     const author = item.context?.author;
-    if (!author) return item.author_id || 'Desconocido';
+    if (!author) return item.author_id || 'Unknown';
     const fullName = `${author.first_name || ''} ${author.last_name || ''}`.trim();
-    return fullName || author.username || item.author_id || 'Desconocido';
+    return fullName || author.username || item.author_id || 'Unknown';
   }
 
   pHateClass(value: number | null): string {
