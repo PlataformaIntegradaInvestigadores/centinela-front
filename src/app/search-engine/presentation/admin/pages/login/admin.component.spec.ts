@@ -6,7 +6,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
 
 describe('AdminComponent', () => {
@@ -36,10 +35,9 @@ describe('AdminComponent', () => {
 
   it('offers moderators a shortcut to the moderation queue', () => {
     setup(true);
-    expect(fixture.nativeElement.textContent).toContain('Open moderation queue');
-    const router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
-    component.openModeration();
-    expect(router.navigate).toHaveBeenCalledWith(['/admin/dashboard/moderation']);
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      'a[href="/admin/dashboard/moderation"]',
+    );
+    expect(link.textContent).toContain('Open moderation queue');
   });
 });

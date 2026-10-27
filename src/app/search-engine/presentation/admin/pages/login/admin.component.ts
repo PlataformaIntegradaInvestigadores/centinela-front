@@ -26,10 +26,6 @@ export class AdminComponent implements OnInit {
       .subscribe((isModerator) => (this.isModerator = isModerator));
   }
 
-  openModeration(): void {
-    this.router.navigate(['/admin/dashboard/moderation']);
-  }
-
   login() {
     this.AuthenticationService.login(this.username, this.password).subscribe({
       next: (success) => {

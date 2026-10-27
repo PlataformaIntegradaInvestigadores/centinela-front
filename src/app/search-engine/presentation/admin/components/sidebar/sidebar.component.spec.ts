@@ -47,7 +47,9 @@ describe('SidebarDashboardComponent', () => {
     setup(false, true);
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Moderation');
+    expect(text).toContain('Back to Centinela');
     expect(text).not.toContain('Logger');
+    expect(text).not.toContain('log out');
   });
 
   it('hides moderation from admins that are not moderators', () => {
