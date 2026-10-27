@@ -23,37 +23,121 @@
   </div>
   <div class="m-4">
     <ul class="mb-4 flex flex-col gap-1">
-      <li>
-        <a routerLink="main-content">
-          <button
-            routerLinkActive="active"
-            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white w-full flex items-center gap-4 px-4 capitalize"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-              class="w-5 h-5 text-inherit"
+      <ng-container *ngIf="isAdmin">
+        <li>
+          <a routerLink="main-content">
+            <button
+              routerLinkActive="active"
+              class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white w-full flex items-center gap-4 px-4 capitalize"
+              type="button"
             >
-              <path
-                d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"
-              ></path>
-              <path
-                d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"
-              ></path>
-            </svg>
-            <p
-              class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="w-5 h-5 text-inherit"
+              >
+                <path
+                  d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"
+                ></path>
+                <path
+                  d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"
+                ></path>
+              </svg>
+              <p
+                class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
+              >
+                Dashboard
+              </p>
+            </button>
+          </a>
+        </li>
+        <li>
+          <a routerLink="logger">
+            <button
+              routerLinkActive="active"
+              class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+              type="button"
             >
-              Dashboard
-            </p>
-          </button>
-        </a>
-      </li>
-      <li>
-        <a routerLink="logger">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="w-5 h-5 text-inherit"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <p
+                class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
+              >
+                Logger
+              </p>
+            </button>
+          </a>
+        </li>
+        <li>
+          <a routerLink="fairness">
+            <button
+              routerLinkActive="active"
+              class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+              type="button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="w-5 h-5 text-inherit"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2.25c.414 0 .75.336.75.75v.518a8.252 8.252 0 016.482 6.482h.518a.75.75 0 010 1.5h-.518a8.252 8.252 0 01-6.482 6.482v.518a.75.75 0 01-1.5 0v-.518a8.252 8.252 0 01-6.482-6.482H3.75a.75.75 0 010-1.5h.518A8.252 8.252 0 0110.5 3.518V3c0-.414.336-.75.75-.75zm-.75 3.026a6.75 6.75 0 00-4.974 4.974H8.25a.75.75 0 010 1.5H6.276a6.75 6.75 0 004.974 4.974V15a.75.75 0 011.5 0v1.724a6.75 6.75 0 004.974-4.974H15.75a.75.75 0 010-1.5h1.974A6.75 6.75 0 0012.75 5.276V7a.75.75 0 01-1.5 0V5.276z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <p
+                class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
+              >
+                Equidad
+              </p>
+            </button>
+          </a>
+        </li>
+        <li>
+          <a routerLink="analytics">
+            <button
+              routerLinkActive="active"
+              class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+              type="button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="w-5 h-5 text-inherit"
+              >
+                <path
+                  d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.035 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
+                ></path>
+              </svg>
+              <p
+                class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize whitespace-nowrap"
+              >
+                Analítica
+              </p>
+            </button>
+          </a>
+        </li>
+      </ng-container>
+      <li *ngIf="isModerator">
+        <a routerLink="moderation">
           <button
             routerLinkActive="active"
             class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
@@ -68,68 +152,14 @@
             >
               <path
                 fill-rule="evenodd"
-                d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
                 clip-rule="evenodd"
               ></path>
             </svg>
             <p
               class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
             >
-              Logger
-            </p>
-          </button>
-        </a>
-      </li>
-      <li>
-        <a routerLink="fairness">
-          <button
-            routerLinkActive="active"
-            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-              class="w-5 h-5 text-inherit"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12 2.25c.414 0 .75.336.75.75v.518a8.252 8.252 0 016.482 6.482h.518a.75.75 0 010 1.5h-.518a8.252 8.252 0 01-6.482 6.482v.518a.75.75 0 01-1.5 0v-.518a8.252 8.252 0 01-6.482-6.482H3.75a.75.75 0 010-1.5h.518A8.252 8.252 0 0110.5 3.518V3c0-.414.336-.75.75-.75zm-.75 3.026a6.75 6.75 0 00-4.974 4.974H8.25a.75.75 0 010 1.5H6.276a6.75 6.75 0 004.974 4.974V15a.75.75 0 011.5 0v1.724a6.75 6.75 0 004.974-4.974H15.75a.75.75 0 010-1.5h1.974A6.75 6.75 0 0012.75 5.276V7a.75.75 0 01-1.5 0V5.276z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            <p
-              class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize"
-            >
-              Equidad
-            </p>
-          </button>
-        </a>
-      </li>
-      <li>
-        <a routerLink="analytics">
-          <button
-            routerLinkActive="active"
-            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-              class="w-5 h-5 text-inherit"
-            >
-              <path
-                d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.035 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
-              ></path>
-            </svg>
-            <p
-              class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize whitespace-nowrap"
-            >
-              Analítica
+              Moderation
             </p>
           </button>
         </a>

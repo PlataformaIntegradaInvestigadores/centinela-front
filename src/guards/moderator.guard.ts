@@ -5,8 +5,9 @@ import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { ModerationService } from 'src/app/moderation/domain/services/moderation.service';
 
 /**
- * Solo moderadores (staff) entran a la cola de revisión. El permiso real lo
- * aplica social-service; este guard solo evita mostrar una pantalla vacía.
+ * Only moderators (MODERATOR_USER_IDS / staff in social-service) can open the
+ * review queue. The real permission check is enforced by social-service; this
+ * guard only avoids rendering an empty screen.
  */
 export const moderatorGuard: CanActivateFn = () => {
   const router = inject(Router);
@@ -19,5 +20,5 @@ export const moderatorGuard: CanActivateFn = () => {
 
   return moderationService
     .isModerator()
-    .pipe(map((isModerator) => (isModerator ? true : router.createUrlTree(['/feeds']))));
+    .pipe(map((isModerator) => (isModerator ? true : router.createUrlTree(['/admin']))));
 };

@@ -21,7 +21,6 @@ import {
   faTimes,
   faChartBar,
   faInfoCircle,
-  faShieldAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -57,7 +56,6 @@ export class HeaderComponent implements OnInit {
   faTimes = faTimes;
   faChartBar = faChartBar;
   faInfoCircle = faInfoCircle;
-  faShieldAlt = faShieldAlt;
   isModerator = false;
 
   constructor(
@@ -220,7 +218,8 @@ export class HeaderComponent implements OnInit {
    */
   getUserType(): string {
     const userType = this.authService.getUserType();
-    return userType === 'company' ? 'Company' : 'Researcher';
+    if (userType === 'company') return 'Company';
+    return this.isModerator ? 'Moderator' : 'Researcher';
   }
 
   toggleUserMenu() {

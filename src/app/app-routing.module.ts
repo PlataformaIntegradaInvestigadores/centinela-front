@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { RedirectComponent } from './auth/presentation/redirect/redirect.component';
 import { AuthRedirectGuard } from 'src/guards/auth-redirect.guard';
 import { researcherOnlyGuard } from 'src/guards/researcher-only.guard';
-import { moderatorGuard } from 'src/guards/moderator.guard';
 // import { DebateChatComponent } from './consensus/presentation/components/debate-chat/debate-chat.component';
 
 const routes: Routes = [
@@ -43,12 +42,6 @@ const routes: Routes = [
     path: 'feeds',
     loadChildren: () => import('src/app/feeds/feeds.module').then((m) => m.FeedsModule),
     canActivate: [researcherOnlyGuard],
-  },
-  {
-    path: 'moderation',
-    loadChildren: () =>
-      import('src/app/moderation/moderation.module').then((m) => m.ModerationModule),
-    canActivate: [moderatorGuard],
   },
   {
     path: 'jobs/:id',

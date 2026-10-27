@@ -10,7 +10,7 @@ describe('moderatorGuard', () => {
   let moderationServiceSpy: jasmine.SpyObj<ModerationService>;
   let router: jasmine.SpyObj<Router>;
   const loginTree = {} as UrlTree;
-  const feedsTree = {} as UrlTree;
+  const adminTree = {} as UrlTree;
 
   const run = () =>
     TestBed.runInInjectionContext(() =>
@@ -22,7 +22,7 @@ describe('moderatorGuard', () => {
     moderationServiceSpy = jasmine.createSpyObj('ModerationService', ['isModerator']);
     router = jasmine.createSpyObj('Router', ['createUrlTree']);
     router.createUrlTree.and.callFake((commands: unknown[]) =>
-      commands[0] === '/login' ? loginTree : feedsTree,
+      commands[0] === '/login' ? loginTree : adminTree,
     );
     TestBed.configureTestingModule({
       providers: [
@@ -47,11 +47,11 @@ describe('moderatorGuard', () => {
     expect(result).toBeTrue();
   });
 
-  it('sends non-moderators back to the feed', () => {
+  it('sends non-moderators to the admin login', () => {
     authServiceSpy.isLoggedIn.and.returnValue(true);
     moderationServiceSpy.isModerator.and.returnValue(of(false));
     let result: unknown;
     (run() as Observable<boolean | UrlTree>).subscribe((value) => (result = value));
-    expect(result).toBe(feedsTree);
+    expect(result).toBe(adminTree);
   });
 });

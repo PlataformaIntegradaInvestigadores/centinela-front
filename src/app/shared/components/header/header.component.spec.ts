@@ -71,12 +71,13 @@ describe('HeaderComponent', () => {
       expect(authServiceSpy.getUsers).toHaveBeenCalled();
     });
 
-    it('shows the moderation link only to moderators', () => {
+    it('flags moderators so their role label reads Moderator', () => {
       authServiceSpy.isLoggedIn.and.returnValue(true);
       authServiceSpy.isUser.and.returnValue(false);
       moderationServiceSpy.isModerator.and.returnValue(of(true));
       component.ngOnInit();
       expect(component.isModerator).toBeTrue();
+      expect(component.getUserType()).toBe('Moderator');
     });
 
     it('does not check moderator status when logged out', () => {
