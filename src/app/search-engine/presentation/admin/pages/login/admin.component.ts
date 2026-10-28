@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/search-engine/domain/services/authentication.service';
+import { AdminSessionService } from 'src/app/search-engine/domain/services/admin-session.service';
 
 @Component({
   selector: 'app-admin',
@@ -12,6 +13,7 @@ export class AdminComponent {
   password: string = '';
   constructor(
     private AuthenticationService: AuthenticationService,
+    private adminSession: AdminSessionService,
     private router: Router,
   ) {}
   message: string = '';
@@ -20,7 +22,12 @@ export class AdminComponent {
     this.AuthenticationService.login(this.username, this.password).subscribe({
       next: (success) => {
         if (success) {
-          localStorage.setItem('authState', 'authenticated');
+          if (success.token) {
+            this.adminSession.start(success.token, success.expires_in);
+          } else {
+            // Backend anterior al token de admin: solo marca la sesion del panel.
+            localStorage.setItem('authState', 'authenticated');
+          }
           this.router.navigate(['/admin/dashboard']);
         }
       },
