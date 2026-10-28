@@ -10,6 +10,7 @@ import { Company, LoginCredentials, AuthResponse } from '../entities/interfaces'
 })
 export class CompanyAuthService {
   private apiUrl = environment.apiIdentity;
+  private apiSocial = environment.apiSocial;
 
   constructor(private http: HttpClient) {}
 
@@ -42,7 +43,7 @@ export class CompanyAuthService {
    */
   getCompanyProfile(companyId: string): Observable<any> {
     return this.http
-      .get(`${this.apiUrl}/companies/${companyId}/`, {
+      .get(`${this.apiSocial}/companies/${companyId}/`, {
         headers: this.getAuthHeaders(),
       })
       .pipe(
@@ -62,7 +63,7 @@ export class CompanyAuthService {
    */
   getMyProfile(): Observable<any> {
     return this.http
-      .get(`${this.apiUrl}/companies/profile/`, {
+      .get(`${this.apiSocial}/companies/profile/`, {
         headers: this.getAuthHeaders(),
       })
       .pipe(
@@ -83,7 +84,7 @@ export class CompanyAuthService {
    */
   updateProfile(companyId: string, formData: FormData): Observable<any> {
     return this.http
-      .patch(`${this.apiUrl}/companies/${companyId}/update/`, formData, {
+      .patch(`${this.apiSocial}/companies/${companyId}/update/`, formData, {
         headers: new HttpHeaders({
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         }),
@@ -108,7 +109,7 @@ export class CompanyAuthService {
   listCompanies(verifiedOnly: boolean = false): Observable<Company[]> {
     const params = verifiedOnly ? '?verified_only=true' : '';
     return this.http
-      .get<Company[]>(`${this.apiUrl}/companies/${params}`, {
+      .get<Company[]>(`${this.apiSocial}/companies/${params}`, {
         headers: this.getAuthHeaders(),
       })
       .pipe(
