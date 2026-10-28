@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { SidebarDashboardComponent } from './sidebar.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -23,5 +24,17 @@ describe('SidebarDashboardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('logout clears the admin session and goes back to the admin login', () => {
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    sessionStorage.setItem('adminToken', 'adm-1');
+    localStorage.setItem('authState', 'authenticated');
+
+    component.logout();
+
+    expect(sessionStorage.getItem('adminToken')).toBeNull();
+    expect(localStorage.getItem('authState')).toBeNull();
+    expect(navigate).toHaveBeenCalledWith(['/admin']);
   });
 });
