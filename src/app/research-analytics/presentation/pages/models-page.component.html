@@ -1,0 +1,83 @@
+<main class="mx-auto max-w-7xl p-6" aria-labelledby="models-heading">
+  <a routerLink="/research-analytics" class="underline">Volver al explorador documental</a>
+  <h1 id="models-heading" class="text-3xl font-bold">Modelos NMF registrados</h1>
+  <p class="notice">
+    Ensayos técnicos. Estos modelos no acreditan evaluación científica final ni resultados validados
+    para la tesis.
+  </p>
+  <div aria-live="polite" [attr.aria-busy]="state === 'loading'">
+    <p *ngIf="state === 'loading'" role="status">Consultando modelos…</p>
+    <div *ngIf="state === 'error'" role="alert">
+      <p>{{ error }}</p>
+      <button type="button" (click)="reload()">Reintentar</button>
+    </div>
+    <section *ngIf="page as data" aria-labelledby="registered-heading">
+      <h2 id="registered-heading">Modelos disponibles: {{ data.total }}</h2>
+      <p *ngIf="!data.items.length" role="status">No hay modelos registrados en esta página.</p>
+      <ul>
+        <li *ngFor="let item of data.items" class="my-6">
+          <p>
+            Modelo: <code class="identifier">{{ item.model_id }}</code>
+          </p>
+          <p>TF-IDF + NMF · {{ item.fit_document_count }} documentos de ajuste · Ensayo técnico</p>
+          <button
+            type="button"
+            (click)="select(item.model_id)"
+            [attr.aria-label]="'Consultar modelo ' + item.model_id"
+          >
+            Ver metadatos
+          </button>
+        </li>
+      </ul>
+      <nav aria-label="Paginación de modelos" class="pagination">
+        <button type="button" (click)="move(-1)" [disabled]="offset === 0">Anterior</button>
+        <span>Desde {{ data.total ? offset + 1 : 0 }} de {{ data.total }}</span>
+        <button type="button" (click)="move(1)" [disabled]="offset + data.limit >= data.total">
+          Siguiente
+        </button>
+      </nav>
+    </section>
+  </div>
+  <section
+    *ngIf="detailState !== 'idle'"
+    aria-labelledby="model-detail-heading"
+    aria-live="polite"
+    [attr.aria-busy]="detailState === 'loading'"
+    class="detail"
+  >
+    <h2 id="model-detail-heading">Metadatos del modelo</h2>
+    <button type="button" (click)="select(null)">Cerrar metadatos</button>
+    <p *ngIf="detailState === 'loading'" role="status">Verificando modelo…</p>
+    <p *ngIf="detailState === 'error'" role="alert">{{ detailError }}</p>
+    <ng-container *ngIf="detail as model">
+      <p>
+        Identificador: <code class="identifier">{{ model.model_id }}</code>
+      </p>
+      <p>
+        Conjunto de origen: <code class="identifier">{{ model.workset_id }}</code>
+      </p>
+      <p>
+        Documentos de ajuste: {{ model.fit_document_count }}. Evaluación científica final:
+        pendiente.
+      </p>
+      <p>
+        Corte declarado: {{ model.cutoff || 'Sin corte temporal validado' }}. La disponibilidad
+        histórica declarada no se verifica contra el origen en esta consulta.
+      </p>
+      <h3>Configuración</h3>
+      <dl>
+        <ng-container *ngFor="let entry of model.configuration | keyvalue"
+          ><dt>{{ entry.key }}</dt>
+          <dd>{{ entry.value }}</dd></ng-container
+        >
+      </dl>
+      <h3>Versiones utilizadas</h3>
+      <dl>
+        <ng-container *ngFor="let entry of model.versions | keyvalue"
+          ><dt>{{ entry.key }}</dt>
+          <dd>{{ entry.value }}</dd></ng-container
+        >
+      </dl>
+    </ng-container>
+  </section>
+</main>

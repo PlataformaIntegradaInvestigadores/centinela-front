@@ -1,0 +1,201 @@
+<main class="mx-auto max-w-7xl p-6" aria-labelledby="corpus-heading">
+  <a routerLink="/home" class="underline">Volver a Centinela</a>
+  <p>
+    <a routerLink="/research-analytics/models" class="underline"
+      >Consultar modelos NMF registrados</a
+    >
+  </p>
+  <p>
+    <a routerLink="/research-analytics/preparation" class="underline"
+      >Calidad y preparación del corpus</a
+    >
+  </p>
+  <header class="my-6">
+    <h1 id="corpus-heading" class="text-3xl font-bold">Analítica de la producción científica</h1>
+    <p class="mt-2">Exploración del corpus de desarrollo</p>
+    <p class="notice">
+      Cobertura y precisión de fechas pendientes de confirmación. Estos datos describen la
+      instantánea disponible.
+    </p>
+  </header>
+
+  <form (ngSubmit)="applyFilters()" class="filters" aria-label="Filtrar artículos">
+    <label
+      >Año<select name="year" [(ngModel)]="year">
+        <option value="">Todos</option>
+        <option *ngFor="let value of years" [value]="value">{{ value }}</option>
+      </select></label
+    >
+    <label
+      >Resumen<select name="abstract" [(ngModel)]="abstract">
+        <option value="all">Todos</option>
+        <option value="present">Disponible</option>
+        <option value="missing">Ausente</option>
+      </select></label
+    >
+    <label
+      >Identificador de autor<input name="author" [(ngModel)]="author" maxlength="256"
+    /></label>
+    <label
+      >Descriptor exacto<input name="descriptor" [(ngModel)]="descriptor" maxlength="256"
+    /></label>
+    <button type="submit" [disabled]="state === 'loading'">Aplicar filtros</button>
+  </form>
+
+  <div aria-live="polite" [attr.aria-busy]="state === 'loading'">
+    <p *ngIf="state === 'loading'" role="status">Consultando corpus…</p>
+    <div *ngIf="state === 'error'" role="alert" class="notice">
+      <p>{{ error }}</p>
+      <button type="button" (click)="reload()">Reintentar</button>
+    </div>
+    <section *ngIf="summary as data" aria-labelledby="summary-heading" class="my-6">
+      <h2 id="summary-heading" class="text-xl font-bold">Cobertura documental de la instantánea</h2>
+      <dl class="metrics">
+        <div>
+          <dt>Artículos</dt>
+          <dd>{{ data.diagnostics.articles | number }}</dd>
+        </div>
+        <div>
+          <dt>Sin resumen</dt>
+          <dd>{{ data.diagnostics.missing_abstracts | number }}</dd>
+        </div>
+        <div>
+          <dt>Modelos y explicaciones</dt>
+          <dd>En proceso</dd>
+        </div>
+      </dl>
+      <p>
+        Las cifras anuales son descriptivas. No representan pronósticos ni una cobertura completa
+        verificada.
+      </p>
+      <table>
+        <caption>
+          Artículos por año en la instantánea
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Año</th>
+            <th scope="col">Artículos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let value of years">
+            <th scope="row">{{ value }}</th>
+            <td>{{ data.diagnostics.articles_by_year[value] | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <p *ngIf="state === 'empty'" role="status">No hay artículos para estos filtros.</p>
+    <section *ngIf="page as data" aria-labelledby="articles-heading">
+      <h2 id="articles-heading" class="text-xl font-bold">
+        Artículos encontrados: {{ data.total | number }}
+      </h2>
+      <div
+        class="table-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="Tabla de artículos desplazable"
+      >
+        <table *ngIf="data.items.length">
+          <caption>
+            Resultados de la consulta documental
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Título</th>
+              <th scope="col">Fecha declarada</th>
+              <th scope="col">Resumen</th>
+              <th scope="col">Autores</th>
+              <th scope="col">Descriptores</th>
+              <th scope="col">Consulta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of data.items">
+              <th scope="row">{{ article.title }}</th>
+              <td>{{ article.publication_date }}</td>
+              <td>{{ article.has_abstract ? 'Disponible' : 'Ausente' }}</td>
+              <td>{{ article.author_count }}</td>
+              <td>{{ article.descriptor_count }}</td>
+              <td>
+                <button
+                  type="button"
+                  (click)="select(article.article_id)"
+                  [attr.aria-label]="'Consultar ' + article.title"
+                >
+                  Ver documento
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <nav aria-label="Paginación de artículos" class="pagination">
+        <button type="button" (click)="move(-1)" [disabled]="query.offset === 0">Anterior</button
+        ><span>Desde {{ data.total ? query.offset + 1 : 0 }} de {{ data.total | number }}</span
+        ><button
+          type="button"
+          (click)="move(1)"
+          [disabled]="query.offset + query.limit >= data.total"
+        >
+          Siguiente
+        </button>
+      </nav>
+    </section>
+    <section *ngIf="descriptors as data" aria-labelledby="descriptors-heading" class="my-6">
+      <h2 id="descriptors-heading" class="text-xl font-bold">
+        Descriptores frecuentes del corpus completo
+      </h2>
+      <p>
+        Palabras clave del origen. Un artículo puede tener varios descriptores; estas frecuencias no
+        son temas inferidos.
+      </p>
+      <p *ngIf="!data.items.length">No hay descriptores disponibles.</p>
+      <table *ngIf="data.items.length">
+        <caption>
+          Los diez descriptores más frecuentes, sin aplicar filtros de artículos
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Descriptor</th>
+            <th scope="col">Artículos distintos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of data.items">
+            <th scope="row">{{ item.descriptor }}</th>
+            <td>{{ item.articles | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <section
+    *ngIf="detailState !== 'idle'"
+    aria-labelledby="detail-heading"
+    class="detail"
+    aria-live="polite"
+    [attr.aria-busy]="detailState === 'loading'"
+  >
+    <h2 id="detail-heading" class="text-xl font-bold">Detalle documental</h2>
+    <button type="button" (click)="closeDetail()">Cerrar detalle</button>
+    <p *ngIf="detailState === 'loading'">Consultando documento…</p>
+    <p *ngIf="detailState === 'error'" role="alert">{{ detailError }}</p>
+    <ng-container *ngIf="detail as data"
+      ><h3 class="font-bold">{{ data.document.title }}</h3>
+      <p class="abstract">{{ data.document.abstract || 'Resumen no disponible.' }}</p>
+      <p>
+        Autores vinculados: {{ data.authors.length }}. Descriptores vinculados:
+        {{ data.descriptors.length }}.
+      </p>
+      <ul>
+        <li *ngFor="let term of data.descriptors">{{ term }}</li>
+      </ul>
+      <p>
+        La fecha de incorporación y el texto completo no están disponibles en esta exportación.
+      </p></ng-container
+    >
+  </section>
+</main>

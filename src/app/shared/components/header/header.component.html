@@ -75,6 +75,13 @@
           </a>
         </div>
         <!-- Group Recommendations-->
+        <div class="nav-item" *ngIf="!showLogin">
+          <a routerLink="/research-analytics" routerLinkActive="active" class="nav-link">
+            <fa-icon [icon]="faChartBar" class="nav-icon"></fa-icon>
+            <span>Corpus y tendencias</span>
+          </a>
+        </div>
+        <!-- Group Recommendations-->
         <div class="nav-item" *ngIf="!showLogin && isUser()">
           <a routerLink="/home/recommendations" routerLinkActive="active" class="nav-link">
             <fa-icon [icon]="faUsers" class="nav-icon"></fa-icon>

@@ -42,7 +42,12 @@ describe('JobDetailComponent', () => {
       component.job = makeJob({ id: 5 });
 
       component.ngOnChanges({
-        job: { currentValue: component.job, previousValue: null, firstChange: true, isFirstChange: () => true },
+        job: {
+          currentValue: component.job,
+          previousValue: null,
+          firstChange: true,
+          isFirstChange: () => true,
+        },
       } as any);
 
       expect(applicationServiceSpy.getCompanyApplications).toHaveBeenCalledWith({ job_id: 5 });
@@ -53,17 +58,29 @@ describe('JobDetailComponent', () => {
       authServiceSpy.getCompanyId.and.returnValue(null);
       component.job = makeJob();
       component.ngOnChanges({
-        job: { currentValue: component.job, previousValue: null, firstChange: true, isFirstChange: () => true },
+        job: {
+          currentValue: component.job,
+          previousValue: null,
+          firstChange: true,
+          isFirstChange: () => true,
+        },
       } as any);
       expect(applicationServiceSpy.getCompanyApplications).not.toHaveBeenCalled();
     });
 
     it('clears applications on an error', () => {
       authServiceSpy.getCompanyId.and.returnValue('c1');
-      applicationServiceSpy.getCompanyApplications.and.returnValue(throwError(() => new Error('boom')));
+      applicationServiceSpy.getCompanyApplications.and.returnValue(
+        throwError(() => new Error('boom')),
+      );
       component.job = makeJob();
       component.ngOnChanges({
-        job: { currentValue: component.job, previousValue: null, firstChange: true, isFirstChange: () => true },
+        job: {
+          currentValue: component.job,
+          previousValue: null,
+          firstChange: true,
+          isFirstChange: () => true,
+        },
       } as any);
       expect(component.jobApplications).toEqual([]);
       expect(component.applicationsLoading).toBeFalse();
@@ -101,7 +118,9 @@ describe('JobDetailComponent', () => {
 
       component.onStatusChange({ target: select } as unknown as Event, 1);
 
-      expect(applicationServiceSpy.updateApplication).toHaveBeenCalledWith(1, { status: 'accepted' });
+      expect(applicationServiceSpy.updateApplication).toHaveBeenCalledWith(1, {
+        status: 'accepted',
+      });
       expect(component.jobApplications[0].status).toBe('accepted');
     });
 
@@ -229,6 +248,19 @@ describe('JobDetailComponent', () => {
   });
 
   describe('getFormattedSalary', () => {
+    beforeEach(() => {
+      // Pin the formatting dependency for these label/range assertions only;
+      // production continues to use the visitor's default locale.
+      const original = Number.prototype.toLocaleString;
+      spyOn(Number.prototype, 'toLocaleString').and.callFake(function (
+        this: number,
+        locales?: string | string[],
+        options?: Intl.NumberFormatOptions,
+      ) {
+        return original.call(this, locales ?? 'en-US', options);
+      });
+    });
+
     it('formats a min-max range', () => {
       expect(component.getFormattedSalary(makeJob({ salary_min: 1000, salary_max: 2000 }))).toBe(
         '$1,000 - $2,000',
@@ -363,7 +395,9 @@ describe('JobDetailComponent', () => {
       component.selectedFile = new File(['x'], 'cv.pdf');
       applicationServiceSpy.createApplication.and.returnValue(throwError(() => ({})));
       component.submitApplication();
-      expect(window.alert).toHaveBeenCalledWith('Error submitting the application. Please try again.');
+      expect(window.alert).toHaveBeenCalledWith(
+        'Error submitting the application. Please try again.',
+      );
     });
   });
 

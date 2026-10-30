@@ -4,5 +4,6 @@ export const environment = {
   apiSocial: '/api/social',
   apiSearch: '/api/search',
   apiPredictive: '/api/predictive',
+  apiAnalytics: '/api/analytics',
   wsUrl: `${window.location.protocol === 'https:' ? 'wss://' : 'ws://'}${window.location.host}/ws`,
 };

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RedirectComponent } from './auth/presentation/redirect/redirect.component';
 import { AuthRedirectGuard } from 'src/guards/auth-redirect.guard';
 import { researcherOnlyGuard } from 'src/guards/researcher-only.guard';
+import { authGuard } from 'src/guards/auth.guard';
 // import { DebateChatComponent } from './consensus/presentation/components/debate-chat/debate-chat.component';
 
 const routes: Routes = [
@@ -55,9 +56,17 @@ const routes: Routes = [
       ),
   },
 
-  /* Siempre al ultimo */
+  /* Analítica documental: integración progresiva del componente de tesis. */
   {
-    path: '**', // Redirects to home when the route is not correct
+    path: 'research-analytics',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./research-analytics/research-analytics.module').then(
+        (m) => m.ResearchAnalyticsModule,
+      ),
+  },
+  {
+    path: '**', // Siempre al último: redirige rutas desconocidas.
     redirectTo: 'home',
   },
 ];

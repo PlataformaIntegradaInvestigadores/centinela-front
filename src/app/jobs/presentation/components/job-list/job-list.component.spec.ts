@@ -58,10 +58,23 @@ describe('JobListComponent', () => {
   });
 
   describe('getFormattedSalary', () => {
+    beforeEach(() => {
+      // These assertions exercise salary labels/ranges with a fixed formatting
+      // dependency, independently of the browser/CI machine's default locale.
+      const original = Number.prototype.toLocaleString;
+      spyOn(Number.prototype, 'toLocaleString').and.callFake(function (
+        this: number,
+        locales?: string | string[],
+        options?: Intl.NumberFormatOptions,
+      ) {
+        return original.call(this, locales ?? 'en-US', options);
+      });
+    });
+
     it('formats a min-max range', () => {
-      expect(
-        component.getFormattedSalary({ salary_min: 1000, salary_max: 2000 } as any),
-      ).toBe('$1,000 - $2,000');
+      expect(component.getFormattedSalary({ salary_min: 1000, salary_max: 2000 } as any)).toBe(
+        '$1,000 - $2,000',
+      );
     });
 
     it('formats a min-only salary', () => {

@@ -38,7 +38,9 @@ src/
 └── environments/              # apiIdentity/apiSocial/apiSearch/apiPredictive/wsUrl
 ```
 
-Features actuales: `analytics`, `auth`, `consensus`, `dashboard`, `feeds`, `group`, `jobs`, `profile`, `profile-company`, `recommendations`, `search-engine`.
+Features actuales: `analytics`, `auth`, `consensus`, `dashboard`, `feeds`, `group`, `jobs`, `profile`, `profile-company`, `recommendations`, `research-analytics`, `search-engine`.
+
+El explorador documental de desarrollo usa `environment.apiAnalytics` con prefijo relativo `/api/analytics`. Su alcance, restricciones, pruebas y ejecución local se describen en [docs/research-analytics.md](docs/research-analytics.md); la comprobación de integración real con identidad/gateway permanece pendiente.
 
 ## Requisitos previos
 
