@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { ApplicationService } from './application.service';
@@ -247,5 +247,94 @@ describe('ApplicationService', () => {
     httpMock
       .expectOne(`${apiUrl}/v1/applications/1/`)
       .flush('fail', { status: 500, statusText: 'Server Error' });
+  });
+
+  describe('downloadResume', () => {
+    it('errors without hitting the API when there is no token', (done) => {
+      authServiceSpy.getToken.and.returnValue(of(null));
+      service.downloadResume(7).subscribe({
+        error: (err: Error) => {
+          expect(err.message).toBe('No authentication token found');
+          done();
+        },
+      });
+      httpMock.expectNone(() => true);
+    });
+
+    it('GETs the resume as a blob with the session token', () => {
+      let received: Blob | undefined;
+      service.downloadResume(7).subscribe((blob) => (received = blob));
+
+      const req = httpMock.expectOne(`${apiUrl}/v1/applications/7/resume/`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer tok-1');
+      req.flush(new Blob(['%PDF-1.4']));
+
+      expect(received?.size).toBe(8);
+    });
+
+    it('propagates a 403 when the user is not allowed to see the resume', (done) => {
+      service.downloadResume(7).subscribe({
+        error: (err) => {
+          expect(err.status).toBe(403);
+          done();
+        },
+      });
+      httpMock
+        .expectOne(`${apiUrl}/v1/applications/7/resume/`)
+        .flush(new Blob(['forbidden']), { status: 403, statusText: 'Forbidden' });
+    });
+  });
+
+  describe('saveResume', () => {
+    let downloadedAs: string | undefined;
+
+    beforeEach(() => {
+      downloadedAs = undefined;
+      spyOn(URL, 'createObjectURL').and.returnValue('blob:resume');
+      spyOn(URL, 'revokeObjectURL');
+      spyOn(HTMLAnchorElement.prototype, 'click').and.callFake(function (this: HTMLAnchorElement) {
+        downloadedAs = this.download;
+      });
+    });
+
+    it('hands the file to the browser named after the stored file', fakeAsync(() => {
+      service.saveResume({ id: 5, resume_file: '/media/resumes/cv_Ab12.pdf' }).subscribe();
+      httpMock.expectOne(`${apiUrl}/v1/applications/5/resume/`).flush(new Blob(['x']));
+      tick();
+
+      expect(downloadedAs).toBe('cv_Ab12.pdf');
+      expect(URL.createObjectURL).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:resume');
+    }));
+
+    it('falls back to a generic name when the application has no file name', fakeAsync(() => {
+      service.saveResume({ id: 5 }).subscribe();
+      httpMock.expectOne(`${apiUrl}/v1/applications/5/resume/`).flush(new Blob(['x']));
+      tick();
+
+      expect(downloadedAs).toBe('resume-5.pdf');
+    }));
+
+    it('does not leave the temporary link in the page', fakeAsync(() => {
+      service.saveResume({ id: 5 }).subscribe();
+      httpMock.expectOne(`${apiUrl}/v1/applications/5/resume/`).flush(new Blob(['x']));
+      tick();
+
+      expect(document.querySelector('a[download]')).toBeNull();
+    }));
+
+    it('reports the error and downloads nothing when the request fails', (done) => {
+      service.saveResume({ id: 5 }).subscribe({
+        error: () => {
+          expect(downloadedAs).toBeUndefined();
+          done();
+        },
+      });
+      httpMock
+        .expectOne(`${apiUrl}/v1/applications/5/resume/`)
+        .flush(new Blob(['nope']), { status: 404, statusText: 'Not Found' });
+    });
   });
 });

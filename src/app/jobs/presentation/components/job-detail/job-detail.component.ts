@@ -72,6 +72,15 @@ export class JobDetailComponent implements OnChanges {
     return true;
   }
 
+  public downloadResume(application: Application): void {
+    this.applicationService.saveResume(application).subscribe({
+      error: (error: unknown) => {
+        console.error('Error downloading the resume:', error);
+        alert('The resume could not be downloaded. Please try again.');
+      },
+    });
+  }
+
   // ✅ NUEVO: Manejar cambio de estado
   public onStatusChange(event: Event, applicationId: number): void {
     const target = event.target as HTMLSelectElement;
