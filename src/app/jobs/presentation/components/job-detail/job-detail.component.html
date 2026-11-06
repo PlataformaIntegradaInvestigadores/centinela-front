@@ -287,10 +287,10 @@
                   </span>
 
                   <!-- Resume button -->
-                  <a
+                  <button
+                    type="button"
                     *ngIf="hasValidResumeFile(application)"
-                    [href]="getFullFileUrl(application.resume_file || '')"
-                    target="_blank"
+                    (click)="downloadResume(application)"
                     class="inline-flex items-center px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
                   >
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -302,7 +302,7 @@
                       ></path>
                     </svg>
                     Download Resume
-                  </a>
+                  </button>
 
                   <span
                     *ngIf="!hasValidResumeFile(application)"

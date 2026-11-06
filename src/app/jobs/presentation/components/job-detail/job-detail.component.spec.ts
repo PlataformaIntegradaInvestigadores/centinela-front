@@ -18,6 +18,7 @@ describe('JobDetailComponent', () => {
       'getCompanyApplications',
       'updateApplication',
       'createApplication',
+      'saveResume',
     ]);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getCompanyId', 'getUserId']);
 
@@ -465,6 +466,30 @@ describe('JobDetailComponent', () => {
       authServiceSpy.getCompanyId.and.returnValue(null);
       component.jobApplications = [];
       expect(component.hasNoApplications()).toBeFalse();
+    });
+  });
+
+  describe('downloadResume', () => {
+    const application = { id: 4, resume_file: '/media/resumes/cv.pdf' } as Application;
+
+    it('asks the service to download the resume of that application', () => {
+      applicationServiceSpy.saveResume.and.returnValue(of(undefined));
+
+      component.downloadResume(application);
+
+      expect(applicationServiceSpy.saveResume).toHaveBeenCalledWith(application);
+    });
+
+    it('alerts when the resume cannot be downloaded', () => {
+      spyOn(window, 'alert');
+      spyOn(console, 'error');
+      applicationServiceSpy.saveResume.and.returnValue(throwError(() => new Error('403')));
+
+      component.downloadResume(application);
+
+      expect(window.alert).toHaveBeenCalledWith(
+        'The resume could not be downloaded. Please try again.',
+      );
     });
   });
 });
