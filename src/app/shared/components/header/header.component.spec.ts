@@ -242,4 +242,25 @@ describe('HeaderComponent', () => {
       expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
     });
   });
+  describe('teamBuilderLink', () => {
+    it('points a logged-in researcher to the groups module of their profile', () => {
+      authServiceSpy.isLoggedIn.and.returnValue(true);
+      authServiceSpy.isUser.and.returnValue(true);
+      authServiceSpy.getUserId.and.returnValue('u-1');
+      expect(component.teamBuilderLink).toEqual(['/profile', 'u-1', 'my-groups']);
+      expect(component.teamBuilderFragment).toBe('ethical-team-builder');
+    });
+
+    it('falls back to the public team builder without a researcher session', () => {
+      authServiceSpy.isLoggedIn.and.returnValue(false);
+      expect(component.teamBuilderLink).toEqual(['/home/team-builder']);
+      expect(component.teamBuilderFragment).toBeUndefined();
+      authServiceSpy.isLoggedIn.and.returnValue(true);
+      authServiceSpy.isUser.and.returnValue(true);
+      authServiceSpy.getUserId.and.returnValue(null);
+      expect(component.teamBuilderLink).toEqual(['/home/team-builder']);
+      authServiceSpy.isUser.and.returnValue(false);
+      expect(component.teamBuilderFragment).toBeUndefined();
+    });
+  });
 });

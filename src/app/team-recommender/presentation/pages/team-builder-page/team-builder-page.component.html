@@ -1,0 +1,356 @@
+<div class="team-builder" [ngClass]="embedded ? 'team-builder--embedded' : 'bg-gray-50/60'">
+  <div [ngClass]="embedded ? 'py-2' : 'container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'">
+    <!-- Encabezado (solo como página propia; embebido lo pone el módulo anfitrión) -->
+    <header *ngIf="!embedded" class="page-header mb-8">
+      <p class="text-xs font-semibold uppercase tracking-wider text-primary_tailwind">
+        Recomendación ética de investigadores
+      </p>
+      <h1 class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
+        Conformar equipo de investigación
+      </h1>
+      <p class="mt-2 max-w-3xl text-sm text-gray-600 sm:text-base">
+        Selecciona a los investigadores que ya forman el equipo. El sistema busca colaboradores con
+        afinidad temática (embeddings semánticos de sus publicaciones) y reordena el resultado para
+        promover la diversidad institucional y la visibilidad de perfiles emergentes.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <!-- Columna izquierda: equipo base -->
+      <aside class="lg:col-span-4">
+        <section
+          class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+          [ngClass]="embedded ? '' : 'lg:sticky lg:top-6'"
+        >
+          <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900">
+            <fa-icon [icon]="faPeopleGroup" class="text-primary_tailwind"></fa-icon>
+            Equipo base
+          </h2>
+          <p class="mt-1 text-sm text-gray-500">
+            Busca por apellido y nombre (en cualquier orden) o por ID Scopus y agrega hasta
+            {{ maxTeamSize }} integrantes.
+          </p>
+
+          <!-- Autocompletado -->
+          <div class="relative mt-4">
+            <label for="author-search" class="sr-only">Buscar investigador</label>
+            <fa-icon
+              [icon]="searching ? faSpinner : faMagnifyingGlass"
+              [spin]="searching"
+              class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            ></fa-icon>
+            <input
+              id="author-search"
+              type="text"
+              autocomplete="off"
+              [formControl]="searchControl"
+              (keydown)="onSearchKeydown($event)"
+              (focus)="openSuggestions()"
+              (blur)="closeSuggestions()"
+              [attr.disabled]="teamIsFull ? true : null"
+              [placeholder]="teamIsFull ? 'Equipo completo' : searchPlaceholder"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-sm text-gray-900 focus:border-primary_tailwind focus:bg-white focus:ring-primary_tailwind disabled:cursor-not-allowed disabled:opacity-60"
+              role="combobox"
+              aria-autocomplete="list"
+              [attr.aria-expanded]="showSuggestions"
+              aria-controls="author-suggestions"
+            />
+
+            <ul
+              *ngIf="showSuggestions"
+              id="author-suggestions"
+              role="listbox"
+              class="suggestions absolute z-20 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+            >
+              <li *ngIf="searchFailed" class="suggestion-error px-4 py-3 text-sm text-rose-700">
+                No se pudo buscar: el servicio de recomendación no responde.
+              </li>
+              <li
+                *ngIf="!searchFailed && suggestions.length === 0"
+                class="suggestion-empty px-4 py-3 text-sm text-gray-500"
+              >
+                Sin coincidencias para «{{ lastQuery }}».
+              </li>
+              <li
+                *ngFor="let author of suggestions; let i = index; trackBy: trackByAuthorId"
+                role="option"
+                [attr.aria-selected]="i === activeSuggestion"
+                class="suggestion flex cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-sm"
+                [class.bg-blue-50]="i === activeSuggestion"
+                [class.opacity-50]="isInTeam(author)"
+                (mousedown)="$event.preventDefault()"
+                (mouseenter)="activeSuggestion = i"
+                (click)="addMember(author)"
+              >
+                <div class="min-w-0">
+                  <p class="suggestion-name truncate font-medium text-gray-900">
+                    {{ displayName(author) }}
+                  </p>
+                  <p
+                    class="suggestion-institution text-xs leading-snug text-gray-600"
+                    [title]="author.institution | institutionName"
+                  >
+                    {{ author.institution | institutionName }}
+                  </p>
+                  <p class="suggestion-scopus truncate text-[11px] text-gray-400">
+                    <span *ngIf="scopusName(author) as scopus">Scopus: {{ scopus }} · </span>ID
+                    {{ author.author_id }}
+                  </p>
+                </div>
+                <div class="shrink-0 text-right text-xs text-gray-400">
+                  <span *ngIf="author.article_count !== null">{{ author.article_count }} art.</span>
+                  <span *ngIf="isInTeam(author)" class="block text-primary_tailwind"
+                    >En el equipo</span
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Integrantes -->
+          <div class="mt-4">
+            <div class="mb-2 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-gray-500"
+                >Integrantes ({{ team.length }})</span
+              >
+              <button
+                *ngIf="team.length > 0"
+                type="button"
+                class="clear-team text-xs font-medium text-gray-500 hover:text-rose-600"
+                (click)="clearTeam()"
+              >
+                Quitar todos
+              </button>
+            </div>
+
+            <p
+              *ngIf="team.length === 0"
+              class="team-empty rounded-lg border border-dashed border-gray-300 px-3 py-4 text-center text-sm text-gray-400"
+            >
+              Aún no hay integrantes.
+            </p>
+
+            <ul class="flex flex-col gap-2">
+              <li
+                *ngFor="let member of team; trackBy: trackByAuthorId"
+                class="member-chip flex items-center gap-3 rounded-lg border px-3 py-2"
+                [ngClass]="
+                  isUnknown(member) ? 'border-rose-300 bg-rose-50' : 'border-blue-100 bg-blue-50/60'
+                "
+              >
+                <div class="min-w-0 flex-1">
+                  <p
+                    class="truncate text-sm font-medium text-gray-900"
+                    [title]="displayName(member)"
+                  >
+                    {{ displayName(member) }}
+                  </p>
+                  <p
+                    class="truncate text-xs text-gray-500"
+                    [title]="member.institution | institutionName"
+                  >
+                    {{ member.institution | institutionName }}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="remove-member rounded-full p-1 text-gray-400 hover:bg-white hover:text-rose-600"
+                  [attr.aria-label]="'Quitar a ' + displayName(member)"
+                  (click)="removeMember(member)"
+                >
+                  <fa-icon [icon]="faXmark"></fa-icon>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Parámetros -->
+          <div class="mt-5 space-y-4 border-t border-gray-100 pt-5">
+            <div>
+              <span class="mb-2 block text-sm font-medium text-gray-700"
+                >Número de recomendaciones</span
+              >
+              <div class="inline-flex rounded-lg shadow-sm" role="group">
+                <button
+                  *ngFor="let option of topKOptions; let first = first; let last = last"
+                  type="button"
+                  class="top-k-option border border-gray-300 px-4 py-2 text-sm font-medium"
+                  [class.rounded-l-lg]="first"
+                  [class.rounded-r-lg]="last"
+                  [class.-ml-px]="!first"
+                  [ngClass]="
+                    option === topK
+                      ? 'z-10 border-primary_tailwind bg-primary_tailwind text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  "
+                  [attr.aria-pressed]="option === topK"
+                  (click)="setTopK(option)"
+                >
+                  Top {{ option }}
+                </button>
+              </div>
+            </div>
+
+            <label class="flex cursor-pointer items-start justify-between gap-4">
+              <span>
+                <span class="block text-sm font-medium text-gray-700">Re-ranking de equidad</span>
+                <span class="block text-xs text-gray-500"
+                  >Máx. 3 por institución y 20 % de perfiles de baja visibilidad.</span
+                >
+              </span>
+              <input
+                type="checkbox"
+                class="fairness-toggle peer sr-only"
+                [checked]="fairnessEnabled"
+                (change)="toggleFairness()"
+              />
+              <span
+                class="relative mt-0.5 h-6 w-11 shrink-0 rounded-full bg-gray-200 transition after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary_tailwind peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 peer-focus:ring-blue-200"
+              ></span>
+            </label>
+
+            <button
+              type="button"
+              class="recommend-button flex w-full items-center justify-center gap-2 rounded-lg bg-primary_tailwind px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-primary_hover focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:bg-gray-300"
+              [disabled]="!canRecommend"
+              (click)="recommend()"
+            >
+              <fa-icon
+                [icon]="loading ? faSpinner : faWandMagicSparkles"
+                [spin]="loading"
+              ></fa-icon>
+              {{
+                loading
+                  ? 'Calculando recomendaciones…'
+                  : response
+                    ? 'Actualizar recomendaciones'
+                    : 'Recomendar colaboradores'
+              }}
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Columna derecha: resultados -->
+      <main class="lg:col-span-8">
+        <!-- Error -->
+        <div
+          *ngIf="error"
+          role="alert"
+          class="error-panel mb-6 flex items-start gap-3 rounded-xl border p-4 text-sm"
+          [ngClass]="
+            error.kind === 'unavailable'
+              ? 'border-amber-200 bg-amber-50 text-amber-900'
+              : 'border-rose-200 bg-rose-50 text-rose-900'
+          "
+        >
+          <fa-icon
+            [icon]="error.kind === 'unavailable' ? faPlugCircleXmark : faCircleExclamation"
+            class="mt-0.5 text-lg"
+          ></fa-icon>
+          <div>
+            <p class="font-semibold">
+              {{
+                error.kind === 'unavailable'
+                  ? 'Servicio de recomendación no disponible'
+                  : 'No se pudo generar la recomendación'
+              }}
+            </p>
+            <p class="mt-0.5">{{ error.message }}</p>
+          </div>
+        </div>
+
+        <!-- Cargando -->
+        <div *ngIf="loading && !response" class="loading-state" aria-live="polite" aria-busy="true">
+          <div class="mb-4 flex items-center gap-2 text-sm text-gray-600">
+            <fa-icon [icon]="faSpinner" [spin]="true" class="text-primary_tailwind"></fa-icon>
+            Calculando el centroide del equipo y aplicando el re-ranking de equidad…
+          </div>
+          <div class="space-y-3">
+            <div
+              *ngFor="let row of skeletonRows"
+              class="flex animate-pulse gap-4 rounded-xl border border-gray-200 bg-white p-4"
+            >
+              <div class="h-11 w-11 rounded-full bg-gray-200"></div>
+              <div class="flex-1 space-y-2 py-1">
+                <div class="h-4 w-1/3 rounded bg-gray-200"></div>
+                <div class="h-3 w-1/2 rounded bg-gray-200"></div>
+                <div class="h-2 w-full rounded bg-gray-100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado inicial -->
+        <div
+          *ngIf="!loading && !response && !error"
+          class="initial-state flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center"
+        >
+          <div class="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50">
+            <fa-icon [icon]="faUsersViewfinder" class="text-2xl text-primary_tailwind"></fa-icon>
+          </div>
+          <h2 class="mt-4 text-base font-semibold text-gray-900">
+            {{
+              team.length === 0
+                ? 'Agrega investigadores al equipo base'
+                : 'Preparando recomendaciones…'
+            }}
+          </h2>
+          <p class="mt-1 max-w-md text-sm text-gray-500">
+            {{
+              team.length === 0
+                ? 'Usa el buscador para seleccionar al menos un integrante. Las recomendaciones aparecerán aquí y se actualizarán solas al cambiar el equipo.'
+                : 'Los candidatos se calculan automáticamente al agregar o quitar integrantes.'
+            }}
+          </p>
+        </div>
+
+        <!-- Resultados -->
+        <ng-container *ngIf="response">
+          <app-fairness-summary
+            *ngIf="hasResults"
+            [metrics]="response.fairness_metrics"
+            [diagnostics]="response.diagnostics"
+            [model]="response.model"
+            [fairnessEnabled]="appliedFairness"
+            [topK]="response.recommendations.length"
+            [elapsedMs]="elapsedMs"
+          ></app-fairness-summary>
+
+          <div class="mb-3 mt-6 flex items-end justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Candidatos recomendados</h2>
+              <p class="team-label text-sm text-gray-500">
+                Para el equipo:
+                <span class="font-medium text-gray-700">{{ responseTeamLabel }}</span>
+              </p>
+            </div>
+            <span
+              *ngIf="loading"
+              class="refreshing flex items-center gap-2 text-xs font-medium text-primary_tailwind"
+              aria-live="polite"
+            >
+              <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
+              Actualizando…
+            </span>
+          </div>
+
+          <div
+            *ngIf="!hasResults"
+            class="results-empty rounded-xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center text-sm text-gray-500"
+          >
+            No se encontraron candidatos para este equipo.
+          </div>
+
+          <div class="results-list space-y-3 transition-opacity" [class.opacity-60]="loading">
+            <app-recommended-candidate-card
+              *ngFor="let candidate of response.recommendations; trackBy: trackByAuthorId"
+              [candidate]="candidate"
+              [fairnessEnabled]="appliedFairness"
+            ></app-recommended-candidate-card>
+          </div>
+        </ng-container>
+      </main>
+    </div>
+  </div>
+</div>

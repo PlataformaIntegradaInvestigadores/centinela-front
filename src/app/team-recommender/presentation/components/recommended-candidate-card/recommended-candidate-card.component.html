@@ -1,0 +1,150 @@
+<article
+  class="candidate-card group relative flex gap-4 rounded-xl border bg-white p-4 shadow-sm transition hover:shadow-md"
+  [class.border-emerald-300]="candidate.selection_reason === 'quota'"
+  [class.border-gray-200]="candidate.selection_reason !== 'quota'"
+  [attr.data-author-id]="candidate.author_id"
+>
+  <!-- Rango -->
+  <div class="flex w-14 shrink-0 flex-col items-center">
+    <span
+      class="rank-badge flex h-11 w-11 items-center justify-center rounded-full bg-primary_tailwind text-base font-semibold text-white"
+      [attr.aria-label]="'Puesto ' + candidate.rank"
+    >
+      {{ candidate.rank }}
+    </span>
+    <span
+      *ngIf="fairnessEnabled"
+      class="movement mt-2 inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium"
+      [class.text-emerald-600]="movement > 0"
+      [class.text-rose-600]="movement < 0"
+      [class.text-gray-400]="movement === 0"
+      [title]="'Puesto por relevancia pura: ' + candidate.baseline_rank"
+    >
+      <fa-icon [icon]="movementIcon" class="text-[10px]"></fa-icon>
+      {{ movementLabel }}
+    </span>
+  </div>
+
+  <!-- Datos del investigador -->
+  <div class="min-w-0 flex-1">
+    <div class="flex items-start gap-3">
+      <div
+        class="avatar hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-semibold text-primary_tailwind sm:flex"
+        aria-hidden="true"
+      >
+        {{ initials }}
+      </div>
+      <div class="min-w-0">
+        <h3 class="candidate-name truncate text-base font-semibold text-gray-900">
+          <a
+            [routerLink]="['/profile', candidate.author_id]"
+            class="hover:text-primary_tailwind hover:underline"
+            title="Ver perfil en Centinela"
+            >{{ displayName }}</a
+          >
+        </h3>
+        <p class="candidate-institution mt-0.5 flex items-center gap-1.5 text-sm text-gray-600">
+          <fa-icon [icon]="faBuildingColumns" class="text-gray-400"></fa-icon>
+          <span class="truncate">{{ candidate.institution | institutionName }}</span>
+        </p>
+        <p class="mt-0.5 text-xs text-gray-400">Scopus ID {{ candidate.author_id }}</p>
+      </div>
+    </div>
+
+    <!-- Relevancia -->
+    <div class="mt-3">
+      <div class="mb-1 flex items-center justify-between text-xs">
+        <span class="font-medium text-gray-600">Relevancia temática</span>
+        <span class="relevance-value font-semibold text-gray-800">
+          {{ relevancePercent }} %
+          <span class="font-normal text-gray-400"
+            >· coseno {{ candidate.relevance_score | number: '1.3-3' }}</span
+          >
+        </span>
+      </div>
+      <div
+        class="h-2 w-full overflow-hidden rounded-full bg-gray-100"
+        role="progressbar"
+        [attr.aria-valuenow]="relevancePercent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="relevance-bar h-full rounded-full bg-gradient-to-r from-primary_tailwind to-blue-400"
+          [style.width.%]="relevancePercent"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Invitación (mock) -->
+    <div *ngIf="canInvite" class="mt-3 flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        class="invite-button inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:border-primary_tailwind hover:text-primary_tailwind focus:outline-none focus:ring-2 focus:ring-blue-200"
+        [attr.aria-label]="'Invitar al equipo a ' + displayName"
+        title="Copia un enlace para invitar a este investigador a Centinela"
+        (click)="invite()"
+      >
+        <fa-icon [icon]="faEnvelope"></fa-icon>
+        Invitar al equipo
+      </button>
+      <span
+        *ngIf="inviteState === 'copied'"
+        class="invite-feedback inline-flex items-center gap-1 text-xs font-medium text-emerald-700"
+        role="status"
+      >
+        <fa-icon [icon]="faCheck"></fa-icon>
+        {{ inviteMessage }}
+      </span>
+    </div>
+
+    <!-- Badges -->
+    <div *ngIf="badges.length > 0" class="mt-3 flex flex-wrap gap-2">
+      <span
+        *ngFor="let badge of badges"
+        class="candidate-badge inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset"
+        [ngClass]="badge.classes"
+        [title]="badge.tooltip"
+      >
+        <fa-icon [icon]="badge.icon"></fa-icon>
+        {{ badge.label }}
+      </span>
+    </div>
+  </div>
+</article>
+
+<!-- Modal mínimo: el navegador no permitió copiar al portapapeles -->
+<div
+  *ngIf="inviteState === 'manual'"
+  class="invite-modal fixed inset-0 z-50 flex items-center justify-center bg-slate-500/50 px-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="invite-title"
+  (click)="closeInvite()"
+>
+  <div class="w-full max-w-md rounded-xl bg-white p-5 shadow-lg" (click)="$event.stopPropagation()">
+    <h3 id="invite-title" class="text-base font-semibold text-gray-900">
+      Invitar a {{ displayName }}
+    </h3>
+    <p class="mt-1 text-sm text-gray-600">
+      Aún no tiene cuenta activa en Centinela. Copia este enlace y compártelo para invitarlo al
+      equipo.
+    </p>
+    <input
+      type="text"
+      readonly
+      class="invite-link mt-3 block w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-800"
+      [value]="inviteLink"
+      (focus)="$any($event.target).select()"
+    />
+    <div class="mt-4 flex justify-end">
+      <button
+        type="button"
+        class="invite-close rounded-lg bg-primary_tailwind px-4 py-2 text-sm font-medium text-white hover:bg-primary_hover"
+        (click)="closeInvite()"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
