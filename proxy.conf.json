@@ -1,10 +1,19 @@
 {
+  "/api/recommender/health": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/recommender/health": "/health"
+    },
+    "logLevel": "debug"
+  },
   "/api/recommender": {
     "target": "http://localhost:8000",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/recommender": ""
+      "^/api/recommender": "/api/v1"
     },
     "logLevel": "debug"
   },

@@ -12,7 +12,7 @@ describe('TeamRecommenderService', () => {
   const base = environment.apiRecommender;
 
   const httpError = (status: number, error: unknown) =>
-    new HttpErrorResponse({ status, error, url: `${base}/api/v1/recommend` });
+    new HttpErrorResponse({ status, error, url: `${base}/recommend` });
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
@@ -34,7 +34,7 @@ describe('TeamRecommenderService', () => {
   it('searchAuthors trims the query, sends limit and unwraps results', () => {
     let results: unknown[] = [];
     service.searchAuthors('  carrion ', 5).subscribe((r) => (results = r));
-    const req = httpMock.expectOne((r) => r.url === `${base}/api/v1/authors`);
+    const req = httpMock.expectOne((r) => r.url === `${base}/authors`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('q')).toBe('carrion');
     expect(req.request.params.get('limit')).toBe('5');
@@ -46,7 +46,7 @@ describe('TeamRecommenderService', () => {
   it('searchAuthors defaults limit to 8 and tolerates a missing results array', () => {
     let results: unknown[] | undefined;
     service.searchAuthors('lavoie').subscribe((r) => (results = r));
-    const req = httpMock.expectOne((r) => r.url === `${base}/api/v1/authors`);
+    const req = httpMock.expectOne((r) => r.url === `${base}/authors`);
     expect(req.request.params.get('limit')).toBe('8');
     req.flush({ query: 'lavoie', count: 0 });
     expect(results).toEqual([]);
@@ -56,7 +56,7 @@ describe('TeamRecommenderService', () => {
     const body = { author_ids: ['1', '2'], top_k: 10, fairness: { enabled: true } };
     let response: RecommendResponse | undefined;
     service.recommend(body).subscribe((r) => (response = r));
-    const req = httpMock.expectOne(`${base}/api/v1/recommend`);
+    const req = httpMock.expectOne(`${base}/recommend`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(body);
     req.flush({ model: 'm', team: [], recommendations: [] });

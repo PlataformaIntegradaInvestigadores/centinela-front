@@ -72,12 +72,14 @@ npm start        # = ng serve, http://localhost:4200
 
 ### Conformar equipo (recomendación ética de investigadores)
 
-La página `/home/team-builder` consume `ethical-recommender-service` (FastAPI) vía
-`environment.apiRecommender` (`/api/recommender`). En local, `proxy.conf.json` reenvía
-`/api/recommender/*` a `http://localhost:8000/*` (regla declarada antes de la genérica `/api`), así
-que basta con levantar ese servicio (`python -m uvicorn infrastructure.api.main:app --port 8000`) y
-`npm start`; no requiere `gateway-service`, `identity-service` ni sesión iniciada. En
-staging/producción falta la ruta equivalente en `gateway-service`.
+El recomendador vive dentro del módulo de grupos (`/profile/:id/my-groups#ethical-team-builder`,
+sección «Recommended Members · Conformación ética de equipo»); `/home/team-builder` queda como demo
+pública sin sesión. Ambos consumen `ethical-recommender-service` (FastAPI) vía
+`environment.apiRecommender` (`/api/recommender`). En staging/producción `gateway-service` reescribe
+`/api/recommender/<ruta>` a `ethical-recommender-service:8007/api/v1/<ruta>` (y
+`/api/recommender/health` a `/health`). En local, `proxy.conf.json` replica esa reescritura contra
+`http://localhost:8000` (reglas declaradas antes de la genérica `/api`), así que para la demo basta
+con levantar ese servicio (`python -m uvicorn infrastructure.api.main:app --port 8000`) y `npm start`.
 
 El equipo base admite hasta 5 integrantes (`MAX_TEAM_SIZE`): más integrantes diluyen el centroide
 semántico. El autocompletado acepta apellido y nombre en cualquier orden o el formato Scopus

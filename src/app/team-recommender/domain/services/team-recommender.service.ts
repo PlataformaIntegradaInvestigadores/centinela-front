@@ -17,8 +17,9 @@ const UNAVAILABLE_STATUSES = [0, 502, 503, 504];
 
 /**
  * Cliente de ethical-recommender-service. Usa el path relativo environment.apiRecommender
- * (mismo origen, convención del repo); en local, proxy.conf.json reescribe
- * /api/recommender/* hacia http://localhost:8000/*.
+ * (mismo origen, convención del repo). Igual que /api/predictive, gateway-service reescribe
+ * /api/recommender/<ruta> a /api/v1/<ruta> del servicio (y /api/recommender/health a /health);
+ * en local, proxy.conf.json replica esa reescritura contra uvicorn en http://localhost:8000.
  *
  * Los endpoints son públicos: si no hay sesión, AuthInterceptor deja pasar la petición sin
  * cabecera Authorization; si la hay, el backend la ignora (nunca responde 401).
@@ -38,12 +39,12 @@ export class TeamRecommenderService {
   searchAuthors(query: string, limit: number = 8): Observable<AuthorSearchResult[]> {
     const params = new HttpParams().set('q', query.trim()).set('limit', limit.toString());
     return this.http
-      .get<AuthorSearchResponse>(`${this.baseUrl}/api/v1/authors`, { params })
+      .get<AuthorSearchResponse>(`${this.baseUrl}/authors`, { params })
       .pipe(map((response) => response.results ?? []));
   }
 
   recommend(request: RecommendRequest): Observable<RecommendResponse> {
-    return this.http.post<RecommendResponse>(`${this.baseUrl}/api/v1/recommend`, request);
+    return this.http.post<RecommendResponse>(`${this.baseUrl}/recommend`, request);
   }
 
   /** Traduce un error HTTP del recomendador a un mensaje en español para la UI. */
@@ -55,8 +56,8 @@ export class TeamRecommenderService {
       return {
         kind: 'unavailable',
         message:
-          'No se pudo conectar con el servicio de recomendación. Verifica que el backend ' +
-          '(uvicorn, puerto 8000) esté en ejecución.',
+          'No se pudo conectar con el servicio de recomendación. Intenta de nuevo en unos ' +
+          'minutos; si persiste, verifica que ethical-recommender-service esté en ejecución.',
         unknownIds: [],
       };
     }
