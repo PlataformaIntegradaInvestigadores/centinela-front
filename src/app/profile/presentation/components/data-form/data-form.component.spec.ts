@@ -144,14 +144,20 @@ describe('DataFormComponent', () => {
     it('reads the selected file as a data url', (done) => {
       const file = new File(['hello'], 'pic.png', { type: 'image/png' });
       const event = { target: { files: [file] } } as unknown as Event;
-
+      const read = FileReader.prototype.readAsDataURL;
+      spyOn(FileReader.prototype, 'readAsDataURL').and.callFake(function (
+        this: FileReader,
+        blob: Blob,
+      ) {
+        this.addEventListener('loadend', () => {
+          expect(component.formData.profile_picture).toContain('data:');
+          done();
+        });
+        read.call(this, blob);
+      });
       component.onFileSelected(event);
 
       expect(component.selectedFile).toBe(file);
-      setTimeout(() => {
-        expect(component.formData.profile_picture).toContain('data:');
-        done();
-      }, 50);
     });
 
     it('does nothing when no file is selected', () => {

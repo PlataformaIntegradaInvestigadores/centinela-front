@@ -9,7 +9,7 @@ describe('CompanyService', () => {
   let service: CompanyService;
   let httpMock: HttpTestingController;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
-  const apiUrl = environment.apiIdentity;
+  const socialUrl = environment.apiSocial;
 
   beforeEach(() => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getToken']);
@@ -41,12 +41,12 @@ describe('CompanyService', () => {
 
   it('getMyProfile GETs the own-profile endpoint', () => {
     service.getMyProfile().subscribe((res) => expect(res).toBeTruthy());
-    httpMock.expectOne(`${apiUrl}/companies/profile/`).flush({});
+    httpMock.expectOne(`${socialUrl}/companies/profile/`).flush({});
   });
 
   it('getCompanyProfile GETs a specific company', () => {
     service.getCompanyProfile('c-1').subscribe((res) => expect(res).toBeTruthy());
-    httpMock.expectOne(`${apiUrl}/companies/c-1/`).flush({});
+    httpMock.expectOne(`${socialUrl}/companies/c-1/`).flush({});
   });
 
   describe('updateCompanyProfile', () => {
@@ -56,7 +56,7 @@ describe('CompanyService', () => {
         .updateCompanyProfile('c-1', { company_name: 'Acme', logo, founded_year: 2020 } as any)
         .subscribe();
 
-      const req = httpMock.expectOne(`${apiUrl}/companies/c-1/update/`);
+      const req = httpMock.expectOne(`${socialUrl}/companies/c-1/update/`);
       expect(req.request.method).toBe('PATCH');
       const body = req.request.body as FormData;
       expect(body.get('company_name')).toBe('Acme');
@@ -70,7 +70,7 @@ describe('CompanyService', () => {
         .updateCompanyProfile('c-1', { company_name: 'Acme', description: null } as any)
         .subscribe();
 
-      const req = httpMock.expectOne(`${apiUrl}/companies/c-1/update/`);
+      const req = httpMock.expectOne(`${socialUrl}/companies/c-1/update/`);
       const body = req.request.body as FormData;
       expect(body.has('description')).toBeFalse();
       req.flush({});
@@ -79,12 +79,12 @@ describe('CompanyService', () => {
 
   it('listCompanies without verifiedOnly hits the plain collection endpoint', () => {
     service.listCompanies().subscribe((res) => expect(res).toEqual([]));
-    httpMock.expectOne(`${apiUrl}/companies/`).flush([]);
+    httpMock.expectOne(`${socialUrl}/companies/`).flush([]);
   });
 
   it('listCompanies with verifiedOnly adds the query param', () => {
     service.listCompanies(true).subscribe((res) => expect(res).toEqual([]));
-    httpMock.expectOne(`${apiUrl}/companies/?verified_only=true`).flush([]);
+    httpMock.expectOne(`${socialUrl}/companies/?verified_only=true`).flush([]);
   });
 
   describe('handleError', () => {
@@ -98,7 +98,7 @@ describe('CompanyService', () => {
         },
       });
       httpMock
-        .expectOne(`${apiUrl}/companies/c-1/`)
+        .expectOne(`${socialUrl}/companies/c-1/`)
         .flush({ message: 'Custom message' }, { status: 400, statusText: 'Bad Request' });
     });
 
@@ -109,7 +109,7 @@ describe('CompanyService', () => {
           done();
         },
       });
-      httpMock.expectOne(`${apiUrl}/companies/c-1/`).flush(null, {
+      httpMock.expectOne(`${socialUrl}/companies/c-1/`).flush(null, {
         status: 0,
         statusText: 'Unknown',
       });

@@ -26,7 +26,7 @@ describe('CompanyChoicesService', () => {
     service.getCompanyChoices().subscribe((choices) => {
       expect(choices.industries.length).toBe(1);
     });
-    const req = httpMock.expectOne(`${environment.apiIdentity}/companies/choices/`);
+    const req = httpMock.expectOne(`${environment.apiSocial}/companies/choices/`);
     expect(req.request.method).toBe('GET');
     req.flush({ industries: [{ value: 'tech', label: 'Tech' }], employee_counts: [] });
   });

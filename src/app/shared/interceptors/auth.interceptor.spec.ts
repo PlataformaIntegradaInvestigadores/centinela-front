@@ -159,4 +159,111 @@ describe('AuthInterceptor', () => {
       done();
     });
   });
+
+  describe('admin routes', () => {
+    const adminUrl = '/api/search/v1/admin/etl/run/';
+
+    function sentRequest(handler: HttpHandler): HttpRequest<unknown> {
+      return (handler.handle as jasmine.Spy).calls.mostRecent().args[0];
+    }
+
+    function startAdminSession(token = 'adm-1', expiresIn = 3600): void {
+      sessionStorage.setItem('adminToken', token);
+      sessionStorage.setItem('adminTokenExpiresAt', String(Date.now() + expiresIn * 1000));
+    }
+
+    beforeEach(() => sessionStorage.clear());
+    afterEach(() => sessionStorage.clear());
+
+    it('sends X-Admin-Token on admin routes', () => {
+      startAdminSession();
+      const handler = fakeHandler(of({} as HttpEvent<unknown>));
+
+      interceptor.intercept(new HttpRequest('GET', adminUrl), handler).subscribe();
+
+      expect(sentRequest(handler).headers.get('X-Admin-Token')).toBe('adm-1');
+    });
+
+    it('covers every admin route', () => {
+      startAdminSession();
+      const urls = [
+        '/api/search/v1/admin/logs/',
+        '/api/search/v1/generate-corpus/',
+        '/api/search/v1/generate-model/',
+        '/api/search/v1/scopus-integration/',
+        '/api/search/v1/information/update/author-information/',
+        '/api/search/v1/dashboard/populate',
+      ];
+      for (const url of urls) {
+        const handler = fakeHandler(of({} as HttpEvent<unknown>));
+        interceptor.intercept(new HttpRequest('POST', url, {}), handler).subscribe();
+        expect(sentRequest(handler).headers.get('X-Admin-Token')).withContext(url).toBe('adm-1');
+      }
+    });
+
+    it('does not send the admin token to other routes', () => {
+      startAdminSession();
+      for (const url of [
+        '/api/search/v1/articles/',
+        '/api/search/v1/dashboard/information/get_system_health/',
+        '/api/identity/users/',
+      ]) {
+        const handler = fakeHandler(of({} as HttpEvent<unknown>));
+        interceptor.intercept(new HttpRequest('GET', url), handler).subscribe();
+        expect(sentRequest(handler).headers.has('X-Admin-Token')).withContext(url).toBeFalse();
+      }
+    });
+
+    it('keeps the user JWT in Authorization and the admin token in its own header', () => {
+      localStorage.setItem('accessToken', 'jwt-1');
+      startAdminSession();
+      const handler = fakeHandler(of({} as HttpEvent<unknown>));
+
+      interceptor.intercept(new HttpRequest('GET', adminUrl), handler).subscribe();
+
+      const sent = sentRequest(handler);
+      expect(sent.headers.get('Authorization')).toBe('Bearer jwt-1');
+      expect(sent.headers.get('X-Admin-Token')).toBe('adm-1');
+    });
+
+    it('does not send an expired admin token', () => {
+      startAdminSession('adm-1', -1);
+      const handler = fakeHandler(of({} as HttpEvent<unknown>));
+
+      interceptor.intercept(new HttpRequest('GET', adminUrl), handler).subscribe();
+
+      expect(sentRequest(handler).headers.has('X-Admin-Token')).toBeFalse();
+    });
+
+    it('clears the admin session and goes back to the admin login on a 403', (done) => {
+      startAdminSession();
+      localStorage.setItem('authState', 'authenticated');
+      const forbidden = new HttpErrorResponse({ status: 403, statusText: 'Forbidden' });
+      const handler = fakeHandler(throwError(() => forbidden));
+
+      interceptor.intercept(new HttpRequest('GET', adminUrl), handler).subscribe({
+        error: (err) => {
+          expect(err).toBe(forbidden);
+          expect(sessionStorage.getItem('adminToken')).toBeNull();
+          expect(localStorage.getItem('authState')).toBeNull();
+          expect(routerSpy.navigate).toHaveBeenCalledWith(['/admin']);
+          done();
+        },
+      });
+    });
+
+    it('does not touch the admin session on a 403 from a non-admin route', (done) => {
+      startAdminSession();
+      const forbidden = new HttpErrorResponse({ status: 403, statusText: 'Forbidden' });
+      const handler = fakeHandler(throwError(() => forbidden));
+
+      interceptor.intercept(new HttpRequest('GET', '/api/search/v1/articles/'), handler).subscribe({
+        error: () => {
+          expect(sessionStorage.getItem('adminToken')).toBe('adm-1');
+          expect(routerSpy.navigate).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+  });
 });

@@ -11,6 +11,11 @@ import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/domain/services/auth.service';
 import { AuthResponse } from 'src/app/auth/domain/entities/interfaces';
 import { Router } from '@angular/router';
+import { AdminSessionService } from 'src/app/search-engine/domain/services/admin-session.service';
+
+// Rutas de search-service que exigen credenciales de administrador (IsCentinelaAdmin).
+const ADMIN_ROUTES =
+  /\/api\/search\/v1\/(admin\/|generate-corpus\/|generate-model\/|scopus-integration\/|information\/update\/|dashboard\/populate)/;
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -22,6 +27,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private adminSession: AdminSessionService,
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -31,8 +37,23 @@ export class AuthInterceptor implements HttpInterceptor {
       request = this.addTokenHeader(request, token);
     }
 
+    const isAdminRoute = ADMIN_ROUTES.test(request.url);
+    if (isAdminRoute) {
+      const adminToken = this.adminSession.token();
+      if (adminToken) {
+        request = request.clone({ headers: request.headers.set('X-Admin-Token', adminToken) });
+      }
+    }
+
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        if (isAdminRoute && error.status === 403) {
+          // Token de admin vencido o inexistente: volver al login del panel.
+          this.adminSession.clear();
+          this.router.navigate(['/admin']);
+          return throwError(() => error);
+        }
+
         if (error.status === 401 && this.shouldAttemptRefresh(request, error)) {
           return this.handle401Error(request, next);
         }

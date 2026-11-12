@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/auth/domain/services/auth.service';
 })
 export class CompanyService {
   private apiUrl = environment.apiIdentity;
+  private apiSocial = environment.apiSocial;
 
   constructor(
     private http: HttpClient,
@@ -31,7 +32,7 @@ export class CompanyService {
           Authorization: `Bearer ${token}`,
         });
 
-        return this.http.get<CompanyProfile>(`${this.apiUrl}/companies/profile/`, { headers });
+        return this.http.get<CompanyProfile>(`${this.apiSocial}/companies/profile/`, { headers });
       }),
       catchError(this.handleError),
     );
@@ -51,7 +52,7 @@ export class CompanyService {
           Authorization: `Bearer ${token}`,
         });
 
-        return this.http.get<CompanyProfile>(`${this.apiUrl}/companies/${companyId}/`, { headers });
+        return this.http.get<CompanyProfile>(`${this.apiSocial}/companies/${companyId}/`, { headers });
       }),
       catchError(this.handleError),
     );
@@ -86,7 +87,7 @@ export class CompanyService {
         });
 
         return this.http.patch<CompanyProfile>(
-          `${this.apiUrl}/companies/${companyId}/update/`,
+          `${this.apiSocial}/companies/${companyId}/update/`,
           formData,
           { headers },
         );
@@ -110,7 +111,7 @@ export class CompanyService {
         });
 
         const params = verifiedOnly ? '?verified_only=true' : '';
-        return this.http.get<CompanyListItem[]>(`${this.apiUrl}/companies/${params}`, { headers });
+        return this.http.get<CompanyListItem[]>(`${this.apiSocial}/companies/${params}`, { headers });
       }),
       catchError(this.handleError),
     );

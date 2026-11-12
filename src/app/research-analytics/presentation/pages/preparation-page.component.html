@@ -1,0 +1,221 @@
+<main class="mx-auto max-w-7xl p-6" aria-labelledby="preparation-heading">
+  <a routerLink="/research-analytics" class="underline">Volver al explorador documental</a>
+  <header class="my-6">
+    <h1 id="preparation-heading" class="text-3xl font-bold">Calidad y preparación del corpus</h1>
+    <p class="notice">
+      Conjuntos para desarrollo. Su creación no ejecuta entrenamiento ni constituye una partición
+      temporal final.
+    </p>
+  </header>
+
+  <section
+    aria-labelledby="quality-heading"
+    aria-live="polite"
+    [attr.aria-busy]="qualityState === 'loading'"
+  >
+    <h2 id="quality-heading" class="text-xl font-bold">Diagnóstico de la instantánea completa</h2>
+    <p *ngIf="qualityState === 'loading'" role="status">Analizando calidad documental…</p>
+    <div *ngIf="qualityState === 'error'" role="alert">
+      <p>{{ qualityError }}</p>
+      <button type="button" (click)="reloadQuality()">Reintentar diagnóstico</button>
+    </div>
+    <ng-container *ngIf="quality as data">
+      <dl class="metrics">
+        <div>
+          <dt>Artículos</dt>
+          <dd>{{ data.articles | number }}</dd>
+        </div>
+        <div>
+          <dt>Sin resumen</dt>
+          <dd>{{ data.missing_abstracts | number }}</dd>
+        </div>
+        <div>
+          <dt>Grupos con texto repetido</dt>
+          <dd>{{ data.duplicate_text_groups | number }}</dd>
+        </div>
+        <div>
+          <dt>Repeticiones adicionales</dt>
+          <dd>{{ data.duplicate_text_excess | number }}</dd>
+        </div>
+      </dl>
+      <p>
+        La coincidencia de título y resumen normalizados es una señal para revisión, no prueba que
+        dos publicaciones sean iguales.
+      </p>
+      <div
+        class="table-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="Tabla de calidad desplazable"
+      >
+        <table>
+          <caption>
+            Longitud del resumen en tokens Unicode; no representa un análisis lingüístico aprendido
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Cantidad de tokens</th>
+              <th scope="col">Artículos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bucket of data.abstract_token_buckets | keyvalue">
+              <th scope="row">{{ tokenLabels[bucket.key] }}</th>
+              <td>{{ bucket.value | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Fechas con día 1: {{ data.dates.day_one | number }}. Fechas con 1 de enero:
+        {{ data.dates.january_one | number }}. El segundo conteo está incluido en el primero.
+      </p>
+      <p class="notice">
+        La precisión de fechas y la cobertura no están verificadas. Estas concentraciones no
+        demuestran rezago de indexación ni permiten asumir periodicidad mensual.
+      </p>
+      <p>
+        Idioma desconocido: {{ data.language.unknown | number }}; declarado en origen:
+        {{ data.language.declared | number }}. No se ha ejecutado detección de idioma.
+      </p>
+      <p>
+        Identidad del informe: <code class="identifier">{{ data.quality_id }}</code>
+      </p>
+    </ng-container>
+  </section>
+
+  <section class="my-6" aria-labelledby="configuration-heading">
+    <h2 id="configuration-heading" class="text-xl font-bold">
+      Configurar un conjunto de desarrollo
+    </h2>
+    <form (ngSubmit)="preview()" class="filters" aria-label="Configurar preparación" #form="ngForm">
+      <label
+        >Sin resumen<select
+          name="missing_abstract"
+          [(ngModel)]="configuration.missing_abstract"
+          (ngModelChange)="changed()"
+          [disabled]="busy"
+        >
+          <option value="exclude">Excluir</option>
+          <option value="title_only">Conservar solo el título</option>
+        </select></label
+      >
+      <label
+        >Textos repetidos<select
+          name="duplicates"
+          [(ngModel)]="configuration.duplicates"
+          (ngModelChange)="changed()"
+          [disabled]="busy"
+        >
+          <option value="exclude_later">Conservar primero por identificador</option>
+          <option value="keep">Conservar todos</option>
+        </select></label
+      >
+      <label
+        >Mínimo de tokens<input
+          type="number"
+          name="min_tokens"
+          min="1"
+          max="10000"
+          required
+          [(ngModel)]="configuration.min_tokens"
+          (ngModelChange)="changed()"
+          [disabled]="busy"
+      /></label>
+      <label
+        >Año inicial<input
+          type="number"
+          name="start_year"
+          min="1"
+          max="9999"
+          required
+          [(ngModel)]="configuration.start_year"
+          (ngModelChange)="changed()"
+          [disabled]="busy"
+      /></label>
+      <label
+        >Año final<input
+          type="number"
+          name="end_year"
+          min="1"
+          max="9999"
+          required
+          [(ngModel)]="configuration.end_year"
+          (ngModelChange)="changed()"
+          [disabled]="busy"
+      /></label>
+      <button type="submit" [disabled]="busy || !form.valid || !valid">
+        Previsualizar selección
+      </button>
+    </form>
+    <p>
+      El mínimo se aplica al título y resumen combinados. Las repeticiones se resuelven por orden
+      estable del identificador, no por fecha de publicación.
+    </p>
+  </section>
+
+  <div aria-live="polite" [attr.aria-busy]="busy">
+    <p *ngIf="busy" role="status">
+      Procesando la selección. La operación puede tardar unos instantes…
+    </p>
+    <p *ngIf="state === 'error'" role="alert" class="notice">{{ error }}</p>
+    <section *ngIf="result as data" class="detail" aria-labelledby="result-heading">
+      <h2 id="result-heading" class="text-xl font-bold">
+        {{
+          state === 'preview' ? 'Previsualización sin guardado' : 'Conjunto guardado y verificado'
+        }}
+      </h2>
+      <p>
+        Incluidos: {{ data.counts.included | number }}. Excluidos:
+        {{ data.counts.excluded | number }}.
+      </p>
+      <p *ngIf="!data.counts.included" role="status">
+        La selección no contiene documentos aptos. Revisa los criterios antes de continuar.
+      </p>
+      <ul>
+        <li *ngFor="let reason of data.counts.exclusion_reasons | keyvalue">
+          {{ exclusionLabels[reason.key] }}: {{ reason.value | number }}
+        </li>
+      </ul>
+      <p>
+        Identificador: <code class="identifier">{{ data.workset_id }}</code>
+      </p>
+      <p>
+        Fuente: <code class="identifier">{{ data.source_version }}</code>
+      </p>
+      <p>Procesador: {{ data.preparation_version }}. Entrenamiento: En proceso.</p>
+      <p *ngIf="data.reused === true">
+        Ya existía una versión idéntica; se comprobó su integridad sin sobrescribirla.
+      </p>
+      <p *ngIf="data.reused === false">
+        Se creó una versión nueva sin modificar la instantánea original.
+      </p>
+      <button
+        *ngIf="state === 'preview'"
+        type="button"
+        (click)="create()"
+        [disabled]="busy || !data.counts.included"
+      >
+        Crear conjunto versionado
+      </button>
+    </section>
+  </div>
+  <section class="my-6" aria-labelledby="lookup-heading">
+    <h2 id="lookup-heading" class="text-xl font-bold">Consultar una versión guardada</h2>
+    <form (ngSubmit)="load()" class="filters" aria-label="Consultar conjunto">
+      <label
+        >Identificador del conjunto<input
+          name="identifier"
+          [(ngModel)]="identifier"
+          maxlength="64"
+          required
+          [disabled]="busy"
+      /></label>
+      <button type="submit" [disabled]="busy">Consultar y verificar</button>
+    </form>
+    <p>
+      Los conjuntos se conservan en el almacenamiento configurado del servidor. Esta pantalla no
+      selecciona rutas ni sobrescribe archivos.
+    </p>
+  </section>
+</main>
