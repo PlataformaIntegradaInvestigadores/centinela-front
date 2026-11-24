@@ -1,17 +1,21 @@
-name: "CD — frontend-app → Producción"
+name: CD — Producción
 
 on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  # ── Tests ──────────────────────────────────────────────────────────────────
-  test:
-    name: Pruebas unitarias (Karma/Jasmine)
+  lint:
+    name: Lint (ESLint)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - name: Descargar código
+        uses: actions/checkout@v7
+      - name: Configurar Node
+        uses: actions/setup-node@v7
         with:
           node-version: '18'
           cache: npm
@@ -19,24 +23,96 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: ng lint
         run: npx ng lint
-      - name: Ejecutar tests
+
+  unit-tests:
+    name: Tests unitarios
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v7
+      - name: Configurar Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '18'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Ejecutar tests unitarios
+        # ubuntu-latest ya trae Chrome; evita descargar chromium por apt.
         env:
           CHROME_BIN: /usr/bin/google-chrome-stable
         run: |
           npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox \
             --no-progress --code-coverage
+      - name: Subir resultados
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: resultados-unitarios-prod
+          if-no-files-found: ignore
+          path: coverage/
+
+  integration-tests:
+    name: Tests de integración
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v7
+      - name: Ejecutar tests de integración
+        run: echo "Sin tests de integración en este servicio."
+
+  coverage:
+    name: Cobertura (mínimo 90 %)
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    steps:
+      - name: Descargar resultados de tests
+        uses: actions/download-artifact@v8
+        with:
+          name: resultados-unitarios-prod
+          path: coverage
+      - name: Verificar cobertura mínima
+        run: |
+          node -e '
+            const s = require("./coverage/frontend-app/coverage-summary.json").total;
+            let ok = true;
+            for (const k of ["statements", "branches", "functions", "lines"]) {
+              const pct = s[k].pct;
+              console.log(`${k.padEnd(10)} ${pct} %`);
+              if (pct < 90) ok = false;
+            }
+            if (!ok) { console.error("Cobertura por debajo de 90 %"); process.exit(1); }
+          '
       - name: Subir reporte de cobertura
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: coverage-report-prod
-          path: coverage/
+          name: cobertura-prod
+          if-no-files-found: ignore
+          path: coverage/frontend-app/
 
-  # ── Deploy producción ────────────────────────────────────────────────────────
+  build:
+    name: Build imagen Docker
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v7
+      - name: Validar docker-compose
+        run: |
+          docker network create centinela-net >/dev/null 2>&1 || true
+          docker compose config --quiet
+      - name: Build imagen
+        run: docker build -t centinela-front:${{ github.sha }} .
+      - name: Verificar imagen
+        run: docker image inspect centinela-front:${{ github.sha }} --format '{{.Id}} {{.Size}}'
+
   deploy-production:
     name: Deploy a servidor producción
     runs-on: [self-hosted, production]
-    needs: test
+    needs: [coverage, build]
     steps:
       - name: Actualizar código
         run: |
@@ -49,7 +125,7 @@ jobs:
           cd /opt/centinela
           docker compose up -d --build --no-deps centinela-front
 
-      - name: Health check con rollback automático
+      - name: Health check
         run: |
           sleep 15
           HEALTHY=false
