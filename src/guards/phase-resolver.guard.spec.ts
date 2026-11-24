@@ -26,7 +26,7 @@ describe('PhaseResolverGuard', () => {
 
   function route(groupId: string | null, parentId = 'p-1'): any {
     return {
-      paramMap: { get: (_: string) => groupId },
+      paramMap: { get: () => groupId },
       parent: { parent: { params: { id: parentId } } },
     };
   }

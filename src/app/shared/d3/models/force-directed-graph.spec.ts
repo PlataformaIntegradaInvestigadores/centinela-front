@@ -25,7 +25,7 @@ describe('ForceDirectedGraph', () => {
   it('pins level-0 nodes to the center', () => {
     const nodes = makeNodes();
     const links = makeLinks(nodes);
-    const graph = new ForceDirectedGraph(nodes, links, options, forces);
+    new ForceDirectedGraph(nodes, links, options, forces);
     expect(nodes[0].fx).toBe(400);
     expect(nodes[0].fy).toBe(300);
   });

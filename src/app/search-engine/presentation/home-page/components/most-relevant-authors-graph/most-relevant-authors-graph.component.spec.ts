@@ -52,7 +52,7 @@ describe('MostRelevantAuthorsGraphComponent', () => {
 
   describe('ngOnInit / refreshGraph', () => {
     it('loads the graph and sets up nodes/links on success', () => {
-      let loadingEvents: boolean[] = [];
+      const loadingEvents: boolean[] = [];
       component.loading.subscribe((v) => loadingEvents.push(v));
       component.ngOnInit();
       expect(component.showGraph).toBeTrue();
