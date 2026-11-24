@@ -27,7 +27,7 @@ describe('PhaseGuard', () => {
   function route(groupId: string | null, expectedPhase: number, parentId = 'p-1'): any {
     return {
       parent: {
-        paramMap: { get: (_: string) => groupId },
+        paramMap: { get: () => groupId },
         parent: { params: { id: parentId } },
       },
       data: { expectedPhase },

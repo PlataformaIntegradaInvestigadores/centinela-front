@@ -17,6 +17,8 @@ jobs:
           cache: npm
       - name: Instalar dependencias
         run: npm ci --no-audit --no-fund
+      - name: ng lint
+        run: npx ng lint
       - name: Ejecutar tests
         env:
           CHROME_BIN: /usr/bin/google-chrome-stable
