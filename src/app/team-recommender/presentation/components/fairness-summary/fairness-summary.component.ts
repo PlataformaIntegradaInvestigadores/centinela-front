@@ -34,7 +34,7 @@ export class FairnessSummaryComponent {
   /** 'sentence-transformers/all-MiniLM-L6-v2' -> 'all-MiniLM-L6-v2'. */
   get modelName(): string {
     const name = this.model.split('/').pop();
-    return name || 'Modelo no informado';
+    return name || 'Model not reported';
   }
 
   get quotaPicks(): number {
@@ -46,35 +46,35 @@ export class FairnessSummaryComponent {
     return [
       {
         key: 'gini',
-        label: 'Diversidad institucional',
+        label: 'Institutional diversity',
         value: this.decimal(m.gini_simpson),
-        hint: 'Índice Gini-Simpson (0 = una sola institución, 1 = máxima diversidad).',
+        hint: 'Gini-Simpson index (0 = a single institution, 1 = maximum diversity).',
       },
       {
         key: 'institutions',
-        label: 'Instituciones únicas',
+        label: 'Unique institutions',
         value:
           m.unique_institutions === undefined
             ? '—'
-            : `${m.unique_institutions}${this.topK ? ' de ' + this.topK : ''}`,
-        hint: 'Instituciones distintas entre los candidatos recomendados.',
+            : `${m.unique_institutions}${this.topK ? ' of ' + this.topK : ''}`,
+        hint: 'Distinct institutions among the recommended candidates.',
       },
       {
         key: 'relevance',
-        label: 'Relevancia retenida',
+        label: 'Relevance retained',
         value: this.percent(m.relevance_retained),
-        hint: 'Relevancia del Top-k final frente al Top-k por relevancia pura.',
+        hint: 'Relevance of the final Top-k versus the Top-k by pure relevance.',
       },
       {
         key: 'exposure',
-        label: 'Exposición baja visibilidad',
+        label: 'Low-visibility exposure',
         value: this.percent(m.low_visibility_exposure_share),
         hint:
           m.pool_low_visibility_share === undefined
-            ? 'Exposición (ponderada por posición) de perfiles de baja visibilidad.'
-            : `Exposición ponderada por posición; en el grupo de candidatos son el ${this.percent(
+            ? 'Exposure (position-weighted) of low-visibility profiles.'
+            : `Position-weighted exposure; they make up ${this.percent(
                 m.pool_low_visibility_share,
-              )}.`,
+              )} of the candidate pool.`,
       },
     ];
   }
@@ -84,6 +84,6 @@ export class FairnessSummaryComponent {
   }
 
   private percent(value: number | undefined): string {
-    return value === undefined || !Number.isFinite(value) ? '—' : `${(value * 100).toFixed(1)} %`;
+    return value === undefined || !Number.isFinite(value) ? '—' : `${(value * 100).toFixed(1)}%`;
   }
 }

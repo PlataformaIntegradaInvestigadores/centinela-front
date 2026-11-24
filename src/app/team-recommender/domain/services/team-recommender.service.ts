@@ -47,17 +47,17 @@ export class TeamRecommenderService {
     return this.http.post<RecommendResponse>(`${this.baseUrl}/recommend`, request);
   }
 
-  /** Traduce un error HTTP del recomendador a un mensaje en español para la UI. */
+  /** Traduce un error HTTP del recomendador a un mensaje en inglés para la UI. */
   toRecommenderError(error: unknown): RecommenderError {
     if (!(error instanceof HttpErrorResponse)) {
-      return { kind: 'unexpected', message: 'Ocurrió un error inesperado.', unknownIds: [] };
+      return { kind: 'unexpected', message: 'An unexpected error occurred.', unknownIds: [] };
     }
     if (UNAVAILABLE_STATUSES.includes(error.status) || this.isProxyError(error)) {
       return {
         kind: 'unavailable',
         message:
-          'No se pudo conectar con el servicio de recomendación. Intenta de nuevo en unos ' +
-          'minutos; si persiste, verifica que ethical-recommender-service esté en ejecución.',
+          'Could not connect to the recommendation service. Try again in a few minutes; if ' +
+          'the problem persists, check that ethical-recommender-service is running.',
         unknownIds: [],
       };
     }
@@ -66,20 +66,20 @@ export class TeamRecommenderService {
       const unknownIds: string[] = detail.unknown_author_ids.map(String);
       return {
         kind: 'unknown_ids',
-        message: `Estos investigadores no están en el corpus del modelo: ${unknownIds.join(', ')}.`,
+        message: `These researchers are not in the model corpus: ${unknownIds.join(', ')}.`,
         unknownIds,
       };
     }
     if (error.status === 422) {
       return {
         kind: 'invalid',
-        message: `La solicitud no es válida: ${this.detailText(detail)}`,
+        message: `Invalid request: ${this.detailText(detail)}`,
         unknownIds: [],
       };
     }
     return {
       kind: 'unexpected',
-      message: `El servicio respondió con un error (${error.status}).`,
+      message: `The service responded with an error (${error.status}).`,
       unknownIds: [],
     };
   }
@@ -100,6 +100,6 @@ export class TeamRecommenderService {
     if (Array.isArray(detail)) {
       return detail.map((d) => d?.msg ?? String(d)).join('; ');
     }
-    return 'parámetros fuera de rango.';
+    return 'parameters out of range.';
   }
 }

@@ -61,7 +61,7 @@ describe('RecommendedCandidateCardComponent', () => {
     expect(el.querySelector('.candidate-institution')?.textContent).toContain(
       'Universidad Espíritu Santo',
     );
-    expect(el.querySelector('.relevance-value')?.textContent).toContain('87 %');
+    expect(el.querySelector('.relevance-value')?.textContent).toContain('87%');
     expect(el.querySelector('.relevance-value')?.textContent).toContain('0.612');
     expect(el.querySelector('a')?.getAttribute('href')).toBe('/profile/57190000001');
     expect(component.initials).toBe('AS');
@@ -69,10 +69,10 @@ describe('RecommendedCandidateCardComponent', () => {
 
   it('falls back to the Scopus id when the name is missing', () => {
     render({ name: null });
-    expect(component.displayName).toBe('Autor Scopus 57190000001');
-    expect(component.initials).toBe('AS');
+    expect(component.displayName).toBe('Scopus author 57190000001');
+    expect(component.initials).toBe('SA');
     render({ name: '   ' });
-    expect(component.displayName).toBe('Autor Scopus 57190000001');
+    expect(component.displayName).toBe('Scopus author 57190000001');
     render({ name: '.' });
     expect(component.initials).toBe('?');
   });
@@ -85,26 +85,26 @@ describe('RecommendedCandidateCardComponent', () => {
       selection_reason: 'quota',
     });
     expect(component.movement).toBe(21);
-    expect(component.movementLabel).toBe('Sube 21 puestos');
+    expect(component.movementLabel).toBe('Up 21 places');
     expect(component.movementIcon).toBe(faArrowUp);
     const labels = Array.from(el.querySelectorAll('.candidate-badge')).map((b) =>
       b.textContent?.trim(),
     );
-    expect(labels).toEqual(['Baja visibilidad', 'Priorizado por equidad']);
-    expect(el.querySelector('.movement')?.textContent).toContain('Sube 21 puestos');
+    expect(labels).toEqual(['Low visibility', 'Prioritized for fairness']);
+    expect(el.querySelector('.movement')?.textContent).toContain('Up 21 places');
   });
 
   it('describes a single-step drop, no change and the relaxed-cap badge', () => {
     render({ rank: 2, baseline_rank: 1, selection_reason: 'cap_relaxed' });
-    expect(component.movementLabel).toBe('Baja 1 puesto');
+    expect(component.movementLabel).toBe('Down 1 place');
     expect(component.movementIcon).toBe(faArrowDown);
-    expect(component.badges.map((b) => b.label)).toEqual(['Cupo institucional relajado']);
+    expect(component.badges.map((b) => b.label)).toEqual(['Institution cap relaxed']);
     render({ rank: 4, baseline_rank: 4 });
-    expect(component.movementLabel).toBe('Sin cambio');
+    expect(component.movementLabel).toBe('No change');
     expect(component.movementIcon).toBe(faMinus);
     expect(component.badges).toEqual([]);
     render({ rank: 1, baseline_rank: 2 });
-    expect(component.movementLabel).toBe('Sube 1 puesto');
+    expect(component.movementLabel).toBe('Up 1 place');
   });
 
   it('hides the movement when the re-ranking is disabled', () => {
@@ -124,11 +124,11 @@ describe('RecommendedCandidateCardComponent', () => {
     const inviteButton = (el: HTMLElement) =>
       el.querySelector('.invite-button') as HTMLButtonElement | null;
 
-    it('shows «Invitar al equipo» unless the candidate already has an account', () => {
+    it('shows "Invite to team" unless the candidate already has an account', () => {
       let el = render();
-      expect(inviteButton(el)?.textContent).toContain('Invitar al equipo');
+      expect(inviteButton(el)?.textContent).toContain('Invite to team');
       expect(inviteButton(el)?.getAttribute('aria-label')).toBe(
-        'Invitar al equipo a Astudillo-Sánchez E.',
+        'Invite Astudillo-Sánchez E. to team',
       );
       el = render({ has_account: false });
       expect(inviteButton(el)).not.toBeNull();
@@ -152,7 +152,7 @@ describe('RecommendedCandidateCardComponent', () => {
       expect(write).toHaveBeenCalledOnceWith(component.inviteLink);
       expect(component.inviteState).toBe('copied');
       expect(el.querySelector('.invite-feedback')?.textContent).toContain(
-        'Enlace copiado para invitar a Astudillo-Sánchez E.',
+        'Link copied to invite Astudillo-Sánchez E.',
       );
       tick(INVITE_FEEDBACK_MS);
       fixture.detectChanges();
@@ -168,7 +168,7 @@ describe('RecommendedCandidateCardComponent', () => {
       fixture.detectChanges();
       expect(component.inviteState).toBe('manual');
       const modal = el.querySelector('.invite-modal') as HTMLElement;
-      expect(modal.textContent).toContain('Invitar a Astudillo-Sánchez E.');
+      expect(modal.textContent).toContain('Invite Astudillo-Sánchez E.');
       const input = modal.querySelector('.invite-link') as HTMLInputElement;
       expect(input.value).toBe(component.inviteLink);
       input.dispatchEvent(new Event('focus'));

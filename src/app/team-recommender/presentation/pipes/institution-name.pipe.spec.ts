@@ -26,9 +26,9 @@ describe('InstitutionNamePipe', () => {
   });
 
   it('labels unknown or empty institutions', () => {
-    expect(pipe.transform('UNKNOWN')).toBe('Institución no registrada');
-    expect(pipe.transform('')).toBe('Institución no registrada');
-    expect(pipe.transform(null)).toBe('Institución no registrada');
-    expect(pipe.transform(undefined)).toBe('Institución no registrada');
+    expect(pipe.transform('UNKNOWN')).toBe('Unregistered institution');
+    expect(pipe.transform('')).toBe('Unregistered institution');
+    expect(pipe.transform(null)).toBe('Unregistered institution');
+    expect(pipe.transform(undefined)).toBe('Unregistered institution');
   });
 });

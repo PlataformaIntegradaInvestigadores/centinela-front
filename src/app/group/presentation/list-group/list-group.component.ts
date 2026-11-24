@@ -34,15 +34,20 @@ export class ListGroupComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     initFlowbite();
-    // El menú «Conformar equipo» llega con #ethical-team-builder: abre y desplaza a la sección.
+    // Un enlace con #ethical-team-builder abre y desplaza a la sección.
     if (this.route?.snapshot?.fragment === ETHICAL_BUILDER_ANCHOR) {
-      this.showEthicalBuilder = true;
-      setTimeout(() =>
-        document
-          .getElementById(ETHICAL_BUILDER_ANCHOR)
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-      );
+      this.openEthicalBuilder();
     }
+  }
+
+  /** Despliega «Recommended Members» y lleva la vista hasta la sección. */
+  openEthicalBuilder(): void {
+    this.showEthicalBuilder = true;
+    setTimeout(() =>
+      document
+        .getElementById(ETHICAL_BUILDER_ANCHOR)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    );
   }
 
   toggleEthicalBuilder(): void {

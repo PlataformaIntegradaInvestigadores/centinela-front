@@ -171,7 +171,8 @@ describe('ListGroupComponent', () => {
     it('embeds the ethical recommender in the groups module, expanded by default', () => {
       fixture.detectChanges();
       const section = el().querySelector(`#${ETHICAL_BUILDER_ANCHOR}`);
-      expect(section?.textContent).toContain('Conformación ética de equipo');
+      expect(section?.textContent).toContain('Recommended Members');
+      expect(section?.textContent).toContain('Ethical team builder');
       expect(section?.querySelector('app-team-builder-page')).not.toBeNull();
       expect(el().textContent).not.toContain('Recommended Groups');
     });
@@ -196,6 +197,22 @@ describe('ListGroupComponent', () => {
       expect(component.showEthicalBuilder).toBeTrue();
       expect(document.getElementById).toHaveBeenCalledWith(ETHICAL_BUILDER_ANCHOR);
       expect(target.scrollIntoView).toHaveBeenCalled();
+    }));
+
+    it('opens and scrolls to the section from the "Find collaborators" button', fakeAsync(() => {
+      fixture.detectChanges();
+      const target = jasmine.createSpyObj('HTMLElement', ['scrollIntoView']);
+      spyOn(document, 'getElementById').and.returnValue(target);
+      component.showEthicalBuilder = false;
+      const button = el().querySelector('.find-collaborators') as HTMLButtonElement;
+      expect(button.textContent).toContain('Find collaborators');
+      button.click();
+      tick();
+      fixture.detectChanges();
+      expect(component.showEthicalBuilder).toBeTrue();
+      expect(el().querySelector('app-team-builder-page')).not.toBeNull();
+      expect(document.getElementById).toHaveBeenCalledWith(ETHICAL_BUILDER_ANCHOR);
+      expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
     }));
 
     it('does not scroll without the fragment', fakeAsync(() => {

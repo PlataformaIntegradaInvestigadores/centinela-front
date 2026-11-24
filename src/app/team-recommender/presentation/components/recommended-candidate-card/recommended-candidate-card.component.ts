@@ -68,7 +68,7 @@ export class RecommendedCandidateCardComponent implements OnDestroy {
   }
 
   get inviteMessage(): string {
-    return `Enlace copiado para invitar a ${this.displayName}`;
+    return `Link copied to invite ${this.displayName}`;
   }
 
   /**
@@ -98,7 +98,7 @@ export class RecommendedCandidateCardComponent implements OnDestroy {
   }
 
   get displayName(): string {
-    return this.candidate.name?.trim() || `Autor Scopus ${this.candidate.author_id}`;
+    return this.candidate.name?.trim() || `Scopus author ${this.candidate.author_id}`;
   }
 
   get initials(): string {
@@ -118,10 +118,10 @@ export class RecommendedCandidateCardComponent implements OnDestroy {
   get movementLabel(): string {
     const steps = Math.abs(this.movement);
     if (steps === 0) {
-      return 'Sin cambio';
+      return 'No change';
     }
-    const noun = steps === 1 ? 'puesto' : 'puestos';
-    return this.movement > 0 ? `Sube ${steps} ${noun}` : `Baja ${steps} ${noun}`;
+    const noun = steps === 1 ? 'place' : 'places';
+    return this.movement > 0 ? `Up ${steps} ${noun}` : `Down ${steps} ${noun}`;
   }
 
   get movementIcon(): IconDefinition {
@@ -143,25 +143,26 @@ export class RecommendedCandidateCardComponent implements OnDestroy {
     const badges: CandidateBadge[] = [];
     if (this.candidate.low_visibility) {
       badges.push({
-        label: 'Baja visibilidad',
-        tooltip: 'Perfil con pocas publicaciones o coautorías en el corpus (grupo protegido).',
+        label: 'Low visibility',
+        tooltip: 'Profile with few publications or co-authorships in the corpus (protected group).',
         icon: faEye,
         classes: 'bg-amber-50 text-amber-800 ring-amber-200',
       });
     }
     if (this.candidate.selection_reason === 'quota') {
       badges.push({
-        label: 'Priorizado por equidad',
+        label: 'Prioritized for fairness',
         tooltip:
-          'Promovido por la cuota mínima de perfiles de baja visibilidad del re-ranking R1 (20 %).',
+          'Promoted by the minimum quota of low-visibility profiles in the R1 re-ranking (20%).',
         icon: faScaleBalanced,
         classes: 'bg-emerald-50 text-emerald-800 ring-emerald-200',
       });
     }
     if (this.candidate.selection_reason === 'cap_relaxed') {
       badges.push({
-        label: 'Cupo institucional relajado',
-        tooltip: 'Se superó el tope de 3 investigadores por institución por falta de candidatos.',
+        label: 'Institution cap relaxed',
+        tooltip:
+          'The cap of 3 researchers per institution was exceeded due to a lack of candidates.',
         icon: faSitemap,
         classes: 'bg-sky-50 text-sky-800 ring-sky-200',
       });

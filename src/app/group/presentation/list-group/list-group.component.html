@@ -51,6 +51,13 @@
             reach a mutually agreed-upon research topic that aligns with the interests of all team
             members. 🎯📚
           </p>
+          <button
+            type="button"
+            class="find-collaborators mb-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            (click)="openEthicalBuilder()"
+          >
+            Find collaborators
+          </button>
           <div class="dark:border-gray-700">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <btn-create-group></btn-create-group>
@@ -79,7 +86,10 @@
             aria-controls="ethical-team-builder-body"
             (click)="toggleEthicalBuilder()"
           >
-            <span>Recommended Members · Conformación ética de equipo</span>
+            <span class="flex flex-col items-start text-left">
+              <span>Recommended Members</span>
+              <span class="text-xs font-normal text-gray-400">Ethical team builder</span>
+            </span>
             <svg
               class="w-3 h-3 shrink-0 transition-transform"
               [class.rotate-180]="!showEthicalBuilder"

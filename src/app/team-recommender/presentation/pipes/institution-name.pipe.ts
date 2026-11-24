@@ -34,7 +34,7 @@ const ACRONYMS = new Set(['espe', 'espol', 'epn', 'ute', 'utpl', 'usfq', 'puce',
 export class InstitutionNamePipe implements PipeTransform {
   transform(value: string | null | undefined): string {
     if (!value || value === UNKNOWN_INSTITUTION) {
-      return 'Institución no registrada';
+      return 'Unregistered institution';
     }
     return value
       .trim()

@@ -3,15 +3,13 @@
     <!-- Encabezado (solo como página propia; embebido lo pone el módulo anfitrión) -->
     <header *ngIf="!embedded" class="page-header mb-8">
       <p class="text-xs font-semibold uppercase tracking-wider text-primary_tailwind">
-        Recomendación ética de investigadores
+        Ethical researcher recommendation
       </p>
-      <h1 class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
-        Conformar equipo de investigación
-      </h1>
+      <h1 class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">Build a research team</h1>
       <p class="mt-2 max-w-3xl text-sm text-gray-600 sm:text-base">
-        Selecciona a los investigadores que ya forman el equipo. El sistema busca colaboradores con
-        afinidad temática (embeddings semánticos de sus publicaciones) y reordena el resultado para
-        promover la diversidad institucional y la visibilidad de perfiles emergentes.
+        Select the researchers who are already on the team. The system finds collaborators with
+        topical affinity (semantic embeddings of their publications) and re-ranks the results to
+        promote institutional diversity and the visibility of emerging profiles.
       </p>
     </header>
 
@@ -24,16 +22,16 @@
         >
           <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900">
             <fa-icon [icon]="faPeopleGroup" class="text-primary_tailwind"></fa-icon>
-            Equipo base
+            Seed team
           </h2>
           <p class="mt-1 text-sm text-gray-500">
-            Busca por apellido y nombre (en cualquier orden) o por ID Scopus y agrega hasta
-            {{ maxTeamSize }} integrantes.
+            Search by last and first name (in any order) or by Scopus ID and add up to
+            {{ maxTeamSize }} members.
           </p>
 
           <!-- Autocompletado -->
           <div class="relative mt-4">
-            <label for="author-search" class="sr-only">Buscar investigador</label>
+            <label for="author-search" class="sr-only">Search researcher</label>
             <fa-icon
               [icon]="searching ? faSpinner : faMagnifyingGlass"
               [spin]="searching"
@@ -48,7 +46,7 @@
               (focus)="openSuggestions()"
               (blur)="closeSuggestions()"
               [attr.disabled]="teamIsFull ? true : null"
-              [placeholder]="teamIsFull ? 'Equipo completo' : searchPlaceholder"
+              [placeholder]="teamIsFull ? 'Team is full' : searchPlaceholder"
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-sm text-gray-900 focus:border-primary_tailwind focus:bg-white focus:ring-primary_tailwind disabled:cursor-not-allowed disabled:opacity-60"
               role="combobox"
               aria-autocomplete="list"
@@ -63,13 +61,13 @@
               class="suggestions absolute z-20 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
             >
               <li *ngIf="searchFailed" class="suggestion-error px-4 py-3 text-sm text-rose-700">
-                No se pudo buscar: el servicio de recomendación no responde.
+                Search failed: the recommendation service is not responding.
               </li>
               <li
                 *ngIf="!searchFailed && suggestions.length === 0"
                 class="suggestion-empty px-4 py-3 text-sm text-gray-500"
               >
-                Sin coincidencias para «{{ lastQuery }}».
+                No matches for “{{ lastQuery }}”.
               </li>
               <li
                 *ngFor="let author of suggestions; let i = index; trackBy: trackByAuthorId"
@@ -98,10 +96,10 @@
                   </p>
                 </div>
                 <div class="shrink-0 text-right text-xs text-gray-400">
-                  <span *ngIf="author.article_count !== null">{{ author.article_count }} art.</span>
-                  <span *ngIf="isInTeam(author)" class="block text-primary_tailwind"
-                    >En el equipo</span
+                  <span *ngIf="author.article_count !== null"
+                    >{{ author.article_count }} articles</span
                   >
+                  <span *ngIf="isInTeam(author)" class="block text-primary_tailwind">In team</span>
                 </div>
               </li>
             </ul>
@@ -111,7 +109,7 @@
           <div class="mt-4">
             <div class="mb-2 flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wide text-gray-500"
-                >Integrantes ({{ team.length }})</span
+                >Members ({{ team.length }})</span
               >
               <button
                 *ngIf="team.length > 0"
@@ -119,7 +117,7 @@
                 class="clear-team text-xs font-medium text-gray-500 hover:text-rose-600"
                 (click)="clearTeam()"
               >
-                Quitar todos
+                Remove all
               </button>
             </div>
 
@@ -127,7 +125,7 @@
               *ngIf="team.length === 0"
               class="team-empty rounded-lg border border-dashed border-gray-300 px-3 py-4 text-center text-sm text-gray-400"
             >
-              Aún no hay integrantes.
+              No members yet.
             </p>
 
             <ul class="flex flex-col gap-2">
@@ -155,7 +153,7 @@
                 <button
                   type="button"
                   class="remove-member rounded-full p-1 text-gray-400 hover:bg-white hover:text-rose-600"
-                  [attr.aria-label]="'Quitar a ' + displayName(member)"
+                  [attr.aria-label]="'Remove ' + displayName(member)"
                   (click)="removeMember(member)"
                 >
                   <fa-icon [icon]="faXmark"></fa-icon>
@@ -168,7 +166,7 @@
           <div class="mt-5 space-y-4 border-t border-gray-100 pt-5">
             <div>
               <span class="mb-2 block text-sm font-medium text-gray-700"
-                >Número de recomendaciones</span
+                >Number of recommendations</span
               >
               <div class="inline-flex rounded-lg shadow-sm" role="group">
                 <button
@@ -193,9 +191,9 @@
 
             <label class="flex cursor-pointer items-start justify-between gap-4">
               <span>
-                <span class="block text-sm font-medium text-gray-700">Re-ranking de equidad</span>
+                <span class="block text-sm font-medium text-gray-700">Fairness re-ranking</span>
                 <span class="block text-xs text-gray-500"
-                  >Máx. 3 por institución y 20 % de perfiles de baja visibilidad.</span
+                  >Max. 3 per institution and 20% low-visibility profiles.</span
                 >
               </span>
               <input
@@ -221,10 +219,10 @@
               ></fa-icon>
               {{
                 loading
-                  ? 'Calculando recomendaciones…'
+                  ? 'Computing recommendations…'
                   : response
-                    ? 'Actualizar recomendaciones'
-                    : 'Recomendar colaboradores'
+                    ? 'Update recommendations'
+                    : 'Recommend collaborators'
               }}
             </button>
           </div>
@@ -252,8 +250,8 @@
             <p class="font-semibold">
               {{
                 error.kind === 'unavailable'
-                  ? 'Servicio de recomendación no disponible'
-                  : 'No se pudo generar la recomendación'
+                  ? 'Recommendation service unavailable'
+                  : 'Could not generate the recommendation'
               }}
             </p>
             <p class="mt-0.5">{{ error.message }}</p>
@@ -264,7 +262,7 @@
         <div *ngIf="loading && !response" class="loading-state" aria-live="polite" aria-busy="true">
           <div class="mb-4 flex items-center gap-2 text-sm text-gray-600">
             <fa-icon [icon]="faSpinner" [spin]="true" class="text-primary_tailwind"></fa-icon>
-            Calculando el centroide del equipo y aplicando el re-ranking de equidad…
+            Computing the team centroid and applying the fairness re-ranking…
           </div>
           <div class="space-y-3">
             <div
@@ -291,16 +289,14 @@
           </div>
           <h2 class="mt-4 text-base font-semibold text-gray-900">
             {{
-              team.length === 0
-                ? 'Agrega investigadores al equipo base'
-                : 'Preparando recomendaciones…'
+              team.length === 0 ? 'Add researchers to the seed team' : 'Preparing recommendations…'
             }}
           </h2>
           <p class="mt-1 max-w-md text-sm text-gray-500">
             {{
               team.length === 0
-                ? 'Usa el buscador para seleccionar al menos un integrante. Las recomendaciones aparecerán aquí y se actualizarán solas al cambiar el equipo.'
-                : 'Los candidatos se calculan automáticamente al agregar o quitar integrantes.'
+                ? 'Use the search box to select at least one member. Recommendations will appear here and update automatically when the team changes.'
+                : 'Candidates are computed automatically when you add or remove members.'
             }}
           </p>
         </div>
@@ -319,9 +315,9 @@
 
           <div class="mb-3 mt-6 flex items-end justify-between">
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">Candidatos recomendados</h2>
+              <h2 class="text-lg font-semibold text-gray-900">Recommended candidates</h2>
               <p class="team-label text-sm text-gray-500">
-                Para el equipo:
+                For the team:
                 <span class="font-medium text-gray-700">{{ responseTeamLabel }}</span>
               </p>
             </div>
@@ -331,7 +327,7 @@
               aria-live="polite"
             >
               <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
-              Actualizando…
+              Updating…
             </span>
           </div>
 
@@ -339,7 +335,7 @@
             *ngIf="!hasResults"
             class="results-empty rounded-xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center text-sm text-gray-500"
           >
-            No se encontraron candidatos para este equipo.
+            No candidates found for this team.
           </div>
 
           <div class="results-list space-y-3 transition-opacity" [class.opacity-60]="loading">

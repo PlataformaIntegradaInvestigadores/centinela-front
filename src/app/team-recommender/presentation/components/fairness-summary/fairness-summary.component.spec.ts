@@ -35,13 +35,13 @@ describe('FairnessSummaryComponent', () => {
 
     expect(component.modelName).toBe('all-MiniLM-L6-v2');
     expect(tile('gini').value).toBe('0.90');
-    expect(tile('institutions').value).toBe('10 de 10');
-    expect(tile('relevance').value).toBe('99.0 %');
-    expect(tile('exposure').value).toBe('14.9 %');
-    expect(tile('exposure').hint).toContain('7.0 %');
+    expect(tile('institutions').value).toBe('10 of 10');
+    expect(tile('relevance').value).toBe('99.0%');
+    expect(tile('exposure').value).toBe('14.9%');
+    expect(tile('exposure').hint).toContain('7.0%');
     expect(el.querySelector('.model-chip')?.textContent).toContain('all-MiniLM-L6-v2');
-    expect(el.querySelector('.rerank-chip')?.textContent).toContain('Re-ranking R1 activo');
-    expect(el.querySelector('.quota-chip')?.textContent).toContain('2 perfiles promovidos');
+    expect(el.querySelector('.rerank-chip')?.textContent).toContain('R1 re-ranking on');
+    expect(el.querySelector('.quota-chip')?.textContent).toContain('2 profiles promoted');
     expect(el.querySelector('.elapsed')?.textContent).toContain('12 ms');
     expect(el.querySelectorAll('.metric-tile').length).toBe(4);
   });
@@ -50,7 +50,7 @@ describe('FairnessSummaryComponent', () => {
     component.diagnostics = { quota_picks: 1 };
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.quota-chip').textContent).toContain(
-      '1 perfil promovido',
+      '1 profile promoted',
     );
   });
 
@@ -60,14 +60,14 @@ describe('FairnessSummaryComponent', () => {
     component.diagnostics = { quota_picks: 3 };
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(component.modelName).toBe('Modelo no informado');
+    expect(component.modelName).toBe('Model not reported');
     expect(component.quotaPicks).toBe(3);
     expect(tile('gini').value).toBe('—');
     expect(tile('institutions').value).toBe('—');
     expect(tile('relevance').value).toBe('—');
     expect(tile('exposure').value).toBe('—');
-    expect(tile('exposure').hint).toContain('ponderada por posición');
-    expect(el.querySelector('.rerank-chip')?.textContent).toContain('Solo relevancia');
+    expect(tile('exposure').hint).toContain('position-weighted');
+    expect(el.querySelector('.rerank-chip')?.textContent).toContain('Relevance only');
     expect(el.querySelector('.quota-chip')).toBeNull();
     expect(el.querySelector('.elapsed')).toBeNull();
   });
