@@ -96,7 +96,7 @@ describe('TeamRecommenderService', () => {
       expect(list.kind).toBe('invalid');
       expect(list.message).toContain('too short; raw');
       expect(service.toRecommenderError(httpError(422, { detail: 5 })).message).toContain(
-        'fuera de rango',
+        'out of range',
       );
     });
 

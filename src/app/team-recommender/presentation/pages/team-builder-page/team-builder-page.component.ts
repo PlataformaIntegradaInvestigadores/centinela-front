@@ -37,7 +37,7 @@ export const MIN_SEARCH_CHARS = 2;
 /** Equipo semilla: más integrantes diluyen el centroide semántico del equipo. */
 export const MAX_TEAM_SIZE = 5;
 /** Formato de búsqueda sugerido, sin nombres reales de investigadores. */
-export const SEARCH_PLACEHOLDER = 'Ej: Apellido Nombre';
+export const SEARCH_PLACEHOLDER = 'E.g. Last name First name';
 export const TOP_K_OPTIONS = [5, 10, 20] as const;
 
 /** Resultado del autocompletado: null = consulta demasiado corta (no se busca). */
@@ -109,7 +109,7 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.embedded) {
-      this.title.setTitle('Conformar equipo');
+      this.title.setTitle('Team builder');
     }
     this.recommendSubscription = this.refresh$
       .pipe(
@@ -163,7 +163,7 @@ export class TeamBuilderPageComponent implements OnInit, OnDestroy {
 
   /** Nombre a mostrar: completo («Apellido, Nombre»), si no el de Scopus, si no el ID. */
   displayName(author: AuthorSearchResult): string {
-    return author.full_name?.trim() || author.name?.trim() || `Autor ${author.author_id}`;
+    return author.full_name?.trim() || author.name?.trim() || `Author ${author.author_id}`;
   }
 
   /** Nombre Scopus como dato secundario, solo cuando difiere del nombre mostrado. */

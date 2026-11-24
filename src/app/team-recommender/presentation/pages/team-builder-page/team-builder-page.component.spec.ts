@@ -21,7 +21,7 @@ import {
   RecommenderError,
 } from '../../../domain/entities/team-recommendation.interface';
 
-const author = (id: string, name: string | null = `Autor ${id}`): AuthorSearchResult => ({
+const author = (id: string, name: string | null = `Author ${id}`): AuthorSearchResult => ({
   author_id: id,
   name,
   institution: 'escuela politécnica nacional',
@@ -94,14 +94,14 @@ describe('TeamBuilderPageComponent', () => {
   afterEach(() => fixture.destroy());
 
   it('sets the page title and shows the initial empty state', () => {
-    expect(title.setTitle).toHaveBeenCalledWith('Conformar equipo');
+    expect(title.setTitle).toHaveBeenCalledWith('Team builder');
     expect(el().querySelector('.initial-state')?.textContent).toContain(
-      'Agrega investigadores al equipo base',
+      'Add researchers to the seed team',
     );
     expect(el().querySelector('.team-empty')).not.toBeNull();
     const button = el().querySelector('.recommend-button') as HTMLButtonElement;
     expect(button.disabled).toBeTrue();
-    expect(button.textContent).toContain('Recomendar colaboradores');
+    expect(button.textContent).toContain('Recommend collaborators');
   });
 
   describe('author autocomplete', () => {
@@ -187,14 +187,14 @@ describe('TeamBuilderPageComponent', () => {
         'Scopus: Piedrahita P.',
       );
       expect(first.querySelector('.suggestion-scopus')?.textContent).toContain('37026882700');
-      expect(second.querySelector('.suggestion-name')?.textContent?.trim()).toBe('Autor 2');
+      expect(second.querySelector('.suggestion-name')?.textContent?.trim()).toBe('Author 2');
       expect(second.querySelector('.suggestion-scopus')?.textContent).not.toContain('Scopus:');
     }));
 
     it('uses a generic placeholder without real researcher names', () => {
       const input = el().querySelector('#author-search') as HTMLInputElement;
-      expect(SEARCH_PLACEHOLDER).toBe('Ej: Apellido Nombre');
-      expect(input.placeholder).toBe('Ej: Apellido Nombre');
+      expect(SEARCH_PLACEHOLDER).toBe('E.g. Last name First name');
+      expect(input.placeholder).toBe('E.g. Last name First name');
     });
 
     it('opens suggestions on focus only when there are results', () => {
@@ -207,7 +207,7 @@ describe('TeamBuilderPageComponent', () => {
   describe('team management', () => {
     it('limits the base team to 5 members and says so in the help text', () => {
       expect(MAX_TEAM_SIZE).toBe(5);
-      expect(el().textContent).toContain('agrega hasta 5 integrantes');
+      expect(el().textContent).toContain('add up to 5 members');
       for (let i = 1; i <= 6; i++) {
         component.addMember(author(String(i)));
       }
@@ -216,7 +216,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(el().querySelectorAll('.member-chip').length).toBe(5);
       const input = el().querySelector('#author-search') as HTMLInputElement;
       expect(input.disabled).toBeTrue();
-      expect(input.placeholder).toBe('Equipo completo');
+      expect(input.placeholder).toBe('Team is full');
     });
 
     it('shows the full name in chips and falls back to the Scopus name or id', () => {
@@ -228,7 +228,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.scopusName(paolo)).toBe('Piedrahita P.');
       expect(component.displayName({ ...paolo, full_name: '  ' })).toBe('Piedrahita P.');
       expect(component.scopusName({ ...paolo, full_name: null })).toBeNull();
-      expect(component.displayName(author('7', null))).toBe('Autor 7');
+      expect(component.displayName(author('7', null))).toBe('Author 7');
     });
 
     it('adds members once, renders chips and enforces the size limit', () => {
@@ -242,7 +242,7 @@ describe('TeamBuilderPageComponent', () => {
         'Escuela Politécnica Nacional',
       );
       expect(el().querySelector('.initial-state')?.textContent).toContain(
-        'Preparando recomendaciones',
+        'Preparing recommendations',
       );
 
       for (let i = 2; i <= MAX_TEAM_SIZE + 2; i++) {
@@ -290,7 +290,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(el().querySelector('app-fairness-summary')).not.toBeNull();
       expect(el().querySelector('.initial-state')).toBeNull();
       expect(el().querySelector('.recommend-button')?.textContent).toContain(
-        'Actualizar recomendaciones',
+        'Update recommendations',
       );
     });
 
@@ -303,7 +303,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.loading).toBeTrue();
       expect(component.canRecommend).toBeFalse();
       expect(el().querySelector('.loading-state')).not.toBeNull();
-      expect(el().querySelector('.recommend-button')?.textContent).toContain('Calculando');
+      expect(el().querySelector('.recommend-button')?.textContent).toContain('Computing');
       component.recommend(); // ignorado mientras carga
       expect(service.recommend).toHaveBeenCalledTimes(1);
 
@@ -323,7 +323,7 @@ describe('TeamBuilderPageComponent', () => {
       component.recommend();
       fixture.detectChanges();
       expect(el().querySelector('.loading-state')).toBeNull();
-      expect(el().querySelector('.refreshing')?.textContent).toContain('Actualizando');
+      expect(el().querySelector('.refreshing')?.textContent).toContain('Updating');
       expect(el().querySelector('.results-list.opacity-60')).not.toBeNull();
       pending.complete();
     });
@@ -337,7 +337,7 @@ describe('TeamBuilderPageComponent', () => {
     it('renders an unavailable backend error', () => {
       const error: RecommenderError = {
         kind: 'unavailable',
-        message: 'sin conexión',
+        message: 'no connection',
         unknownIds: [],
       };
       service.recommend.and.returnValue(throwError(() => new HttpErrorResponse({ status: 504 })));
@@ -348,7 +348,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.response).toBeNull();
       expect(component.loading).toBeFalse();
       expect(el().querySelector('.error-panel')?.textContent).toContain(
-        'Servicio de recomendación no disponible',
+        'Recommendation service unavailable',
       );
     });
 
@@ -356,7 +356,7 @@ describe('TeamBuilderPageComponent', () => {
       service.recommend.and.returnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
       service.toRecommenderError.and.returnValue({
         kind: 'unknown_ids',
-        message: 'no están',
+        message: 'not in corpus',
         unknownIds: ['2'],
       });
       component.recommend();
@@ -364,7 +364,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(component.isUnknown(author('2'))).toBeTrue();
       expect(component.isUnknown(author('1'))).toBeFalse();
       expect(el().querySelector('.error-panel')?.textContent).toContain(
-        'No se pudo generar la recomendación',
+        'Could not generate the recommendation',
       );
       expect(el().querySelector('.member-chip.border-rose-300')).not.toBeNull();
       component.removeMember(author('2'));
@@ -473,7 +473,7 @@ describe('TeamBuilderPageComponent', () => {
       expect(service.recommend).toHaveBeenCalledTimes(2);
       fixture.detectChanges();
       expect(el().querySelector('.initial-state')?.textContent).toContain(
-        'Agrega investigadores al equipo base',
+        'Add researchers to the seed team',
       );
     }));
 

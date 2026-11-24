@@ -1,13 +1,13 @@
 <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h2 class="text-base font-semibold text-gray-900">Métricas de equidad del resultado</h2>
-      <p class="text-sm text-gray-500">Calculadas sobre los {{ topK }} candidatos recomendados.</p>
+      <h2 class="text-base font-semibold text-gray-900">Fairness metrics</h2>
+      <p class="text-sm text-gray-500">Computed over the {{ topK }} recommended candidates.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2 text-xs">
       <span
         class="model-chip inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 font-medium text-primary_tailwind ring-1 ring-inset ring-blue-200"
-        title="Modelo de embeddings (Etapa 1: centroide + K-NN)"
+        title="Embedding model (Stage 1: centroid + K-NN)"
       >
         <fa-icon [icon]="faMicrochip"></fa-icon>
         {{ modelName }}
@@ -21,17 +21,16 @@
         "
       >
         <fa-icon [icon]="faScaleBalanced"></fa-icon>
-        {{ fairnessEnabled ? 'Re-ranking R1 activo' : 'Solo relevancia (sin re-ranking)' }}
+        {{ fairnessEnabled ? 'R1 re-ranking on' : 'Relevance only (no re-ranking)' }}
       </span>
       <span
         *ngIf="fairnessEnabled && quotaPicks > 0"
         class="quota-chip inline-flex items-center rounded-full bg-amber-50 px-3 py-1 font-medium text-amber-800 ring-1 ring-inset ring-amber-200"
       >
-        {{ quotaPicks }} {{ quotaPicks === 1 ? 'perfil promovido' : 'perfiles promovidos' }} por
-        cuota
+        {{ quotaPicks }} {{ quotaPicks === 1 ? 'profile promoted' : 'profiles promoted' }} by quota
       </span>
       <span *ngIf="elapsedMs !== null" class="elapsed text-gray-400"
-        >Respuesta en {{ elapsedMs | number: '1.0-0' }} ms</span
+        >Response in {{ elapsedMs | number: '1.0-0' }} ms</span
       >
     </div>
   </div>
