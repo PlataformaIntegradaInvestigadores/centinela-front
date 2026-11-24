@@ -12,7 +12,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-RUN npm run build -- --configuration=local
+# Production build: minified, hashed file names (the nginx cache headers rely on
+# them) and no public source maps.
+RUN npm run build -- --configuration=production
 
 
 # Pinned to the version that runs in staging; "latest" changed under us on rebuilds.
