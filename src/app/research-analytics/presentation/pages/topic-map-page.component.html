@@ -1,0 +1,154 @@
+<main class="mx-auto max-w-7xl p-6">
+  <nav>
+    <a routerLink="/research-analytics">Corpus</a> ·
+    <a routerLink="/research-analytics/study">Series, pronóstico y XAI</a> ·
+    <a routerLink="/research-analytics/lineage">Versiones</a>
+  </nav>
+  <h1>Relaciones entre temas científicos</h1>
+  <p>
+    El área representa artículos distintos. Los enlaces representan similitud coseno entre
+    componentes NMF congelados. La posición circular solo organiza la vista.
+  </p>
+  <p>
+    La relación temática, la tendencia observada, el pronóstico y la explicación XAI son resultados
+    diferentes.
+  </p>
+  <form class="filters" (ngSubmit)="reload()">
+    <label
+      >Desde el año <input type="number" name="start" [(ngModel)]="start" min="1900" max="2100"
+    /></label>
+    <label
+      >Hasta el año <input type="number" name="end" [(ngModel)]="end" min="1900" max="2100"
+    /></label>
+    <label
+      >Umbral coseno
+      <input
+        type="number"
+        name="threshold"
+        [(ngModel)]="threshold"
+        min="0"
+        max="1"
+        step="0.05"
+        required
+    /></label>
+    <button type="submit">Aplicar filtros</button>
+  </form>
+  <p role="status" aria-live="polite">{{ state }}</p>
+  <section *ngIf="data as m">
+    <p>
+      Documentos preparados elegibles: <strong>{{ m.denominator }}</strong
+      >. Sin asignación: {{ m.unassigned }}. Cobertura de la instantánea; los años vacíos no prueban
+      ausencia de producción.
+    </p>
+    <details>
+      <summary>Versión y método</summary>
+      <p>Release: {{ m.release_id }}<br />Modelo: {{ m.model_id }}<br />{{ m.space }}</p>
+    </details>
+    <svg
+      viewBox="0 0 720 500"
+      role="group"
+      aria-label="Mapa de similitud temática. La tabla siguiente permite explorar los mismos temas mediante teclado."
+      style="max-width: 900px; width: 100%; background: #f4f7fb"
+    >
+      <g *ngFor="let edge of m.edges">
+        <line
+          [attr.x1]="coordinate(edge.source, 'x')"
+          [attr.y1]="coordinate(edge.source, 'y')"
+          [attr.x2]="coordinate(edge.target, 'x')"
+          [attr.y2]="coordinate(edge.target, 'y')"
+          stroke="#718096"
+          [attr.stroke-width]="1 + 3 * edge.weight"
+        >
+          <title>{{ edge.source }} / {{ edge.target }}: {{ edge.weight | number: '1.3-3' }}</title>
+        </line>
+      </g>
+      <g *ngFor="let node of m.nodes">
+        <circle
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="node.topic_id + ' consultar documentos'"
+          (click)="select(node.topic_id)"
+          (keydown.enter)="select(node.topic_id)"
+          (keydown.space)="$event.preventDefault(); select(node.topic_id)"
+          [attr.cx]="coordinate(node.topic_id, 'x')"
+          [attr.cy]="coordinate(node.topic_id, 'y')"
+          [attr.r]="radius(node.count)"
+          fill="#244a70"
+        >
+          <title>{{ node.topic_id }}: {{ node.count }} artículos</title>
+        </circle>
+        <text
+          [attr.x]="coordinate(node.topic_id, 'x')"
+          [attr.y]="coordinate(node.topic_id, 'y') + 55"
+          text-anchor="middle"
+        >
+          {{ node.topic_id }}
+        </text>
+      </g>
+    </svg>
+    <h2>Temas y documentos asociados</h2>
+    <table>
+      <caption>
+        Alternativa tabular del mapa
+      </caption>
+      <thead>
+        <tr>
+          <th>Tema</th>
+          <th>Artículos</th>
+          <th>Proporción del denominador</th>
+          <th>Términos</th>
+          <th>Explorar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let node of m.nodes">
+          <td>{{ node.topic_id }}</td>
+          <td>{{ node.count }}</td>
+          <td>{{ node.share | percent: '1.1-1' }}</td>
+          <td>{{ node.terms.join(', ') }}</td>
+          <td>
+            <button (click)="select(node.topic_id)">Ver {{ node.topic_id }}</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Enlaces y pesos</h2>
+    <p *ngIf="!m.edges.length">Ningún enlace supera el umbral aplicado.</p>
+    <table *ngIf="m.edges.length">
+      <thead>
+        <tr>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Coseno</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of m.edges">
+          <td>{{ e.source }}</td>
+          <td>{{ e.target }}</td>
+          <td>{{ e.weight | number: '1.4-4' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <section *ngIf="selected">
+      <h2>Documentos de {{ selected }}</h2>
+      <a
+        routerLink="/research-analytics/study"
+        [queryParams]="{ release: m.release_id, topic: selected }"
+        class="underline"
+        >Ver evolución y pronóstico de este tema</a
+      >
+      <p role="status">{{ documentState }}</p>
+      <ng-container *ngIf="documents as docs"
+        ><p>{{ docs.total }} documentos; mostrando desde {{ offset + 1 }}.</p>
+        <ul>
+          <li *ngFor="let d of docs.items">{{ d.year }} — {{ d.title }}</li>
+        </ul>
+        <button [disabled]="offset === 0" (click)="page(-20)">Anterior</button>
+        <button [disabled]="offset + 20 >= docs.total" (click)="page(20)">
+          Siguiente
+        </button></ng-container
+      >
+    </section>
+  </section>
+</main>

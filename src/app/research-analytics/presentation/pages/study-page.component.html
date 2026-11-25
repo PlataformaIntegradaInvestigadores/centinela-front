@@ -1,0 +1,397 @@
+<main class="mx-auto max-w-7xl p-6" aria-labelledby="study-heading">
+  <nav>
+    <a routerLink="/research-analytics" class="underline">Volver al corpus</a> ·
+    <a routerLink="/research-analytics/map" class="underline">Mapa de relaciones temáticas</a>
+  </nav>
+  <h1 id="study-heading" class="text-3xl font-bold">Temas, evolución y pronóstico explicable</h1>
+  <p class="notice">
+    Estudio empírico inicial con títulos y resúmenes. Los conteos describen la instantánea
+    preparada. No acreditan cobertura completa, causalidad ni evaluación con personas.
+  </p>
+  <div aria-live="polite" [attr.aria-busy]="state === 'loading'">
+    <p *ngIf="state === 'loading'" role="status">Consultando el estudio…</p>
+    <div *ngIf="state !== 'loading' && state !== 'ready'" role="alert" [ngSwitch]="state">
+      <p *ngSwitchCase="'unauthorized'">Inicia sesión para consultar el pronóstico.</p>
+      <p *ngSwitchCase="'forbidden'">Tu cuenta no tiene permiso para consultar el estudio.</p>
+      <p *ngSwitchCase="'unavailable'">La versión solicitada del estudio no está disponible.</p>
+      <p *ngSwitchDefault>No se pudo consultar el estudio.</p>
+      <button (click)="reload()" type="button">Reintentar</button>
+    </div>
+  </div>
+  <ng-container *ngIf="data as study">
+    <p *ngIf="study.storage_lineage as storage" class="break-all">
+      Versión de datos: <code>{{ storage.release_id }}</code
+      >.
+      <a routerLink="/research-analytics/lineage" class="underline">Ver procedencia</a>
+    </p>
+    <section class="my-6" aria-labelledby="source-heading">
+      <h2 id="source-heading">Datos y protocolo</h2>
+      <dl class="metrics">
+        <div>
+          <dt>Artículos de origen</dt>
+          <dd>{{ study.source_articles | number }}</dd>
+        </div>
+        <div>
+          <dt>Documentos preparados</dt>
+          <dd>{{ study.preparation.included | number }}</dd>
+        </div>
+        <div>
+          <dt>Temas aprendidos</dt>
+          <dd>{{ study.topics.length }}</dd>
+        </div>
+      </dl>
+      <p>
+        Temas ajustados hasta {{ study.protocol.topic_fit_end }}. Validación para selección hasta
+        {{ study.protocol.validation_end }} y diagnóstico retrospectivo hasta
+        {{ study.protocol.test_end }}. Vocabulario y temas permanecen congelados.
+      </p>
+      <p>
+        Reconstrucción retrospectiva por año de publicación; no reproduce fechas históricas de
+        indexación. El modelamiento textual usa títulos y resúmenes.
+      </p>
+      <details>
+        <summary>Ver trazabilidad y decisiones</summary>
+        <p>{{ study.protocol.rationale }}</p>
+        <p>
+          Ejecución: <code class="identifier">{{ study.run_id }}</code>
+        </p>
+        <p>
+          Modelo temático: <code class="identifier">{{ study.topic_model_id }}</code>
+        </p>
+        <ul>
+          <li *ngFor="let item of study.preparation.decisions | keyvalue">
+            {{ item.key }}: {{ item.value | number }}
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section class="my-6" aria-labelledby="topic-heading">
+      <h2 id="topic-heading">Descubrimiento y evolución temática</h2>
+      <label
+        >Tema<select name="topic" [(ngModel)]="topic" (ngModelChange)="changeTopic()">
+          <option *ngFor="let item of study.topics" [value]="item.topic_id">
+            {{ item.topic_id }} — {{ item.terms.slice(0, 3).join(', ') }}
+          </option>
+        </select></label
+      >
+      <p><strong>Términos representativos:</strong> {{ selectedTerms }}</p>
+      <p>
+        Son temas aprendidos con NMF, no las palabras clave del archivo original ni áreas de
+        conocimiento validadas manualmente.
+      </p>
+      <p>
+        NPMI medio de entrenamiento: {{ study.topic_quality_train.mean_npmi | number: '1.3-3' }};
+        diagnóstico: {{ study.topic_quality_test.mean_npmi | number: '1.3-3' }}. Diversidad de
+        términos en entrenamiento:
+        {{ study.topic_quality_train.term_diversity | percent: '1.1-1' }}.
+      </p>
+      <form class="filters" (ngSubmit)="applyRange()" novalidate>
+        <label>Desde el año <input type="number" name="fromYear" [(ngModel)]="fromYear" /></label>
+        <label>Hasta el año <input type="number" name="toYear" [(ngModel)]="toYear" /></label>
+        <button type="submit">Aplicar filtro</button>
+        <button type="button" (click)="resetRange()">Restablecer</button>
+      </form>
+      <p *ngIf="rangeError" role="alert">{{ rangeError }}</p>
+      <p *ngIf="!points.length" role="status">El tema no tiene años cubiertos en esta consulta.</p>
+      <p *ngIf="observedChange !== null">
+        Cambio observado entre el primer y último año visibles:
+        <strong>{{ observedChange | number }}</strong> artículos.
+      </p>
+      <svg
+        *ngIf="points.length"
+        viewBox="0 0 800 290"
+        role="img"
+        aria-label="Evolución anual observada y proyección de un año; datos exactos en la tabla siguiente"
+      >
+        <line x1="40" y1="240" x2="760" y2="240" stroke="#68778a" />
+        <polyline [attr.points]="observedLine" fill="none" stroke="#1e4870" stroke-width="3" />
+        <polyline
+          [attr.points]="referenceLine"
+          fill="none"
+          stroke="#4b5969"
+          stroke-dasharray="2 5"
+          stroke-width="3"
+        />
+        <polyline
+          [attr.points]="forecastLine"
+          fill="none"
+          stroke="#b45a10"
+          stroke-dasharray="8 5"
+          stroke-width="3"
+        />
+        <circle
+          *ngFor="let p of points"
+          [attr.cx]="x(p.year)"
+          [attr.cy]="y(p.count)"
+          r="3"
+          fill="#1e4870"
+        />
+        <text x="40" y="275">{{ points[0].year }}</text>
+        <text x="700" y="275" *ngIf="points.length > 1 || visibleForecast">
+          {{ visibleForecast?.year || points[points.length - 1].year }}
+        </text>
+      </svg>
+      <p>
+        Azul continuo, conteos observados. Naranja discontinuo, proyección retrospectiva de Ridge.
+        Gris punteado, referencia de último valor. La proyección parte del corte
+        {{ study.protocol.test_end }} y aparece al incluirlo. No se calculó un intervalo predictivo.
+      </p>
+      <div
+        *ngIf="points.length"
+        class="table-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="Serie temática anual"
+      >
+        <table>
+          <caption>
+            Conteos y proporciones del tema en los documentos preparados
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Año</th>
+              <th scope="col">Documentos</th>
+              <th scope="col">Denominador preparado</th>
+              <th scope="col">Proporción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let point of points">
+              <th scope="row">{{ point.year }}</th>
+              <td>{{ point.count | number }}</td>
+              <td>{{ point.denominator | number }}</td>
+              <td>{{ point.share | percent: '1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="visibleForecast as f">
+              <th scope="row">{{ f.year }} (Ridge)</th>
+              <td>{{ f.prediction | number: '1.2-2' }}</td>
+              <td>Fuera del corte del estudio</td>
+              <td>No estimada</td>
+            </tr>
+            <tr *ngIf="visibleForecast as f">
+              <th scope="row">{{ f.year }} (último valor)</th>
+              <td>{{ f.baseline_last_value | number }}</td>
+              <td>Fuera del corte del estudio</td>
+              <td>No estimada</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="my-6" aria-labelledby="errors-heading">
+      <h2 id="errors-heading">Comparación temporal con último valor</h2>
+      <p>
+        Horizonte de un año con origen móvil y los mismos pares tema/año en ambos métodos. Los
+        parámetros se seleccionaron en validación. El periodo de diagnóstico ya se examinó y se
+        presenta con alcance exploratorio.
+      </p>
+      <table>
+        <caption>
+          Errores agregados en artículos por tema/año
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Periodo</th>
+            <th scope="col">Método</th>
+            <th scope="col">MAE</th>
+            <th scope="col">RMSE</th>
+            <th scope="col">Pares evaluados</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngTemplateOutlet="
+              errorRows;
+              context: { label: 'Validación', score: study.prediction.validation }
+            "
+          ></ng-container>
+          <ng-container
+            *ngTemplateOutlet="
+              errorRows;
+              context: { label: 'Diagnóstico', score: study.prediction.test }
+            "
+          ></ng-container>
+        </tbody>
+      </table>
+      <p
+        *ngIf="study.prediction.test.ridge.mae >= study.prediction.test.last_value.mae"
+        class="notice"
+      >
+        Ridge no supera la referencia en el MAE del diagnóstico retrospectivo.
+      </p>
+      <details *ngIf="study.forecast_comparison as comparison">
+        <summary>Desglose por tema seleccionado y por año</summary>
+        <p>
+          {{ comparison.validation.start_year }}–{{ comparison.validation.end_year }}: validación
+          para selección. {{ comparison.diagnostic.start_year }}–{{
+            comparison.diagnostic.end_year
+          }}: diagnóstico exploratorio. Los filtros del gráfico no recalculan las métricas.
+        </p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Desglose comparativo">
+          <table>
+            <caption>
+              Errores para
+              {{
+                topic
+              }}
+              y resultados agrupados por año
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Grupo</th>
+                <th scope="col">Método</th>
+                <th scope="col">MAE</th>
+                <th scope="col">RMSE</th>
+                <th scope="col">Pares evaluados</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="comparison.validation.by_topic[topic] as score">
+                <ng-container
+                  *ngTemplateOutlet="
+                    errorRows;
+                    context: { label: 'Tema en validación', score: score }
+                  "
+                ></ng-container>
+              </ng-container>
+              <ng-container *ngIf="comparison.diagnostic.by_topic[topic] as score">
+                <ng-container
+                  *ngTemplateOutlet="
+                    errorRows;
+                    context: { label: 'Tema en diagnóstico', score: score }
+                  "
+                ></ng-container>
+              </ng-container>
+              <ng-container *ngFor="let item of comparison.validation.by_year | keyvalue">
+                <ng-container
+                  *ngTemplateOutlet="
+                    errorRows;
+                    context: { label: 'Validación ' + item.key, score: item.value }
+                  "
+                ></ng-container>
+              </ng-container>
+              <ng-container *ngFor="let item of comparison.diagnostic.by_year | keyvalue">
+                <ng-container
+                  *ngTemplateOutlet="
+                    errorRows;
+                    context: { label: 'Diagnóstico ' + item.key, score: item.value }
+                  "
+                ></ng-container>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <ng-template #errorRows let-label="label" let-score="score">
+        <tr>
+          <th scope="row">{{ label }}</th>
+          <td>Ridge (α {{ study.prediction.selected_alpha }})</td>
+          <td>{{ score.ridge.mae | number: '1.3-3' }}</td>
+          <td>{{ score.ridge.rmse | number: '1.3-3' }}</td>
+          <td>{{ score.ridge.n }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{{ label }}</th>
+          <td>Último valor</td>
+          <td>{{ score.last_value.mae | number: '1.3-3' }}</td>
+          <td>{{ score.last_value.rmse | number: '1.3-3' }}</td>
+          <td>{{ score.last_value.n }}</td>
+        </tr>
+      </ng-template>
+    </section>
+    <section class="my-6" aria-labelledby="explanation-heading">
+      <h2 id="explanation-heading">Explicación local del pronóstico</h2>
+      <label
+        >Año explicado<select name="explanationYear" [(ngModel)]="explanationYear">
+          <option *ngFor="let p of explanationOptions" [ngValue]="p.year">
+            {{ p.year }} —
+            {{
+              p.observed === null
+                ? 'proyección'
+                : p.year <= study.protocol.validation_end
+                  ? 'validación'
+                  : 'diagnóstico'
+            }}
+          </option>
+        </select></label
+      >
+      <ng-container *ngIf="explained as p"
+        ><p>
+          Ridge estimó {{ p.prediction | number: '1.2-2' }} artículos. Referencia de último valor:
+          {{ p.baseline_last_value | number }}. Datos de entrada hasta {{ p.observed_through }}.
+          Conteo observado para el año explicado:
+          {{ p.observed === null ? 'fuera del corte' : p.observed }}.
+        </p>
+        <p>
+          Descomposición lineal exacta en escala log(1 + conteo). No es SHAP ni una explicación
+          causal. Las contribuciones no se suman en unidades de artículos.
+        </p>
+        <table>
+          <caption>
+            Atribuciones locales respecto del fondo fijo de entrenamiento
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Variable</th>
+              <th scope="col">Entrada logarítmica</th>
+              <th scope="col">Referencia</th>
+              <th scope="col">Contribución</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let feature of p.explanation.features; let i = index">
+              <th scope="row">{{ featureLabel(feature) }}</th>
+              <td>{{ p.explanation.feature_values[i] | number: '1.4-4' }}</td>
+              <td>{{ p.explanation.reference_values[i] | number: '1.4-4' }}</td>
+              <td>{{ p.explanation.contributions[i] | number: '1.4-4' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Base {{ p.explanation.base_value | number: '1.4-4' }} + contribuciones =
+          {{ p.explanation.output_value | number: '1.4-4' }}. Para volver al conteo se aplica
+          máximo(0, exp(salida) − 1).
+        </p>
+        <p>
+          Identidad del predictor: <code class="identifier">{{ p.model_id }}</code>
+        </p>
+      </ng-container>
+    </section>
+    <section class="my-6" aria-labelledby="global-heading">
+      <h2 id="global-heading">Explicación global y comprobaciones</h2>
+      <table>
+        <caption>
+          Magnitud media absoluta de las atribuciones en el diagnóstico retrospectivo
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Variable</th>
+            <th scope="col">Atribución absoluta media (escala log)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of study.prediction.global_explanation.features">
+            <th scope="row">{{ featureLabel(f.feature) }}</th>
+            <td>{{ f.mean_absolute_attribution | number: '1.4-4' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Residuo máximo de aditividad: {{ study.prediction.fidelity.value }}. Comprueba la
+        reconstrucción algebraica del modelo, no su utilidad humana.
+      </p>
+      <p>
+        Cambio medio L1 de atribuciones entre ajustes que incorporan un año real adicional:
+        {{ study.prediction.stability.value | number: '1.4-4' }} ({{ study.prediction.stability.n }}
+        comparaciones, mismo fondo de referencia). Es una medida descriptiva; no se declara un
+        umbral universal de estabilidad.
+      </p>
+    </section>
+    <details>
+      <summary>Límites del estudio</summary>
+      <ul>
+        <li *ngFor="let item of study.limitations">{{ item }}</li>
+      </ul>
+    </details>
+  </ng-container>
+</main>
