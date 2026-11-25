@@ -1,0 +1,37 @@
+svg {
+  width: 100%;
+  max-height: 350px;
+  background: #f5f8fb;
+  margin: 1rem 0;
+}
+svg text {
+  fill: #203e60;
+  font-size: 16px;
+}
+section {
+  border-top: 1px solid #ccd7e1;
+  padding-top: 1.4rem;
+}
+select {
+  max-width: 100%;
+  margin: 0.5rem;
+}
+table {
+  margin: 1rem 0;
+}
+td,
+th {
+  overflow-wrap: anywhere;
+}
+details {
+  margin: 1rem 0;
+}
+summary {
+  cursor: pointer;
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  table {
+    font-size: 0.85rem;
+  }
+}
