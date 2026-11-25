@@ -39,7 +39,7 @@ export interface DescriptorPage {
 }
 
 export interface CorpusSummary {
-  status: 'ready_for_development';
+  status: 'ready_for_development' | 'ready_for_research_preparation';
   training: string;
   diagnostics: {
     articles: number;

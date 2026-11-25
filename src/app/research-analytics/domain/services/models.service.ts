@@ -6,7 +6,7 @@ export interface ModelSummary {
   model_id: string;
   workset_id: string;
   method: 'tfidf-nmf';
-  purpose: 'technical';
+  purpose: 'technical' | 'research';
   evaluation_status: 'not_research_validated';
   fit_document_count: number;
   configuration: Record<string, number>;

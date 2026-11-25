@@ -2,8 +2,8 @@
   <a routerLink="/research-analytics" class="underline">Volver al explorador documental</a>
   <h1 id="models-heading" class="text-3xl font-bold">Modelos NMF registrados</h1>
   <p class="notice">
-    Ensayos técnicos. Estos modelos no acreditan evaluación científica final ni resultados validados
-    para la tesis.
+    Modelos registrados con su propósito técnico o de investigación. El registro no acredita por sí
+    solo evaluación científica final ni aprobación académica.
   </p>
   <div aria-live="polite" [attr.aria-busy]="state === 'loading'">
     <p *ngIf="state === 'loading'" role="status">Consultando modelos…</p>
@@ -19,7 +19,10 @@
           <p>
             Modelo: <code class="identifier">{{ item.model_id }}</code>
           </p>
-          <p>TF-IDF + NMF · {{ item.fit_document_count }} documentos de ajuste · Ensayo técnico</p>
+          <p>
+            TF-IDF + NMF · {{ item.fit_document_count }} documentos de ajuste ·
+            {{ item.purpose === 'research' ? 'Estudio de investigación' : 'Ensayo técnico' }}
+          </p>
           <button
             type="button"
             (click)="select(item.model_id)"

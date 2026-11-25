@@ -5,9 +5,19 @@ import { RouterModule } from '@angular/router';
 import { CorpusPageComponent } from './presentation/pages/corpus-page.component';
 import { PreparationPageComponent } from './presentation/pages/preparation-page.component';
 import { ModelsPageComponent } from './presentation/pages/models-page.component';
+import { StudyPageComponent } from './presentation/pages/study-page.component';
+import { LineagePageComponent } from './presentation/pages/lineage-page.component';
+import { TopicMapPageComponent } from './presentation/pages/topic-map-page.component';
 
 @NgModule({
-  declarations: [CorpusPageComponent, PreparationPageComponent, ModelsPageComponent],
+  declarations: [
+    CorpusPageComponent,
+    PreparationPageComponent,
+    ModelsPageComponent,
+    StudyPageComponent,
+    LineagePageComponent,
+    TopicMapPageComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +25,9 @@ import { ModelsPageComponent } from './presentation/pages/models-page.component'
       { path: '', pathMatch: 'full', component: CorpusPageComponent },
       { path: 'preparation', component: PreparationPageComponent },
       { path: 'models', component: ModelsPageComponent },
+      { path: 'study', component: StudyPageComponent },
+      { path: 'lineage', component: LineagePageComponent },
+      { path: 'map', component: TopicMapPageComponent },
     ]),
   ],
 })
