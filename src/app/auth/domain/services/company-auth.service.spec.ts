@@ -7,6 +7,7 @@ describe('CompanyAuthService', () => {
   let service: CompanyAuthService;
   let httpMock: HttpTestingController;
   const apiUrl = environment.apiIdentity;
+  const socialUrl = environment.apiSocial;
 
   beforeEach(() => {
     localStorage.clear();
@@ -59,7 +60,7 @@ describe('CompanyAuthService', () => {
   it('fetches a company profile with auth headers', () => {
     localStorage.setItem('accessToken', 'tok-1');
     service.getCompanyProfile('c-1').subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/companies/c-1/`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/c-1/`);
     expect(req.request.headers.get('Authorization')).toBe('Bearer tok-1');
     req.flush({});
   });
@@ -70,13 +71,13 @@ describe('CompanyAuthService', () => {
 
     service.getCompanyProfile('c-1').subscribe();
 
-    const first = httpMock.expectOne(`${apiUrl}/companies/c-1/`);
+    const first = httpMock.expectOne(`${socialUrl}/companies/c-1/`);
     first.flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     const refresh = httpMock.expectOne(`${apiUrl}/token/refresh/`);
     refresh.flush({ access: 'new-tok' });
 
-    const retry = httpMock.expectOne(`${apiUrl}/companies/c-1/`);
+    const retry = httpMock.expectOne(`${socialUrl}/companies/c-1/`);
     expect(retry.request.headers.get('Authorization')).toBe('Bearer new-tok');
     retry.flush({});
   });
@@ -84,7 +85,7 @@ describe('CompanyAuthService', () => {
   it('fetches its own profile with auth headers', () => {
     localStorage.setItem('accessToken', 'tok-1');
     service.getMyProfile().subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/companies/profile/`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/profile/`);
     expect(req.request.headers.get('Authorization')).toBe('Bearer tok-1');
     req.flush({});
   });
@@ -96,13 +97,13 @@ describe('CompanyAuthService', () => {
 
     service.updateProfile('c-2', formData).subscribe();
 
-    const first = httpMock.expectOne(`${apiUrl}/companies/c-2/update/`);
+    const first = httpMock.expectOne(`${socialUrl}/companies/c-2/update/`);
     first.flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     const refresh = httpMock.expectOne(`${apiUrl}/token/refresh/`);
     refresh.flush({ access: 'new-tok' });
 
-    const retry = httpMock.expectOne(`${apiUrl}/companies/c-2/update/`);
+    const retry = httpMock.expectOne(`${socialUrl}/companies/c-2/update/`);
     expect(retry.request.headers.get('Authorization')).toBe('Bearer new-tok');
     retry.flush({});
   });
@@ -117,7 +118,7 @@ describe('CompanyAuthService', () => {
       },
     });
 
-    const req = httpMock.expectOne(`${apiUrl}/companies/profile/`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/profile/`);
     req.flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
   });
 
@@ -125,7 +126,7 @@ describe('CompanyAuthService', () => {
     service.listCompanies(true).subscribe((companies) => {
       expect(companies).toEqual([]);
     });
-    const req = httpMock.expectOne(`${apiUrl}/companies/?verified_only=true`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/?verified_only=true`);
     req.flush([]);
   });
 
@@ -133,14 +134,14 @@ describe('CompanyAuthService', () => {
     service.listCompanies().subscribe((companies) => {
       expect(companies).toEqual([]);
     });
-    const req = httpMock.expectOne(`${apiUrl}/companies/`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/`);
     req.flush([]);
   });
 
   it('updates a company profile using the token straight from localStorage', () => {
     localStorage.setItem('accessToken', 'tok-9');
     service.updateProfile('c-2', new FormData()).subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/companies/c-2/update/`);
+    const req = httpMock.expectOne(`${socialUrl}/companies/c-2/update/`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.headers.get('Authorization')).toBe('Bearer tok-9');
     req.flush({});

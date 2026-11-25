@@ -128,6 +128,17 @@ describe('ProfileComponent', () => {
       expect(fakeEl.scrollIntoView).toHaveBeenCalledWith({ block: 'start', behavior: 'smooth' });
     });
 
+    it('does not scroll to the tabs when the URL targets #ethical-team-builder', () => {
+      component.ngOnInit();
+      const fakeEl = { scrollIntoView: jasmine.createSpy() };
+      (component as unknown as { tabsTop: unknown }).tabsTop = { nativeElement: fakeEl };
+
+      const url = '/profile/1/my-groups?from=nav#ethical-team-builder';
+      routerEvents$.next(new NavigationEnd(1, url, url));
+
+      expect(fakeEl.scrollIntoView).not.toHaveBeenCalled();
+    });
+
     it('does not scroll for a non-matching NavigationEnd route', () => {
       component.ngOnInit();
       const fakeEl = { scrollIntoView: jasmine.createSpy() };

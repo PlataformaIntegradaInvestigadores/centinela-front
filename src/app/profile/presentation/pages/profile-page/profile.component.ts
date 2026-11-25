@@ -55,7 +55,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.routeSub.add(
       this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
         const url = (e as NavigationEnd).urlAfterRedirects;
-        if (/\/(network|article|fingerprint|about-me|my-groups)(\/|$|\?)/.test(url)) {
+        if (
+          !url.includes('#ethical-team-builder') &&
+          /\/(network|article|fingerprint|about-me|my-groups)(\/|$|\?)/.test(url)
+        ) {
           this.tabsTop?.nativeElement?.scrollIntoView({ block: 'start', behavior: 'smooth' });
         }
       }),

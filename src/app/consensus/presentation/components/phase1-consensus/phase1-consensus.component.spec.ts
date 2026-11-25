@@ -26,7 +26,6 @@ describe('Phase1ConsensusComponent', () => {
   let debateStatisticsService: any;
   let router: any;
 
-  let wsSubject: Subject<any>;
   let newTopicSubject: Subject<any>;
   let notificationsSubject: Subject<any>;
   let validateStatusSubject: Subject<void>;
@@ -53,7 +52,6 @@ describe('Phase1ConsensusComponent', () => {
   }
 
   beforeEach(() => {
-    wsSubject = new Subject<any>();
     newTopicSubject = new Subject<any>();
     notificationsSubject = new Subject<any>();
     validateStatusSubject = new Subject<void>();

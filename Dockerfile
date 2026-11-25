@@ -12,11 +12,18 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-RUN npm run build -- --configuration=local
+# Production build: minified, hashed file names (the nginx cache headers rely on
+# them) and no public source maps.
+RUN npm run build -- --configuration=production
 
 
-FROM nginx:latest
+# Pinned to the version that runs in staging; "latest" changed under us on rebuilds.
+FROM nginx:1.31.8
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=build /app/dist/centinela-application-frontend /usr/share/nginx/html
+
+# nginx.conf answers /health itself, so this tells whether the web server is up.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -fsS -o /dev/null http://127.0.0.1/health || exit 1

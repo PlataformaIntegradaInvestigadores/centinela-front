@@ -70,6 +70,21 @@ npm start        # = ng serve, http://localhost:4200
 
 `ng serve` proxea `/api`, `/ws` y `/media` a `http://localhost:8080` (ver `proxy.conf.json`, referenciado en `angular.json` → `serve`) — ese es el puerto host donde escucha `gateway-service` corrido vía Docker. Para respuestas reales de API con hot reload: levantar el stack de backend necesario (al menos `gateway-service` en `127.0.0.1:8080`), luego `npm start`, y abrir `http://localhost:4200`.
 
+### Conformar equipo (recomendación ética de investigadores)
+
+El recomendador vive dentro del módulo de grupos (`/profile/:id/my-groups#ethical-team-builder`,
+sección «Recommended Members · Conformación ética de equipo»); `/home/team-builder` queda como demo
+pública sin sesión. Ambos consumen `ethical-recommender-service` (FastAPI) vía
+`environment.apiRecommender` (`/api/recommender`). En staging/producción `gateway-service` reescribe
+`/api/recommender/<ruta>` a `ethical-recommender-service:8007/api/v1/<ruta>` (y
+`/api/recommender/health` a `/health`). En local, `proxy.conf.json` replica esa reescritura contra
+`http://localhost:8000` (reglas declaradas antes de la genérica `/api`), así que para la demo basta
+con levantar ese servicio (`python -m uvicorn infrastructure.api.main:app --port 8000`) y `npm start`.
+
+El equipo base admite hasta 5 integrantes (`MAX_TEAM_SIZE`): más integrantes diluyen el centroide
+semántico. El autocompletado acepta apellido y nombre en cualquier orden o el formato Scopus
+(`GET /api/v1/authors`, búsqueda flexible) y muestra nombre completo, institución y nombre/ID Scopus.
+
 Para trabajo aislado de UI/presentación, `ng serve` funciona sin ningún backend corriendo — las llamadas a la API simplemente devuelven 404.
 
 ## Variables de entorno

@@ -28,6 +28,7 @@ import { GroupCreateModalComponent } from '../group/presentation/group-create-mo
 import { BtnMenuGroupComponent } from '../group/presentation/btn-menu-group/btn-menu-group.component';
 import { ConfirmLeaveModalComponent } from '../group/presentation/confirm-leave-modal/confirm-leave-modal.component';
 import { ConfirmDeleteModalComponent } from '../group/presentation/confirm-delete-modal/confirm-delete-modal.component';
+import { TeamRecommenderUiModule } from '../team-recommender/team-recommender-ui.module';
 
 @NgModule({
   imports: [
@@ -41,6 +42,8 @@ import { ConfirmDeleteModalComponent } from '../group/presentation/confirm-delet
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
+    // Recomendación ética de investigadores dentro de «Groups» (my-groups).
+    TeamRecommenderUiModule,
   ],
   exports: [ProfileDataComponent],
   declarations: [

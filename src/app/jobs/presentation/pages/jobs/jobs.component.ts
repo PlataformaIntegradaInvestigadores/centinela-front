@@ -545,6 +545,15 @@ export class JobsComponent implements OnInit {
   /**
    * Construye la URL completa del archivo usando la URL base del backend
    */
+  downloadResume(application: Application): void {
+    this.applicationService.saveResume(application).subscribe({
+      error: (error: unknown) => {
+        console.error('Error downloading the resume:', error);
+        alert('The resume could not be downloaded. Please try again.');
+      },
+    });
+  }
+
   getFullFileUrl(relativePath: string): string {
     if (!relativePath) return '';
 

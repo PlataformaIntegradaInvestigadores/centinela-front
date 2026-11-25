@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
   Application,
@@ -262,6 +262,55 @@ export class ApplicationService {
       }),
       catchError(this.handleError),
     );
+  }
+
+  /**
+   * Descarga el CV de una postulación. El backend solo lo entrega a la empresa dueña
+   * de la oferta y al propio postulante, así que necesita el token de sesión: no puede
+   * ser un enlace directo (un <a href> no envía el encabezado Authorization).
+   */
+  downloadResume(applicationId: number): Observable<Blob> {
+    return this.authService.getToken().pipe(
+      switchMap((token) => {
+        if (!token) {
+          return throwError(() => new Error('No authentication token found'));
+        }
+
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        });
+
+        return this.http.get(`${this.apiUrl}/v1/applications/${applicationId}/resume/`, {
+          headers,
+          responseType: 'blob',
+        });
+      }),
+      catchError(this.handleError),
+    );
+  }
+
+  /**
+   * Descarga el CV y se lo entrega al navegador como archivo.
+   */
+  saveResume(application: { id: number; resume_file?: unknown }): Observable<void> {
+    return this.downloadResume(application.id).pipe(
+      map((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = this.resumeFilename(application);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url));
+      }),
+    );
+  }
+
+  private resumeFilename(application: { id: number; resume_file?: unknown }): string {
+    const path = typeof application.resume_file === 'string' ? application.resume_file : '';
+    const name = path.split('/').pop();
+    return name && name.trim() ? name : `resume-${application.id}.pdf`;
   }
 
   /**
