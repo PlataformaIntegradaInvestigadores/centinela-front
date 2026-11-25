@@ -61,4 +61,18 @@ describe('TopicMapPageComponent', () => {
     page.reload();
     expect(page.state).toBe('empty');
   });
+  it('reports document request errors and recovers to an empty page', () => {
+    service.documents.and.returnValue(throwError(() => new HttpErrorResponse({ status: 422 })));
+    page.select('topic-0');
+    expect(page.documentState).toBe('Filtros o artefactos inválidos');
+    expect(page.documents).toBeNull();
+    service.documents.and.returnValue(throwError(() => new HttpErrorResponse({ status: 503 })));
+    page.select('topic-0');
+    expect(page.documentState).toBe('Servicio no disponible');
+    service.documents.and.returnValue(of({ total: 0, items: [] }));
+    page.select('topic-0');
+    expect(page.documentState).toBe('empty');
+    page.select('');
+    expect(page.documents).toBeNull();
+  });
 });
