@@ -91,6 +91,18 @@ export class PreparationPageComponent implements OnInit, OnDestroy {
       .subscribe((report) => {
         this.quality = report;
         this.qualityState = report ? 'ready' : 'error';
+        if (report && !this.result) {
+          const years = Object.keys(report.dates.articles_by_year)
+            .map(Number)
+            .sort((a, b) => a - b);
+          if (years.length) {
+            this.configuration = {
+              ...this.configuration,
+              start_year: years[0],
+              end_year: years[years.length - 1],
+            };
+          }
+        }
       });
     this.actions
       .pipe(

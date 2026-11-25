@@ -1,5 +1,16 @@
 <main class="mx-auto max-w-7xl p-6" aria-labelledby="corpus-heading">
   <a routerLink="/home" class="underline">Volver a Centinela</a>
+  <p><a routerLink="/research-analytics/map" class="underline">Explorar mapa de relaciones temáticas</a></p>
+  <p>
+    <a routerLink="/research-analytics/lineage" class="underline"
+      >Datos y procedencia del estudio</a
+    >
+  </p>
+  <p>
+    <a routerLink="/research-analytics/study" class="underline"
+      >Temas, evolución, pronósticos y explicaciones</a
+    >
+  </p>
   <p>
     <a routerLink="/research-analytics/models" class="underline"
       >Consultar modelos NMF registrados</a
@@ -12,7 +23,13 @@
   </p>
   <header class="my-6">
     <h1 id="corpus-heading" class="text-3xl font-bold">Analítica de la producción científica</h1>
-    <p class="mt-2">Exploración del corpus de desarrollo</p>
+    <p class="mt-2">
+      {{
+        summary?.status === 'ready_for_research_preparation'
+          ? 'Exploración del corpus de investigación'
+          : 'Exploración del corpus de desarrollo'
+      }}
+    </p>
     <p class="notice">
       Cobertura y precisión de fechas pendientes de confirmación. Estos datos describen la
       instantánea disponible.

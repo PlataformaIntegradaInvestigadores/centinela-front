@@ -1,0 +1,91 @@
+<main class="mx-auto max-w-7xl p-6" aria-labelledby="lineage-heading">
+  <a routerLink="/research-analytics" class="underline">Volver al corpus</a>
+  <h1 id="lineage-heading" class="text-3xl font-bold">Datos y procedencia del estudio</h1>
+  <p>Consulta la versión de los datos, sus capas y las ejecuciones asociadas.</p>
+  <div aria-live="polite" [attr.aria-busy]="state === 'loading'">
+    <p *ngIf="state === 'loading'" role="status">Consultando la versión publicada…</p>
+    <p *ngIf="state === 'unauthenticated'" role="alert">
+      Inicia sesión en Centinela para consultar estos datos.
+    </p>
+    <p *ngIf="state === 'forbidden'" role="alert">
+      Tu cuenta no tiene acceso autorizado al módulo analítico.
+    </p>
+    <p *ngIf="state === 'empty'">No hay una versión de datos publicada.</p>
+    <div *ngIf="state === 'error'" role="alert">
+      <p>No se pudo consultar la procedencia del estudio.</p>
+      <button type="button" (click)="reload()">Reintentar</button>
+    </div>
+  </div>
+  <ng-container *ngIf="data as release">
+    <p *ngIf="!release.distributed_lakehouse_verified" class="notice">
+      Versión local de investigación. La infraestructura institucional del Lakehouse sigue pendiente
+      de verificación.
+    </p>
+    <section aria-labelledby="version-heading" class="my-6">
+      <h2 id="version-heading">Versión de datos</h2>
+      <dl>
+        <dt>Identificador</dt>
+        <dd class="break-all">
+          <code>{{ release.release_id }}</code>
+        </dd>
+        <dt>Publicada</dt>
+        <dd>{{ release.published_at | date: 'medium' }}</dd>
+        <dt>Corpus</dt>
+        <dd class="break-all">{{ release.lineage.dataset }}</dd>
+        <dt>Ejecución del estudio</dt>
+        <dd class="break-all">
+          <code>{{ release.lineage.study_run_id }}</code>
+        </dd>
+        <dt>Ejecución de la revisión</dt>
+        <dd class="break-all">
+          <code>{{ release.lineage.review_run_id }}</code>
+        </dd>
+      </dl>
+      <a routerLink="/research-analytics/study" class="underline"
+        >Consultar temas, evolución y pronóstico</a
+      >
+    </section>
+    <section aria-labelledby="layers-heading" class="my-6">
+      <h2 id="layers-heading">Capas publicadas</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <caption>
+            Tablas de la versión actual; los conteos no acreditan cobertura completa del universo
+            científico.
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Tabla</th>
+              <th scope="col">Capa</th>
+              <th scope="col">Registros</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of tables">
+              <th scope="row">{{ entry[0] }}</th>
+              <td>{{ layerName(entry[1].layer) }}</td>
+              <td>{{ entry[1].rows | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <details>
+      <summary>Fuentes y trazabilidad</summary>
+      <ul>
+        <li *ngFor="let source of sources">{{ source }}</li>
+      </ul>
+      <p>
+        Los originales se conservan. Las relaciones depuradas, textos preparados, modelos y
+        resultados tienen versiones asociadas.
+      </p>
+      <p class="break-all">
+        SHA256 del plan firmado: <code>{{ release.lineage.signed_plan_sha256 }}</code>
+      </p>
+      <p>
+        Los años son retrospectivos por publicación; las fechas históricas de incorporación siguen
+        sin conocerse.
+      </p>
+    </details>
+  </ng-container>
+</main>

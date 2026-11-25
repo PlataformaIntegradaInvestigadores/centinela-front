@@ -49,11 +49,14 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private isTokenExpiredError(error: HttpErrorResponse): boolean {
+    const detail = typeof error.error?.detail === 'string' ? error.error.detail : '';
+    const message = typeof error.error?.message === 'string' ? error.error.message : '';
+    const code = error.error?.code || error.error?.detail?.code;
     return (
-      error.error?.code === 'token_not_valid' ||
-      error.error?.detail === 'Token is invalid or expired' ||
-      error.error?.message?.includes('token') ||
-      error.error?.detail?.includes('expired')
+      code === 'token_not_valid' ||
+      detail === 'Token is invalid or expired' ||
+      message.includes('token') ||
+      detail.includes('expired')
     );
   }
 
