@@ -8,6 +8,8 @@ import { loginGuard } from 'src/guards/login.guard';
 import { LoggerComponent } from './components/logger/logger.component';
 import { FairnessDashboardComponent } from './pages/fairness-dashboard/fairness-dashboard.component';
 import { StrategicAnalyticsComponent } from './components/strategic-analytics/strategic-analytics.component';
+import { ReviewInboxComponent } from './pages/review-inbox/review-inbox.component';
+import { ReviewCaseComponent } from './pages/review-case/review-case.component';
 
 const routes: Routes = [
   {
@@ -38,6 +40,14 @@ const routes: Routes = [
       {
         path: 'analytics',
         component: StrategicAnalyticsComponent,
+      },
+      {
+        path: 'reviews',
+        component: ReviewInboxComponent,
+      },
+      {
+        path: 'reviews/:caseId',
+        component: ReviewCaseComponent,
       },
       {
         path: '',

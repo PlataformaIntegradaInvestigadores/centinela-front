@@ -1,0 +1,152 @@
+<div class="px-2 text-gray-800">
+  <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Revisión humana</h1>
+      <p class="text-sm text-gray-600 mt-1 max-w-2xl">
+        Salidas retenidas por la gobernanza que esperan tu decisión. Un expediente que nadie
+        resuelve antes de su plazo se deniega y no llega al usuario.
+      </p>
+    </div>
+    <form
+      class="flex items-end gap-2"
+      (ngSubmit)="open(caseIdInput)"
+      aria-label="Abrir expediente por identificador"
+    >
+      <label class="text-sm text-gray-600">
+        Abrir por ID
+        <input
+          name="caseId"
+          [(ngModel)]="caseIdInput"
+          class="mt-1 block w-72 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800"
+          placeholder="ID del expediente"
+        />
+      </label>
+      <button
+        type="submit"
+        class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-900 disabled:opacity-50"
+        [disabled]="!caseIdInput.trim()"
+      >
+        Abrir
+      </button>
+    </form>
+  </div>
+
+  <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-4">
+    <div role="group" aria-label="Tipo de caso" class="flex flex-wrap gap-1">
+      <button
+        *ngFor="let filter of typeFilters"
+        type="button"
+        (click)="setType(filter.value)"
+        [attr.aria-pressed]="caseType === filter.value"
+        class="rounded-lg px-3 py-1.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900"
+        [ngClass]="
+          caseType === filter.value
+            ? 'bg-gray-200 font-semibold text-gray-900'
+            : 'text-gray-600 hover:bg-gray-100'
+        "
+      >
+        {{ filter.label }}
+      </button>
+    </div>
+    <label class="text-sm text-gray-600 flex items-center gap-2">
+      Estado
+      <select
+        name="status"
+        [ngModel]="status"
+        (ngModelChange)="setStatus($event)"
+        class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-gray-800 focus:outline-none"
+      >
+        <option *ngFor="let filter of statusFilters" [ngValue]="filter.value">
+          {{ filter.label }}
+        </option>
+      </select>
+    </label>
+  </div>
+
+  <section class="rounded-xl border border-gray-200 bg-white" aria-live="polite">
+    <div *ngIf="error" class="p-5 text-sm" role="alert">
+      <p class="text-red-700">{{ error }}</p>
+      <p *ngIf="traceId" class="mt-1 text-gray-500">Traza: {{ traceId }}</p>
+      <button
+        type="button"
+        (click)="load()"
+        class="mt-3 rounded-lg border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
+      >
+        Reintentar
+      </button>
+    </div>
+
+    <div class="overflow-x-auto" *ngIf="!error">
+      <table class="min-w-full text-sm">
+        <caption class="sr-only">
+          Expedientes de revisión
+        </caption>
+        <thead>
+          <tr class="text-left text-gray-500 border-b border-gray-200">
+            <th scope="col" class="py-3 px-4 font-medium">Caso</th>
+            <th scope="col" class="py-3 px-4 font-medium">Motivo de la retención</th>
+            <th scope="col" class="py-3 px-4 font-medium">Política</th>
+            <th scope="col" class="py-3 px-4 font-medium">Recibido</th>
+            <th scope="col" class="py-3 px-4 font-medium text-right">
+              {{ status === 'pending' ? 'Vence en' : 'Estado' }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let summary of cases"
+            class="border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer"
+            (click)="open(summary.case_id)"
+          >
+            <td class="py-3 px-4 align-top">
+              <a
+                [routerLink]="['/admin/dashboard/reviews', summary.case_id]"
+                class="font-medium text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 rounded"
+                (click)="$event.stopPropagation()"
+              >
+                {{ typeLabels[summary.case_type] }}
+              </a>
+              <div class="text-xs text-gray-500 mt-0.5 break-all">{{ summary.case_id }}</div>
+            </td>
+            <td class="py-3 px-4 align-top">
+              <ul>
+                <li *ngFor="let code of summary.reason_codes">{{ reasonLabel(code) }}</li>
+              </ul>
+            </td>
+            <td class="py-3 px-4 align-top text-gray-600 whitespace-nowrap">
+              {{ summary.policy.policy_id }} · {{ summary.policy.version }}
+            </td>
+            <td class="py-3 px-4 align-top text-gray-600 whitespace-nowrap tabular-nums">
+              {{ summary.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="py-3 px-4 align-top text-right whitespace-nowrap tabular-nums">
+              <ng-container *ngIf="summary.status === 'pending'; else state">
+                <span
+                  *ngIf="remaining(summary) as left; else due"
+                  [ngClass]="urgent(summary) ? 'font-semibold text-amber-700' : 'text-gray-800'"
+                  >{{ left }}</span
+                >
+                <ng-template #due><span class="text-red-700">Plazo cumplido</span></ng-template>
+              </ng-container>
+              <ng-template #state>{{ outcomeLabels[summary.status] }}</ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="loading" class="p-5 text-sm text-gray-500">Cargando expedientes…</p>
+      <p *ngIf="!loading && cases.length === 0" class="p-5 text-sm text-gray-600">
+        No hay expedientes {{ status === 'pending' ? 'pendientes' : 'en este estado' }}.
+      </p>
+      <div *ngIf="!loading && nextCursor" class="p-4 border-t border-gray-100">
+        <button
+          type="button"
+          (click)="load(nextCursor)"
+          class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
+        >
+          Cargar más
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

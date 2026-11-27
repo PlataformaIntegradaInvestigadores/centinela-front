@@ -105,12 +105,10 @@ describe('AuthInterceptor', () => {
     authServiceSpy.refreshToken.and.returnValue(of(newToken));
 
     const handler: any = {
-      handle: jasmine
-        .createSpy('handle')
-        .and.returnValues(
-          throwError(() => unauthorized({ code: 'token_not_valid' })),
-          of({} as HttpEvent<unknown>),
-        ),
+      handle: jasmine.createSpy('handle').and.returnValues(
+        throwError(() => unauthorized({ code: 'token_not_valid' })),
+        of({} as HttpEvent<unknown>),
+      ),
     };
     const req = new HttpRequest('GET', '/api/identity/users/');
 
@@ -145,12 +143,10 @@ describe('AuthInterceptor', () => {
     authServiceSpy.refreshToken.and.returnValue(of({ access: 'new-tok' } as AuthResponse));
 
     const handler: any = {
-      handle: jasmine
-        .createSpy('handle')
-        .and.returnValues(
-          throwError(() => unauthorized({ detail: 'forbidden' })),
-          of({} as HttpEvent<unknown>),
-        ),
+      handle: jasmine.createSpy('handle').and.returnValues(
+        throwError(() => unauthorized({ detail: 'forbidden' })),
+        of({} as HttpEvent<unknown>),
+      ),
     };
     const req = new HttpRequest('GET', '/api/identity/profile-information/');
 
@@ -250,6 +246,44 @@ describe('AuthInterceptor', () => {
           done();
         },
       });
+    });
+
+    it('sends the admin token to the governance supervision API only', () => {
+      startAdminSession();
+      const cases: [string, boolean][] = [
+        ['/api/governance/review-cases/', true],
+        ['/api/governance/review-cases/c-1/resolution', true],
+        ['/api/governance/qa-samples/s-1', true],
+        ['/api/governance/supervisors/me', true],
+        ['/api/governance/governed/qa/reviews/r-1', false],
+        ['/api/governance/health', false],
+      ];
+      for (const [url, expected] of cases) {
+        const handler = fakeHandler(of({} as HttpEvent<unknown>));
+        interceptor.intercept(new HttpRequest('GET', url), handler).subscribe();
+        expect(sentRequest(handler).headers.has('X-Admin-Token')).withContext(url).toBe(expected);
+      }
+    });
+
+    it('goes back to the admin login on a 401 from the governance API without refreshing', (done) => {
+      startAdminSession();
+      const missing = new HttpErrorResponse({
+        status: 401,
+        error: { code: 'AUTHENTICATION_REQUIRED', trace_id: 't-1' },
+      });
+      const handler = fakeHandler(throwError(() => missing));
+
+      interceptor
+        .intercept(new HttpRequest('GET', '/api/governance/review-cases/c-1'), handler)
+        .subscribe({
+          error: (err) => {
+            expect(err).toBe(missing);
+            expect(sessionStorage.getItem('adminToken')).toBeNull();
+            expect(authServiceSpy.refreshToken).not.toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/admin']);
+            done();
+          },
+        });
     });
 
     it('does not touch the admin session on a 403 from a non-admin route', (done) => {
