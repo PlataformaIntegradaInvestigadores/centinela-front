@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import {
   CaseStatus,
@@ -7,17 +7,12 @@ import {
   GovernanceError,
   ReviewCaseSummary,
 } from 'src/app/search-engine/domain/entities/review.interface';
-import {
-  CASE_TYPE_LABELS,
-  OUTCOME_LABELS,
-  URGENT_MS,
-  errorMessage,
-  reasonLabel,
-  timeLeft,
-} from 'src/app/search-engine/domain/entities/review-rules';
+import { CASE_TYPE_LABELS, errorMessage } from 'src/app/search-engine/domain/entities/review-rules';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
 
 const PAGE_SIZE = 25;
+const CASE_TYPES: CaseType[] = ['qa', 'recommendation', 'rag'];
+const STATUSES: CaseStatus[] = ['pending', 'expired', 'approve', 'modify', 'reject'];
 
 @Component({
   selector: 'app-review-inbox',
@@ -38,8 +33,6 @@ export class ReviewInboxComponent implements OnInit, OnDestroy {
     { value: 'reject', label: 'Rechazados' },
   ];
   readonly typeLabels = CASE_TYPE_LABELS;
-  readonly outcomeLabels = OUTCOME_LABELS;
-  readonly reasonLabel = reasonLabel;
 
   caseType: CaseType | null = null;
   status: CaseStatus = 'pending';
@@ -53,30 +46,46 @@ export class ReviewInboxComponent implements OnInit, OnDestroy {
 
   private request?: Subscription;
   private clock?: Subscription;
+  private queryChanges?: Subscription;
 
   constructor(
     private reviews: ReviewService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.load();
+    // Filters live in the URL so a view can be bookmarked, shared and restored with Back.
+    this.queryChanges = this.route.queryParamMap.subscribe((params) => {
+      const type = params.get('tipo') as CaseType | null;
+      const status = params.get('estado') as CaseStatus | null;
+      this.caseType = type && CASE_TYPES.includes(type) ? type : null;
+      this.status = status && STATUSES.includes(status) ? status : 'pending';
+      this.load();
+    });
     this.clock = interval(30000).subscribe(() => (this.now = Date.now()));
   }
 
   ngOnDestroy(): void {
     this.request?.unsubscribe();
     this.clock?.unsubscribe();
+    this.queryChanges?.unsubscribe();
   }
 
   setType(caseType: CaseType | null): void {
-    this.caseType = caseType;
-    this.load();
+    this.navigate({ tipo: caseType });
   }
 
   setStatus(status: CaseStatus): void {
-    this.status = status;
-    this.load();
+    this.navigate({ estado: status === 'pending' ? null : status });
+  }
+
+  private navigate(queryParams: Record<string, string | null>): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams, queryParamsHandling: 'merge' });
+  }
+
+  get statusLabel(): string {
+    return (this.statusFilters.find((f) => f.value === this.status) as { label: string }).label;
   }
 
   load(cursor: string | null = null): void {
@@ -114,13 +123,5 @@ export class ReviewInboxComponent implements OnInit, OnDestroy {
     if (id) {
       this.router.navigate(['/admin/dashboard/reviews', id]);
     }
-  }
-
-  remaining(summary: ReviewCaseSummary): string | null {
-    return timeLeft(summary.expires_at, this.now);
-  }
-
-  urgent(summary: ReviewCaseSummary): boolean {
-    return Date.parse(summary.expires_at) - this.now < URGENT_MS;
   }
 }

@@ -1,11 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReviewResolutionViewComponent } from './review-resolution-view.component';
+import { ReviewPanelComponent } from '../review-panel/review-panel.component';
+import { ReviewDatePipe } from '../../pipes/review-format.pipes';
 
 describe('ReviewResolutionViewComponent', () => {
   let fixture: ComponentFixture<ReviewResolutionViewComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ declarations: [ReviewResolutionViewComponent] });
+    TestBed.configureTestingModule({
+      declarations: [ReviewResolutionViewComponent, ReviewPanelComponent, ReviewDatePipe],
+    });
     fixture = TestBed.createComponent(ReviewResolutionViewComponent);
   });
 

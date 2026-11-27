@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import {
   CaseType,
@@ -14,10 +14,14 @@ import {
   OUTCOME_LABELS,
   URGENT_MS,
   errorMessage,
+  metricLabel,
   reasonLabel,
+  selectionLabel,
   timeLeft,
 } from 'src/app/search-engine/domain/entities/review-rules';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
+import { ReviewResolutionFormComponent } from '../../components/review-resolution-form/review-resolution-form.component';
+import { HasUnsavedDecision } from './unsaved-decision.guard';
 
 export type AnswerSegment = { text: string } | { position: number; known: boolean };
 
@@ -44,10 +48,18 @@ export function answerSegments(paragraph: string, blockCount: number): AnswerSeg
   selector: 'app-review-case',
   templateUrl: './review-case.component.html',
 })
-export class ReviewCaseComponent implements OnInit, OnDestroy {
+export class ReviewCaseComponent implements OnInit, OnDestroy, HasUnsavedDecision {
   readonly typeLabels = CASE_TYPE_LABELS;
   readonly outcomeLabels = OUTCOME_LABELS;
   readonly reasonLabel = reasonLabel;
+  readonly selectionLabel = selectionLabel;
+
+  @ViewChild(ReviewResolutionFormComponent) form?: ReviewResolutionFormComponent;
+
+  /** The decision editor needs the wide column to sit beside the original text. */
+  editing = false;
+  /** After a resolution: whether the queue still has another pending case. */
+  nextState: 'idle' | 'loading' | 'none' | 'error' = 'idle';
 
   caseId = '';
   reviewCase: ReviewCase | null = null;
@@ -63,8 +75,36 @@ export class ReviewCaseComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private reviews: ReviewService,
   ) {}
+
+  hasUnsavedDecision(): boolean {
+    return !!this.form?.dirty;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  warnBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedDecision()) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
+  /** Opens the pending case closest to its deadline, so a queue can be cleared in one pass. */
+  nextPending(): void {
+    this.nextState = 'loading';
+    this.reviews.listCases({ status: 'pending', limit: 2 }).subscribe({
+      next: (page) => {
+        const next = page.items.find((item) => item.case_id !== this.caseId);
+        this.nextState = next ? 'idle' : 'none';
+        if (next) {
+          this.router.navigate(['/admin/dashboard/reviews', next.case_id]);
+        }
+      },
+      error: () => (this.nextState = 'error'),
+    });
+  }
 
   ngOnInit(): void {
     this.routeChanges = this.route.paramMap.subscribe((params) => {
@@ -86,6 +126,8 @@ export class ReviewCaseComponent implements OnInit, OnDestroy {
     this.error = null;
     this.traceId = null;
     this.reviewCase = null;
+    this.editing = false;
+    this.nextState = 'idle';
     this.request = this.reviews.getCase(this.caseId).subscribe({
       next: (reviewCase) => {
         this.reviewCase = reviewCase;
@@ -123,6 +165,7 @@ export class ReviewCaseComponent implements OnInit, OnDestroy {
       return;
     }
     this.reviewCase = { ...this.reviewCase, status: resolution.outcome, resolution };
+    this.editing = false;
   }
 
   /** The case changed on the server (expired or resolved elsewhere): show its real state. */
@@ -150,10 +193,11 @@ export class ReviewCaseComponent implements OnInit, OnDestroy {
     return !!plan && plan.retained_ranks.includes(rank);
   }
 
-  entries(record: Record<string, unknown> | undefined): { key: string; value: string }[] {
+  /** Labelled metric rows; numbers stay numbers so the template formats them for the locale. */
+  entries(record: Record<string, unknown> | undefined): { key: string; value: unknown }[] {
     return Object.entries(record ?? {}).map(([key, value]) => ({
-      key,
-      value: typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value),
+      key: metricLabel(key),
+      value: typeof value === 'object' && value !== null ? JSON.stringify(value) : value,
     }));
   }
 }

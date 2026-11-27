@@ -1,7 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Subject, of, throwError } from 'rxjs';
 import { ReviewResolutionFormComponent } from './review-resolution-form.component';
+import { ReviewPanelComponent } from '../review-panel/review-panel.component';
+import { ReviewErrorComponent } from '../review-error/review-error.component';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
 import {
   CaseType,
@@ -70,7 +72,7 @@ describe('ReviewResolutionFormComponent', () => {
     reviews = jasmine.createSpyObj('ReviewService', ['resolve']);
     reviews.resolve.and.returnValue(of(saved));
     TestBed.configureTestingModule({
-      declarations: [ReviewResolutionFormComponent],
+      declarations: [ReviewResolutionFormComponent, ReviewPanelComponent, ReviewErrorComponent],
       imports: [FormsModule],
       providers: [{ provide: ReviewService, useValue: reviews }],
     });
@@ -277,6 +279,64 @@ describe('ReviewResolutionFormComponent', () => {
     expect(form.submitting).toBeFalse();
     expect(form.outcome).toBe('approve');
   });
+
+  it('says when the justification is required before a choice is made', () => {
+    setup(qa, 'qa');
+    expect(form.justificationState).toBe('obligatoria para modificar o rechazar');
+    form.choose('approve');
+    expect(form.justificationState).toBe('opcional');
+    setup(reco, 'recommendation');
+    expect(form.justificationState).toBe('obligatoria');
+  });
+
+  it('names the consequence, the proposal and a fitting example', () => {
+    setup(reco, 'recommendation');
+    expect(form.proposed).toBe('modify');
+    expect(form.consequences.reject).toContain('no recibe');
+    expect(form.placeholder).toContain('rango');
+    setup(rag, 'rag');
+    expect(form.proposed).toBeNull();
+    expect(form.placeholder).toContain('párrafo');
+    setup(qa, 'qa');
+    expect(form.placeholder).toContain('par 2');
+  });
+
+  it('asks for the wide layout only for text editors', () => {
+    const editing: boolean[] = [];
+    form.editing.subscribe((v) => editing.push(v));
+    setup(rag, 'rag');
+    form.choose('modify');
+    setup(reco, 'recommendation');
+    form.choose('modify');
+    form.choose('reject');
+    expect(editing).toEqual([true, false, false]);
+  });
+
+  it('is dirty while a decision is unsent and clean after it is saved', () => {
+    setup(qa, 'qa');
+    expect(form.dirty).toBeFalse();
+    form.justification = 'nota';
+    expect(form.dirty).toBeTrue();
+    form.justification = '';
+    form.choose('approve');
+    expect(form.dirty).toBeTrue();
+    form.submit();
+    expect(form.dirty).toBeFalse();
+  });
+
+  it('moves focus to the confirmation and back', fakeAsync(() => {
+    setup(qa, 'qa');
+    form.choose('approve');
+    fixture.detectChanges();
+    form.review();
+    fixture.detectChanges();
+    tick();
+    expect(document.activeElement?.getAttribute('role')).toBe('group');
+    form.back();
+    fixture.detectChanges();
+    tick();
+    expect(document.activeElement?.textContent).toContain('Revisar y confirmar');
+  }));
 
   it('renders every editor without errors', () => {
     setup(qa, 'qa');

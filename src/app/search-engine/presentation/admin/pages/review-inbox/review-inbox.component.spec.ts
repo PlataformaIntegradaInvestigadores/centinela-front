@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
@@ -6,10 +7,11 @@ import {
   tick,
 } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { ReviewInboxComponent } from './review-inbox.component';
+import { ReviewDatePipe } from '../../pipes/review-format.pipes';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
 import { ReviewCaseSummary } from 'src/app/search-engine/domain/entities/review.interface';
 
@@ -31,14 +33,20 @@ describe('ReviewInboxComponent', () => {
   let component: ReviewInboxComponent;
   let reviews: jasmine.SpyObj<ReviewService>;
   let router: Router;
+  let query: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
 
   beforeEach(() => {
     reviews = jasmine.createSpyObj('ReviewService', ['listCases']);
     reviews.listCases.and.returnValue(of({ items: [summary()], next_cursor: null }));
+    query = new BehaviorSubject(convertToParamMap({}));
     TestBed.configureTestingModule({
-      declarations: [ReviewInboxComponent],
+      declarations: [ReviewInboxComponent, ReviewDatePipe],
       imports: [FormsModule, RouterTestingModule],
-      providers: [{ provide: ReviewService, useValue: reviews }],
+      providers: [
+        { provide: ReviewService, useValue: reviews },
+        { provide: ActivatedRoute, useValue: { queryParamMap: query } },
+      ],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(ReviewInboxComponent);
     component = fixture.componentInstance;
@@ -48,7 +56,7 @@ describe('ReviewInboxComponent', () => {
 
   afterEach(() => fixture.destroy());
 
-  it('loads pending cases first and shows them', () => {
+  it('loads pending cases by default and shows them', () => {
     fixture.detectChanges();
     expect(reviews.listCases).toHaveBeenCalledWith({
       status: 'pending',
@@ -56,17 +64,37 @@ describe('ReviewInboxComponent', () => {
       cursor: null,
       limit: 25,
     });
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Preguntas y respuestas');
-    expect(text).toContain('La política exige revisión humana');
+    expect(fixture.nativeElement.textContent).toContain('Preguntas y respuestas');
   });
 
-  it('filters by case type and status', () => {
+  it('reads valid filters from the URL and ignores invalid ones', () => {
     fixture.detectChanges();
+    query.next(convertToParamMap({ tipo: 'rag', estado: 'expired' }));
+    expect(reviews.listCases.calls.mostRecent().args[0]).toEqual(
+      jasmine.objectContaining({ caseType: 'rag', status: 'expired' }),
+    );
+    expect(component.statusLabel).toBe('Vencidos');
+    query.next(convertToParamMap({ tipo: 'x', estado: 'y' }));
+    expect(component.caseType).toBeNull();
+    expect(component.status).toBe('pending');
+  });
+
+  it('writes filters to the URL', () => {
     component.setType('recommendation');
-    expect(reviews.listCases.calls.mostRecent().args[0]?.caseType).toBe('recommendation');
-    component.setStatus('expired');
-    expect(reviews.listCases.calls.mostRecent().args[0]?.status).toBe('expired');
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({ queryParams: { tipo: 'recommendation' } }),
+    );
+    component.setStatus('reject');
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({ queryParams: { estado: 'reject' } }),
+    );
+    component.setStatus('pending');
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({ queryParams: { estado: null } }),
+    );
   });
 
   it('appends the next page and keeps its cursor', () => {
@@ -81,19 +109,21 @@ describe('ReviewInboxComponent', () => {
     expect(component.nextCursor).toBeNull();
   });
 
-  it('shows the service error and its trace', () => {
+  it('keeps the service error and its trace', () => {
     reviews.listCases.and.returnValue(
       throwError(() => ({ status: 404, code: 'CASE_LIST_UNAVAILABLE', traceId: 't-1' })),
     );
     fixture.detectChanges();
     expect(component.error).toContain('listado');
-    expect(fixture.nativeElement.textContent).toContain('Traza: t-1');
+    expect(component.traceId).toBe('t-1');
   });
 
-  it('shows an empty state', () => {
+  it('teaches what fills an empty queue', () => {
     reviews.listCases.and.returnValue(of({ items: [], next_cursor: null }));
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('No hay expedientes pendientes');
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('No hay expedientes pendientes');
+    expect(text).toContain('Aparecen aquí');
   });
 
   it('opens a case by trimmed ID and ignores a blank one', () => {
@@ -101,17 +131,6 @@ describe('ReviewInboxComponent', () => {
     expect(router.navigate).not.toHaveBeenCalled();
     component.open(' qa-9 ');
     expect(router.navigate).toHaveBeenCalledWith(['/admin/dashboard/reviews', 'qa-9']);
-  });
-
-  it('marks cases close to their deadline and overdue ones', () => {
-    component.now = Date.parse('2026-12-01T12:00:00Z');
-    const soon = summary({ expires_at: '2026-12-01T13:00:00Z' });
-    const later = summary({ expires_at: '2026-12-02T12:00:00Z' });
-    const due = summary({ expires_at: '2026-12-01T11:00:00Z' });
-    expect(component.urgent(soon)).toBeTrue();
-    expect(component.urgent(later)).toBeFalse();
-    expect(component.remaining(soon)).toBe('1 h 0 min');
-    expect(component.remaining(due)).toBeNull();
   });
 
   it('refreshes its clock and stops on destroy', fakeAsync(() => {

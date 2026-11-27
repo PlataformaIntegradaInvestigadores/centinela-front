@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { ReviewSourcesComponent } from './review-sources.component';
+import { ReviewPanelComponent } from '../review-panel/review-panel.component';
 import { ArticleService } from 'src/app/search-engine/domain/services/article.service';
 import { Article } from 'src/app/shared/interfaces/article.interface';
 
@@ -12,7 +13,7 @@ describe('ReviewSourcesComponent', () => {
   beforeEach(() => {
     articles = jasmine.createSpyObj('ArticleService', ['getArticleById']);
     TestBed.configureTestingModule({
-      declarations: [ReviewSourcesComponent],
+      declarations: [ReviewSourcesComponent, ReviewPanelComponent],
       providers: [{ provide: ArticleService, useValue: articles }],
     });
     fixture = TestBed.createComponent(ReviewSourcesComponent);
@@ -40,7 +41,7 @@ describe('ReviewSourcesComponent', () => {
     ]);
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('El 35 % reutilizó datos.');
-    expect(text).toContain('No se encontró en el corpus');
+    expect(text).toContain('No está en el corpus');
   });
 
   it('shows a record without title or abstract as such', () => {

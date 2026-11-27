@@ -26,6 +26,11 @@ import { ReviewCaseComponent } from './pages/review-case/review-case.component';
 import { ReviewSourcesComponent } from './components/review-sources/review-sources.component';
 import { ReviewResolutionFormComponent } from './components/review-resolution-form/review-resolution-form.component';
 import { ReviewResolutionViewComponent } from './components/review-resolution-view/review-resolution-view.component';
+import { ReviewDeadlineComponent } from './components/review-deadline/review-deadline.component';
+import { ReviewPanelComponent } from './components/review-panel/review-panel.component';
+import { ReviewReasonsComponent } from './components/review-reasons/review-reasons.component';
+import { ReviewErrorComponent } from './components/review-error/review-error.component';
+import { ReviewDatePipe, ReviewNumberPipe } from './pipes/review-format.pipes';
 
 @NgModule({
   imports: [
@@ -61,6 +66,12 @@ import { ReviewResolutionViewComponent } from './components/review-resolution-vi
     ReviewSourcesComponent,
     ReviewResolutionFormComponent,
     ReviewResolutionViewComponent,
+    ReviewDeadlineComponent,
+    ReviewPanelComponent,
+    ReviewReasonsComponent,
+    ReviewErrorComponent,
+    ReviewDatePipe,
+    ReviewNumberPipe,
   ],
   providers: [],
 })

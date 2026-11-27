@@ -1,18 +1,14 @@
-<section
-  class="rounded-xl border border-gray-200 bg-white p-5 text-sm"
-  aria-labelledby="resolution-title"
+<app-review-panel
+  [heading]="outcomeLabels[resolution.outcome]"
+  description="Resolución definitiva: no puede cambiarse."
 >
-  <h2 id="resolution-title" class="text-lg font-semibold">
-    {{ outcomeLabels[resolution.outcome] }}
-  </h2>
-  <p class="mt-1 text-gray-600">Resolución definitiva: no puede cambiarse.</p>
-  <dl class="mt-3 flex flex-col gap-2">
+  <dl class="flex flex-col gap-3 text-sm">
     <div>
-      <dt class="text-gray-500">Fecha</dt>
-      <dd class="tabular-nums">{{ resolution.resolved_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      <dt class="font-normal text-gray-600">Fecha</dt>
+      <dd class="tabular-nums">{{ resolution.resolved_at | reviewDate }}</dd>
     </div>
     <div>
-      <dt class="text-gray-500">Responsable</dt>
+      <dt class="font-normal text-gray-600">Responsable</dt>
       <dd>
         {{
           resolution.supervisor
@@ -22,17 +18,17 @@
       </dd>
     </div>
     <div *ngIf="resolution.proposed_outcome">
-      <dt class="text-gray-500">Propuesta de la política</dt>
+      <dt class="font-normal text-gray-600">Propuesta de la política</dt>
       <dd>
         {{ outcomeLabels[resolution.proposed_outcome] }}
-        <span *ngIf="resolution.departed_from_plan" class="font-semibold text-amber-800">
+        <span *ngIf="resolution.departed_from_plan" class="font-medium text-amber-900">
           · el revisor se apartó de la propuesta</span
         >
       </dd>
     </div>
     <div>
-      <dt class="text-gray-500">Justificación</dt>
-      <dd class="whitespace-pre-line">{{ resolution.justification ?? '—' }}</dd>
+      <dt class="font-normal text-gray-600">Justificación</dt>
+      <dd class="max-w-prose whitespace-pre-line">{{ resolution.justification ?? '—' }}</dd>
     </div>
   </dl>
-</section>
+</app-review-panel>

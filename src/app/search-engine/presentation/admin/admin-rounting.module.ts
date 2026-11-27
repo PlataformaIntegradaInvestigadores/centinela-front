@@ -10,6 +10,7 @@ import { FairnessDashboardComponent } from './pages/fairness-dashboard/fairness-
 import { StrategicAnalyticsComponent } from './components/strategic-analytics/strategic-analytics.component';
 import { ReviewInboxComponent } from './pages/review-inbox/review-inbox.component';
 import { ReviewCaseComponent } from './pages/review-case/review-case.component';
+import { unsavedDecisionGuard } from './pages/review-case/unsaved-decision.guard';
 
 const routes: Routes = [
   {
@@ -48,6 +49,7 @@ const routes: Routes = [
       {
         path: 'reviews/:caseId',
         component: ReviewCaseComponent,
+        canDeactivate: [unsavedDecisionGuard],
       },
       {
         path: '',

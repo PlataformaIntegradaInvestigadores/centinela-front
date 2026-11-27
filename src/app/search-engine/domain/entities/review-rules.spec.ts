@@ -1,4 +1,7 @@
 import {
+  justificationHint,
+  metricLabel,
+  selectionLabel,
   citedPositions,
   departsFromPlan,
   errorMessage,
@@ -82,5 +85,18 @@ describe('review rules', () => {
     expect(caseTypeOf({ ...base, recommendation: {} as ReviewCase['recommendation'] })).toBe(
       'recommendation',
     );
+  });
+
+  it('labels selections and metrics, keeping unknown keys', () => {
+    expect(selectionLabel('quota')).toBe('Cuota de baja visibilidad');
+    expect(selectionLabel('other')).toBe('other');
+    expect(selectionLabel(undefined)).toBe('—');
+    expect(metricLabel('lambda_')).toContain('λ');
+    expect(metricLabel('new_metric')).toBe('new_metric');
+  });
+
+  it('hints the justification rule before a choice', () => {
+    expect(justificationHint('qa', [])).toBe('obligatoria para modificar o rechazar');
+    expect(justificationHint('qa', ['PARTIAL_GENERATION'])).toBe('obligatoria');
   });
 });

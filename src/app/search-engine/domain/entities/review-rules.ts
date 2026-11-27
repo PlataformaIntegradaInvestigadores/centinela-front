@@ -127,3 +127,62 @@ export function timeLeft(expiresAt: string, now: number): string | null {
 
 /** Less than this left: the inbox marks the case as urgent. */
 export const URGENT_MS = 2 * 60 * 60 * 1000;
+
+/** What each outcome does to the requester, by case type, in the reviewer's words. */
+export const CONSEQUENCES: Record<CaseType, Record<ReviewOutcome, string>> = {
+  qa: {
+    approve: 'El usuario recibe la respuesta tal como está.',
+    modify: 'El usuario recibe tu versión corregida de los pares.',
+    reject: 'El usuario no recibe la respuesta.',
+  },
+  recommendation: {
+    approve: 'El usuario recibe la lista completa, sin nombres.',
+    modify: 'El usuario recibe la lista sin los perfiles que retires.',
+    reject: 'El usuario no recibe ninguna recomendación.',
+  },
+  rag: {
+    approve: 'El usuario recibe la respuesta y sus fuentes tal como están.',
+    modify: 'El usuario recibe tu respuesta corregida.',
+    reject: 'El usuario no recibe la respuesta.',
+  },
+};
+
+export const OUTCOME_VERBS: Record<ReviewOutcome, string> = {
+  approve: 'Aprobar',
+  modify: 'Modificar',
+  reject: 'Rechazar',
+};
+
+/** When the justification is required, said before the reviewer picks an outcome. */
+export function justificationHint(caseType: CaseType, reasonCodes: string[]): string {
+  return justificationRequired(caseType, 'approve', reasonCodes)
+    ? 'obligatoria'
+    : 'obligatoria para modificar o rechazar';
+}
+
+const SELECTION_LABELS: Record<string, string> = {
+  relevance: 'Relevancia',
+  quota: 'Cuota de baja visibilidad',
+  cap_relaxed: 'Tope relajado',
+};
+
+export function selectionLabel(reason: string | undefined): string {
+  return reason ? (SELECTION_LABELS[reason] ?? reason) : '—';
+}
+
+const METRIC_LABELS: Record<string, string> = {
+  low_visibility_share: 'Baja visibilidad en la lista',
+  pool_low_visibility_share: 'Baja visibilidad entre los candidatos',
+  quota_picks: 'Perfiles elegidos por cuota',
+  quota_shortfalls: 'Déficit de cuota informado',
+  cap_relaxations: 'Relajaciones del tope',
+  lambda_: 'Peso de la relevancia (λ)',
+  max_per_institution: 'Tope por institución',
+  min_protected_share: 'Cuota mínima de baja visibilidad',
+  relevance_floor: 'Piso de relevancia',
+  mode: 'Modo de reordenamiento',
+};
+
+export function metricLabel(key: string): string {
+  return METRIC_LABELS[key] ?? key;
+}

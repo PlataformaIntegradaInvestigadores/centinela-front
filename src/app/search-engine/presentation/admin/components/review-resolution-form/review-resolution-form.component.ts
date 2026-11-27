@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   CaseType,
   GovernanceError,
@@ -9,11 +17,14 @@ import {
   ReviewOutcome,
 } from 'src/app/search-engine/domain/entities/review.interface';
 import {
+  CONSEQUENCES,
   MAX_JUSTIFICATION_LENGTH,
   OUTCOME_LABELS,
+  OUTCOME_VERBS,
   citedPositions,
   departsFromPlan,
   errorMessage,
+  justificationHint,
   justificationRequired,
 } from 'src/app/search-engine/domain/entities/review-rules';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
@@ -30,9 +41,14 @@ export class ReviewResolutionFormComponent implements OnChanges {
   @Input({ required: true }) caseType!: CaseType;
   @Output() resolved = new EventEmitter<ResolutionResponse>();
   @Output() stale = new EventEmitter<void>();
+  /** Emits whether the chosen outcome needs room for an editor beside the original. */
+  @Output() editing = new EventEmitter<boolean>();
+  @ViewChild('confirmation') confirmation?: ElementRef<HTMLElement>;
+  @ViewChild('reviewButton') reviewButton?: ElementRef<HTMLButtonElement>;
 
   readonly outcomes: ReviewOutcome[] = ['approve', 'modify', 'reject'];
   readonly outcomeLabels = OUTCOME_LABELS;
+  readonly verbs = OUTCOME_VERBS;
   readonly maxLength = MAX_JUSTIFICATION_LENGTH;
 
   outcome: ReviewOutcome | null = null;
@@ -123,9 +139,39 @@ export class ReviewResolutionFormComponent implements OnChanges {
     return unchanged ? 'Modifica o retira al menos un par.' : null;
   }
 
+  get placeholder(): string {
+    return {
+      qa: 'Ej.: N en el par 2: la fuente informa 92 y 95 días, sin reducción…',
+      recommendation: 'Ej.: PROTECTED_ATTRIBUTE_UNKNOWN en el rango 5: sin metadatos; se retira…',
+      rag: 'Ej.: G1 en el párrafo 2: la cita [3] no tiene bloque…',
+    }[this.caseType];
+  }
+
+  get consequences(): Record<ReviewOutcome, string> {
+    return CONSEQUENCES[this.caseType];
+  }
+
+  get proposed(): ReviewOutcome | null {
+    return this.reviewCase.review_plan?.outcome ?? null;
+  }
+
+  /** Requirement said before and after choosing, so the label never reads "optional" wrongly. */
+  get justificationState(): string {
+    if (!this.outcome) {
+      return justificationHint(this.caseType, this.reviewCase.reason_codes);
+    }
+    return this.needsJustification ? 'obligatoria' : 'opcional';
+  }
+
+  /** Anything typed or chosen that has not reached the service yet. */
+  get dirty(): boolean {
+    return !this.submitting && (!!this.outcome || !!this.justification.trim());
+  }
+
   choose(outcome: ReviewOutcome): void {
     this.outcome = outcome;
     this.confirming = false;
+    this.editing.emit(outcome === 'modify' && this.caseType !== 'recommendation');
   }
 
   toggleRank(rank: number): void {
@@ -145,11 +191,13 @@ export class ReviewResolutionFormComponent implements OnChanges {
   review(): void {
     if (!this.blocker) {
       this.confirming = true;
+      setTimeout(() => this.confirmation?.nativeElement.focus());
     }
   }
 
   back(): void {
     this.confirming = false;
+    setTimeout(() => this.reviewButton?.nativeElement.focus());
   }
 
   request(): ResolutionRequest {
@@ -184,6 +232,8 @@ export class ReviewResolutionFormComponent implements OnChanges {
     this.reviews.resolve(this.reviewCase.case_id, this.request()).subscribe({
       next: (resolution) => {
         this.submitting = false;
+        this.outcome = null;
+        this.justification = '';
         this.resolved.emit(resolution);
       },
       error: (error: GovernanceError) => {

@@ -12,6 +12,8 @@ import { BehaviorSubject, of, throwError } from 'rxjs';
 import { ReviewCaseComponent, answerSegments } from './review-case.component';
 import { ReviewService } from 'src/app/search-engine/domain/services/review.service';
 import { ReviewCase } from 'src/app/search-engine/domain/entities/review.interface';
+import { ReviewDatePipe, ReviewNumberPipe } from '../../pipes/review-format.pipes';
+import { Router } from '@angular/router';
 
 const later = () => new Date(Date.now() + 5 * 3600 * 1000).toISOString();
 
@@ -72,10 +74,10 @@ describe('ReviewCaseComponent', () => {
   }
 
   beforeEach(() => {
-    reviews = jasmine.createSpyObj('ReviewService', ['getCase']);
+    reviews = jasmine.createSpyObj('ReviewService', ['getCase', 'listCases']);
     params = new BehaviorSubject(convertToParamMap({ caseId: 'qa-1' }));
     TestBed.configureTestingModule({
-      declarations: [ReviewCaseComponent],
+      declarations: [ReviewCaseComponent, ReviewDatePipe, ReviewNumberPipe],
       imports: [RouterTestingModule],
       providers: [
         { provide: ReviewService, useValue: reviews },
@@ -111,7 +113,7 @@ describe('ReviewCaseComponent', () => {
     );
     fixture.detectChanges();
     expect(component.error).toContain('No existe');
-    expect(fixture.nativeElement.textContent).toContain('Traza: t-4');
+    expect(component.traceId).toBe('t-4');
   });
 
   it('closes the form once the deadline passes on screen', () => {
@@ -189,6 +191,68 @@ describe('ReviewCaseComponent', () => {
     reviews.getCase.and.returnValue(of(qaCase()));
     component.onStale();
     expect(component.reviewCase?.case_id).toBe('qa-1');
+  });
+
+  describe('after a resolution', () => {
+    let router: Router;
+    beforeEach(() => {
+      router = TestBed.inject(Router);
+      spyOn(router, 'navigate').and.resolveTo(true);
+      render(qaCase());
+    });
+
+    it('opens the next pending case that is not this one', () => {
+      reviews.listCases.and.returnValue(
+        of({
+          items: [{ case_id: 'qa-1' } as never, { case_id: 'reco-9' } as never],
+          next_cursor: null,
+        }),
+      );
+      component.nextPending();
+      expect(reviews.listCases).toHaveBeenCalledWith({ status: 'pending', limit: 2 });
+      expect(router.navigate).toHaveBeenCalledWith(['/admin/dashboard/reviews', 'reco-9']);
+      expect(component.nextState).toBe('idle');
+    });
+
+    it('says when the queue is empty', () => {
+      reviews.listCases.and.returnValue(
+        of({ items: [{ case_id: 'qa-1' } as never], next_cursor: null }),
+      );
+      component.nextPending();
+      expect(component.nextState).toBe('none');
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('reports a failed lookup', () => {
+      reviews.listCases.and.returnValue(throwError(() => ({ code: 'NETWORK_ERROR' })));
+      component.nextPending();
+      expect(component.nextState).toBe('error');
+    });
+  });
+
+  it('knows about an unsent decision and warns before unloading', () => {
+    render(qaCase());
+    expect(component.hasUnsavedDecision()).toBeFalse();
+    component.form = { dirty: true } as never;
+    expect(component.hasUnsavedDecision()).toBeTrue();
+    const event = {
+      preventDefault: jasmine.createSpy('preventDefault'),
+    } as unknown as BeforeUnloadEvent;
+    component.warnBeforeUnload(event);
+    expect(event.preventDefault).toHaveBeenCalled();
+    component.form = { dirty: false } as never;
+    const quiet = {
+      preventDefault: jasmine.createSpy('preventDefault'),
+    } as unknown as BeforeUnloadEvent;
+    component.warnBeforeUnload(quiet);
+    expect(quiet.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('labels metrics and keeps numbers as numbers', () => {
+    expect(component.entries({ quota_picks: 1, mode: 'prefix' })).toEqual([
+      { key: 'Perfiles elegidos por cuota', value: 1 },
+      { key: 'Modo de reordenamiento', value: 'prefix' },
+    ]);
   });
 
   it('has no deadline state without a case', () => {
