@@ -204,6 +204,14 @@
                     · no citado</span
                   >
                 </p>
+                <p
+                  *ngIf="block.authors_mention || block.year || block.doi_raw"
+                  class="text-xs text-gray-600"
+                >
+                  {{ block.authors_mention ?? block.authors_raw
+                  }}<span *ngIf="block.year"> · {{ block.year }}</span
+                  ><span *ngIf="block.doi_raw" translate="no"> · {{ block.doi_raw }}</span>
+                </p>
                 <p class="mt-1 max-w-prose text-sm whitespace-pre-line">{{ block.text }}</p>
               </li>
             </ol>

@@ -216,6 +216,15 @@ describe('ReviewResolutionFormComponent', () => {
       });
     });
 
+    it('blocks a correction without citations or with unresolved ones (rag-ask v1)', () => {
+      form.answerText = 'Sin citas.';
+      expect(form.blocker).toContain('al menos una fuente');
+      form.answerText = 'Uno [1]. Dos [2].';
+      expect(form.blocker).toContain('sin bloque');
+      form.answerText = 'Uno [1].';
+      expect(form.blocker).toBeNull();
+    });
+
     it('does not accept an empty answer', () => {
       form.answerText = ' ';
       expect(form.blocker).toContain('vacía');

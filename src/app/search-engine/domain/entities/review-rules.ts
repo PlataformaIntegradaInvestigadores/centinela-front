@@ -4,12 +4,13 @@ export const MAX_JUSTIFICATION_LENGTH = 2000;
 
 /**
  * Codes that flag a defect: approving output that carries one overrides the
- * evaluator (ADR 0003). `RAG_CITATION_WITHOUT_BLOCK` follows the draft RAG contract.
+ * evaluator (ADR 0003). The RAG codes follow rag-ask v1.
  */
 const RISK_REASON_CODES = new Set([
   'PARTIAL_GENERATION',
   'SOURCE_EVIDENCE_INCOMPLETE',
   'RAG_CITATION_WITHOUT_BLOCK',
+  'RAG_CITATIONS_MISSING',
 ]);
 
 /** Mirrors the service: the UI asks early, the service still decides (422). */
@@ -66,6 +67,9 @@ const REASON_LABELS: Record<string, string> = {
   LOW_VISIBILITY_SHORTFALL_REPORTED: 'Déficit de cuota informado',
   BASELINE_WITHOUT_FAIRNESS: 'Lista base sin equidad',
   RAG_CITATION_WITHOUT_BLOCK: 'Cita [n] sin bloque correspondiente',
+  RAG_CITATIONS_MISSING: 'La respuesta no cita ninguna fuente',
+  RAG_REVIEW_REQUIRED: 'La política exige revisión humana',
+  RAG_NO_SOURCES: 'Sin fuentes recuperadas',
 };
 
 export function reasonLabel(code: string): string {
@@ -98,6 +102,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_RECOMMENDATION_RESOLUTION:
     'La selección no es válida: elige un subconjunto no vacío de rangos, en su orden original.',
   INVALID_REQUEST: 'La solicitud no es válida. Revisa los campos.',
+  INVALID_RAG_CORRECTION:
+    'La corrección debe citar al menos una fuente y todas sus citas deben tener bloque.',
   ADMIN_VERIFIER_UNAVAILABLE: 'El verificador de administrador no responde. Intenta más tarde.',
   SUPERVISION_NOT_CONFIGURED: 'La supervisión no está configurada en el servicio.',
   CASE_LIST_UNAVAILABLE:

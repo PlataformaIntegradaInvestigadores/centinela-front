@@ -125,7 +125,7 @@ export class ReviewResolutionFormComponent implements OnChanges {
       return this.ranks.length > 0 ? null : 'Conserva al menos un perfil.';
     }
     if (this.caseType === 'rag') {
-      return this.answerText.trim() ? null : 'La respuesta corregida no puede quedar vacía.';
+      return this.ragBlocker();
     }
     if (this.pairs.some((pair) => !pair.question.trim() || !pair.answer.trim())) {
       return 'Cada par conservado necesita pregunta y respuesta.';
@@ -166,6 +166,17 @@ export class ReviewResolutionFormComponent implements OnChanges {
   /** Anything typed or chosen that has not reached the service yet. */
   get dirty(): boolean {
     return !this.submitting && (!!this.outcome || !!this.justification.trim());
+  }
+
+  /** rag-ask v1: a correction cites at least one block and every citation resolves. */
+  private ragBlocker(): string | null {
+    if (!this.answerText.trim()) {
+      return 'La respuesta corregida no puede quedar vacía.';
+    }
+    if (citedPositions(this.answerText).length === 0) {
+      return 'La respuesta corregida debe citar al menos una fuente.';
+    }
+    return this.uncitedPositions.length ? 'Corrige o quita las citas sin bloque.' : null;
   }
 
   choose(outcome: ReviewOutcome): void {

@@ -10,7 +10,7 @@ Pantallas del panel de administración para resolver las salidas que `governance
 
 ## Pantallas
 
-**Bandeja.** Lista los expedientes por tipo (todos, Q&A, recomendador, RAG) y estado (pendientes por defecto, vencidos, aprobados, modificados, rechazados). Cada fila muestra el tipo, los motivos de retención en palabras, la política y versión, la fecha de recepción y el tiempo que queda; menos de dos horas se marca en ámbar. Permite abrir un expediente por su identificador, que es la vía disponible mientras el servicio no publique el listado.
+**Bandeja.** Los filtros viven en la URL (`?tipo=rag&estado=expired`). En pantallas estrechas la tabla pasa a una lista con el plazo primero. Lista los expedientes por tipo (todos, Q&A, recomendador, RAG) y estado (pendientes por defecto, vencidos, aprobados, modificados, rechazados). Cada fila muestra el tipo, los motivos de retención en palabras, la política y versión, la fecha de recepción y el tiempo que queda; menos de dos horas se marca en ámbar. Permite abrir un expediente por su identificador, que es la vía disponible mientras el servicio no publique el listado.
 
 **Expediente.** Encabezado con estado, plazo, recepción y política; los códigos de razón con su explicación. El contenido depende del tipo:
 
@@ -18,7 +18,7 @@ Pantallas del panel de administración para resolver las salidas que `governance
 - **Recomendador:** la lista retenida sin nombres, con rango, institución, baja visibilidad, motivo de selección y puntajes, las métricas de equidad y los parámetros aplicados, y la propuesta de la política (`review_plan`) fila por fila.
 - **RAG:** la consulta, la respuesta con cada cita `[n]` enlazada al texto de su bloque y las citas sin bloque resaltadas, y los bloques recuperados en su orden.
 
-**Decisión.** Aprobar, modificar o rechazar, con un paso de confirmación porque la resolución es definitiva. La justificación se marca obligatoria con las reglas del servicio (D6 en ADR 0003 y ADR 0007): siempre en el recomendador; al modificar o rechazar Q&A y RAG; al aprobar una salida con `PARTIAL_GENERATION`, `SOURCE_EVIDENCE_INCOMPLETE` o `RAG_CITATION_WITHOUT_BLOCK`. Máximo 2000 caracteres. Modificar permite:
+**Decisión.** Aprobar, modificar o rechazar. Cada opción dice qué recibe el usuario y la propuesta de la política se marca, pero no se preselecciona. La confirmación recibe el foco, nombra la consecuencia y usa el verbo de la decisión («Rechazar definitivamente»). Salir con una decisión sin enviar pide confirmación. Tras resolver, «Siguiente pendiente» abre el expediente más próximo a vencer. La justificación se marca obligatoria con las reglas del servicio (D6 en ADR 0003 y ADR 0007): siempre en el recomendador; al modificar o rechazar Q&A y RAG; al aprobar una salida con `PARTIAL_GENERATION`, `SOURCE_EVIDENCE_INCOMPLETE` o `RAG_CITATION_WITHOUT_BLOCK`. Máximo 2000 caracteres. Modificar permite:
 
 - en Q&A, editar o retirar pares (al menos uno, y algún cambio);
 - en el recomendador, retirar perfiles sin reordenar; la pantalla avisa cuando el revisor se aparta de la propuesta (desenlace libre, ADR 0007);
@@ -30,7 +30,7 @@ Una resolución registrada se muestra con fecha, responsable (el rol administrad
 
 ## Contratos
 
-Detalle y resolución siguen `app/api/review_cases.py` de `governance-service` (`20c57e6`, PR #17). Dos piezas aún no existen en el servicio y el módulo trabaja contra su contrato:
+Detalle y resolución siguen `app/api/review_cases.py` de `governance-service` (`20c57e6`, PR #17). El listado aún no existe en el servicio y el módulo trabaja contra el contrato propuesto aquí:
 
 ### Listado de expedientes (propuesto)
 
@@ -61,7 +61,11 @@ Sin contenido protegido (pares, listas, bloques ni justificaciones). `status` po
 
 ### Sección `rag` del expediente
 
-Del borrador del contrato de RAG (AB#320): `rag.query`, `rag.answer_text`, `rag.blocks[]` (`cite_id`, `title`, `text`) y `rag.cited_positions`. La modificación envía `answer_text`. Se ajustará al contrato que publique el servicio.
+Sigue `docs/contracts/rag-ask.v1.md` de `governance-service` (`e53f754`, rama `feature/governed-rag-ask`): `rag.query`, `rag.answer_text`, `rag.blocks[]` (`cite_id`, `title`, `authors_mention`, `authors_raw`, `year`, `doi_raw` y `text`), `rag.cited_positions` y `rag.unresolved_positions`. La modificación envía `answer_text`; el front exige, como el servicio (422 `INVALID_RAG_CORRECTION`), que la corrección cite al menos una fuente y que todas sus citas tengan bloque. Aprobar con `RAG_CITATION_WITHOUT_BLOCK` o `RAG_CITATIONS_MISSING` exige justificación.
+
+### Expediente de explicación (P4)
+
+Pendiente del contrato de X3 (AB#263–265), que aún no está publicado en `docs/contracts/`. El panel lo mostrará en el expediente cuando exista.
 
 ## Doble de pruebas local
 
@@ -81,3 +85,7 @@ npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
 ```
 
 Cubren el servicio (rutas, parámetros y traducción de errores), las reglas (justificación, apartamiento del plan, citas y plazos), la bandeja, el expediente de los tres tipos, el formulario de decisión y el interceptor.
+
+## Diseño
+
+Componentes compartidos del módulo: `app-review-panel` (bloque con título que nombra la región), `app-review-deadline` (plazo o estado final con palabra y color), `app-review-reasons`, `app-review-error` (mensaje, traza y acción) y los pipes `reviewDate` y `reviewNumber` (`Intl`, `es-EC`). Colores de marca `primary_tailwind` y `primary_hover`. Bootstrap define `p-3…p-5`, `mt-3…mt-5` y `gap-3…gap-5` con `!important` y pisa los de Tailwind; el módulo usa el paso 6 cuando necesita uno mayor que 2.

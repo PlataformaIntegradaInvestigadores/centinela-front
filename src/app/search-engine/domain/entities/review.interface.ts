@@ -2,8 +2,9 @@
  * Payloads of the governance-service supervision API (`/api/governance/*`).
  *
  * Case detail and resolution follow `app/api/review_cases.py` (ADR 0003, D6
- * amendment, ADR 0007). The case list and the `rag` section follow contracts
- * that the service has not published yet; see `docs/admin-review.md`.
+ * amendment, ADR 0007). The `rag` section follows `docs/contracts/rag-ask.v1.md`
+ * (governance-service e53f754). The case list follows a contract the service has not
+ * published yet; see `docs/admin-review.md`.
  */
 
 export type CaseType = 'qa' | 'recommendation' | 'rag';
@@ -48,6 +49,10 @@ export interface ReviewPlan {
 export interface RagBlock {
   cite_id: string;
   title?: string | null;
+  authors_mention?: string | null;
+  authors_raw?: string | null;
+  year?: number | string | null;
+  doi_raw?: string | null;
   text: string;
 }
 
@@ -56,6 +61,8 @@ export interface RagSection {
   answer_text: string;
   blocks: RagBlock[];
   cited_positions: number[];
+  /** Decimal strings, so an arbitrarily large position stays representable. */
+  unresolved_positions?: string[];
 }
 
 export interface ResolutionView {

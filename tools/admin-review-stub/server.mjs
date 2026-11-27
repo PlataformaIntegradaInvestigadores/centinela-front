@@ -11,6 +11,7 @@ const RISK = new Set([
   'PARTIAL_GENERATION',
   'SOURCE_EVIDENCE_INCOMPLETE',
   'RAG_CITATION_WITHOUT_BLOCK',
+  'RAG_CITATIONS_MISSING',
 ]);
 
 const articles = {
@@ -128,7 +129,7 @@ const cases = [
     created_at: iso(now - 1 * HOUR),
     expires_at: iso(now + 23 * HOUR),
     policy: { policy_id: 'rag-ask-review', version: 'draft-1' },
-    reason_codes: ['HUMAN_REVIEW_REQUIRED', 'RAG_CITATION_WITHOUT_BLOCK'],
+    reason_codes: ['RAG_CITATION_WITHOUT_BLOCK'],
     rag: {
       query: '¿Depositar la tesis aumenta su visibilidad?',
       answer_text:
@@ -137,15 +138,24 @@ const cases = [
         {
           cite_id: 'SYN-A03',
           title: articles['SYN-A03'].title,
+          authors_mention: 'Autoría sintética',
+          authors_raw: null,
+          year: 2025,
+          doi_raw: null,
           text: articles['SYN-A03'].abstract,
         },
         {
           cite_id: 'SYN-A01',
           title: articles['SYN-A01'].title,
+          authors_mention: 'Autoría sintética',
+          authors_raw: null,
+          year: 2024,
+          doi_raw: '10.0000/sintetico.a01',
           text: articles['SYN-A01'].abstract,
         },
       ],
-      cited_positions: [1, 3],
+      cited_positions: [1],
+      unresolved_positions: ['3'],
     },
   },
   {
@@ -232,6 +242,13 @@ function resolve(c, body) {
     if (needs && !justification) return [422, 'JUSTIFICATION_REQUIRED'];
     const edit = type === 'rag' ? body.answer_text : body.qa_pairs;
     if ((outcome === 'modify') !== (edit !== undefined)) return [422, 'INVALID_REQUEST'];
+    if (type === 'rag' && outcome === 'modify') {
+      const cited = [...String(edit).matchAll(/\[(\d+)\]/g)].map((m) => Number(m[1]));
+      const blocks = c.rag.blocks.length;
+      if (!cited.length || cited.some((n) => n < 1 || n > blocks)) {
+        return [422, 'INVALID_RAG_CORRECTION'];
+      }
+    }
   }
   const resolution = {
     resolution_id: randomUUID(),
