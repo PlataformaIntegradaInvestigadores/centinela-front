@@ -21,6 +21,16 @@ import { LoggerComponent } from './components/logger/logger.component';
 import { FairnessDashboardComponent } from './pages/fairness-dashboard/fairness-dashboard.component';
 import { StrategicAnalyticsComponent } from './components/strategic-analytics/strategic-analytics.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ReviewInboxComponent } from './pages/review-inbox/review-inbox.component';
+import { ReviewCaseComponent } from './pages/review-case/review-case.component';
+import { ReviewSourcesComponent } from './components/review-sources/review-sources.component';
+import { ReviewResolutionFormComponent } from './components/review-resolution-form/review-resolution-form.component';
+import { ReviewResolutionViewComponent } from './components/review-resolution-view/review-resolution-view.component';
+import { ReviewDeadlineComponent } from './components/review-deadline/review-deadline.component';
+import { ReviewPanelComponent } from './components/review-panel/review-panel.component';
+import { ReviewReasonsComponent } from './components/review-reasons/review-reasons.component';
+import { ReviewErrorComponent } from './components/review-error/review-error.component';
+import { ReviewDatePipe, ReviewNumberPipe } from './pipes/review-format.pipes';
 
 @NgModule({
   imports: [
@@ -51,6 +61,17 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     LoggerComponent,
     FairnessDashboardComponent,
     StrategicAnalyticsComponent,
+    ReviewInboxComponent,
+    ReviewCaseComponent,
+    ReviewSourcesComponent,
+    ReviewResolutionFormComponent,
+    ReviewResolutionViewComponent,
+    ReviewDeadlineComponent,
+    ReviewPanelComponent,
+    ReviewReasonsComponent,
+    ReviewErrorComponent,
+    ReviewDatePipe,
+    ReviewNumberPipe,
   ],
   providers: [],
 })

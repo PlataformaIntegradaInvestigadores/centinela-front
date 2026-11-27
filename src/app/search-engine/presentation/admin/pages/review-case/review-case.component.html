@@ -1,0 +1,268 @@
+<div class="px-2 text-gray-800">
+  <a
+    routerLink="/admin/dashboard/reviews"
+    class="inline-flex items-center gap-1 rounded text-sm text-gray-600 hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary_tailwind"
+    ><span aria-hidden="true">←</span> Bandeja de revisión</a
+  >
+
+  <div *ngIf="loading" class="mt-6 animate-pulse" aria-hidden="true">
+    <div class="h-7 w-64 rounded bg-gray-200"></div>
+    <div class="mt-6 h-16 rounded-xl bg-gray-200"></div>
+    <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div class="h-64 rounded-xl bg-gray-200 xl:col-span-2"></div>
+      <div class="h-64 rounded-xl bg-gray-200"></div>
+    </div>
+  </div>
+  <p *ngIf="loading" class="sr-only" role="status">Cargando expediente…</p>
+
+  <app-review-error
+    *ngIf="error"
+    class="mt-6 block"
+    [message]="error"
+    [traceId]="traceId"
+    actionLabel="Reintentar"
+    (action)="load()"
+  ></app-review-error>
+
+  <ng-container *ngIf="reviewCase as rc">
+    <header class="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold text-gray-900 [text-wrap:balance]">
+          {{ typeLabels[caseType] }}
+        </h1>
+        <p class="mt-1 break-words text-sm text-gray-600">
+          Expediente <span translate="no">{{ rc.case_id }}</span>
+        </p>
+      </div>
+      <dl class="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-4">
+        <div>
+          <dt class="font-normal text-gray-600">Estado</dt>
+          <dd class="mt-0.5">
+            <app-review-deadline
+              [status]="rc.status"
+              [expiresAt]="rc.expires_at"
+              [now]="now"
+            ></app-review-deadline>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-normal text-gray-600">Plazo</dt>
+          <dd class="mt-0.5 tabular-nums">{{ rc.expires_at | reviewDate }}</dd>
+        </div>
+        <div>
+          <dt class="font-normal text-gray-600">Recibido</dt>
+          <dd class="mt-0.5 tabular-nums">{{ rc.created_at | reviewDate }}</dd>
+        </div>
+        <div>
+          <dt class="font-normal text-gray-600">Política</dt>
+          <dd class="mt-0.5" translate="no">{{ rc.policy.policy_id }} · {{ rc.policy.version }}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="mt-6 rounded-xl bg-gray-100 p-4 text-sm" aria-labelledby="reasons-title">
+      <h2 id="reasons-title" class="font-semibold text-gray-900">Por qué se retuvo</h2>
+      <app-review-reasons class="mt-1 block" [codes]="rc.reason_codes" [showCodes]="true">
+      </app-review-reasons>
+    </section>
+
+    <div
+      class="mt-6 grid grid-cols-1 gap-6"
+      [ngClass]="editing ? 'xl:grid-cols-2' : 'xl:grid-cols-3'"
+    >
+      <div class="flex min-w-0 flex-col gap-6" [ngClass]="editing ? '' : 'xl:col-span-2'">
+        <!-- Q&A: pairs and the corpus text of their sources (rubric §9) -->
+        <ng-container *ngIf="caseType === 'qa'">
+          <app-review-panel heading="Respuesta retenida">
+            <ol class="flex flex-col gap-6">
+              <li *ngFor="let pair of rc.qa_pairs; let i = index">
+                <p class="text-xs font-medium text-gray-600">Par {{ i + 1 }}</p>
+                <p class="mt-0.5 font-medium text-gray-900 whitespace-pre-line">
+                  {{ pair.question }}
+                </p>
+                <p class="mt-1 max-w-prose whitespace-pre-line">{{ pair.answer }}</p>
+              </li>
+            </ol>
+          </app-review-panel>
+          <app-review-sources [articleIds]="rc.source_article_ids ?? []"></app-review-sources>
+        </ng-container>
+
+        <!-- Recommender: the retained list against the suggested plan -->
+        <ng-container *ngIf="caseType === 'recommendation' && rc.recommendation as reco">
+          <app-review-panel
+            heading="Lista retenida"
+            description="Sin nombres. La columna Propuesta muestra lo que la política sugiere conservar."
+          >
+            <div class="-mx-6 overflow-x-auto px-6">
+              <table class="min-w-full text-sm">
+                <caption class="sr-only">
+                  Perfiles recomendados y propuesta de la política
+                </caption>
+                <thead>
+                  <tr class="border-b border-gray-200 text-left text-gray-600">
+                    <th scope="col" class="py-2 pr-4 text-right font-medium">Rango</th>
+                    <th scope="col" class="py-2 pr-4 font-medium">Propuesta</th>
+                    <th scope="col" class="py-2 pr-4 font-medium">Institución</th>
+                    <th scope="col" class="py-2 pr-4 font-medium">Baja visibilidad</th>
+                    <th scope="col" class="py-2 pr-4 font-medium">Selección</th>
+                    <th scope="col" class="py-2 text-right font-medium">Puntaje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let profile of reco.recommendations"
+                    class="border-b border-gray-100 last:border-0"
+                    [ngClass]="
+                      rc.review_plan?.outcome === 'modify' && !inPlan(profile.rank)
+                        ? 'bg-red-50'
+                        : ''
+                    "
+                  >
+                    <td class="py-2 pr-4 text-right tabular-nums">{{ profile.rank }}</td>
+                    <td class="py-2 pr-4">
+                      <ng-container *ngIf="rc.review_plan?.outcome === 'modify'; else whole">
+                        <span *ngIf="inPlan(profile.rank)">Conservar</span>
+                        <span *ngIf="!inPlan(profile.rank)" class="font-medium text-red-800"
+                          >Retirar</span
+                        >
+                      </ng-container>
+                      <ng-template #whole>{{
+                        outcomeLabels[rc.review_plan?.outcome ?? 'pending']
+                      }}</ng-template>
+                    </td>
+                    <td class="py-2 pr-4">{{ profile.institution }}</td>
+                    <td class="py-2 pr-4">{{ profile.low_visibility ? 'Sí' : 'No' }}</td>
+                    <td class="py-2 pr-4">{{ selectionLabel(profile.selection_reason) }}</td>
+                    <td class="py-2 text-right tabular-nums">
+                      {{ profile.final_score | reviewNumber }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </app-review-panel>
+          <app-review-panel
+            heading="Métricas y parámetros aplicados"
+            description="Describen la lista original, antes de cualquier modificación."
+          >
+            <dl class="grid grid-cols-1 gap-x-8 text-sm sm:grid-cols-2">
+              <div
+                *ngFor="
+                  let item of entries(reco.fairness_metrics).concat(
+                    entries(reco.parameters?.rerank)
+                  )
+                "
+                class="flex justify-between gap-4 border-b border-gray-100 py-1.5"
+              >
+                <dt class="font-normal text-gray-600">{{ item.key }}</dt>
+                <dd class="break-words text-right tabular-nums">{{ item.value | reviewNumber }}</dd>
+              </div>
+            </dl>
+          </app-review-panel>
+        </ng-container>
+
+        <!-- RAG: the answer with each [n] tied to the text of its block -->
+        <ng-container *ngIf="caseType === 'rag' && rc.rag as rag">
+          <app-review-panel heading="Respuesta retenida" [description]="'Consulta: ' + rag.query">
+            <div class="flex max-w-prose flex-col gap-3 leading-relaxed">
+              <p *ngFor="let paragraph of paragraphs(rag)">
+                <ng-container *ngFor="let segment of paragraph">
+                  <ng-container *ngIf="isText(segment); else cite">{{ segment.text }}</ng-container>
+                  <ng-template #cite>
+                    <a
+                      *ngIf="asCitation(segment).known; else unknown"
+                      [href]="'#block-' + asCitation(segment).position"
+                      class="rounded font-semibold text-primary_tailwind underline decoration-blue-300 underline-offset-2 hover:decoration-primary_tailwind focus:outline-none focus-visible:ring-2 focus-visible:ring-primary_tailwind"
+                      >[{{ asCitation(segment).position }}]</a
+                    >
+                    <ng-template #unknown>
+                      <mark class="rounded bg-red-100 px-1 font-semibold text-red-800"
+                        >[{{ asCitation(segment).position }}] sin bloque</mark
+                      >
+                    </ng-template>
+                  </ng-template>
+                </ng-container>
+              </p>
+            </div>
+          </app-review-panel>
+          <app-review-panel
+            heading="Fuentes recuperadas"
+            description="Texto de cada bloque en el orden en que lo recibió el generador."
+          >
+            <ol class="flex flex-col gap-6">
+              <li
+                *ngFor="let block of rag.blocks; let i = index"
+                [id]="'block-' + (i + 1)"
+                class="scroll-mt-4"
+              >
+                <p class="text-sm font-medium text-gray-900">
+                  [{{ i + 1 }}] {{ block.title || block.cite_id }}
+                  <span
+                    *ngIf="!rag.cited_positions.includes(i + 1)"
+                    class="font-normal text-gray-600"
+                  >
+                    · no citado</span
+                  >
+                </p>
+                <p
+                  *ngIf="block.authors_mention || block.year || block.doi_raw"
+                  class="text-xs text-gray-600"
+                >
+                  {{ block.authors_mention ?? block.authors_raw
+                  }}<span *ngIf="block.year"> · {{ block.year }}</span
+                  ><span *ngIf="block.doi_raw" translate="no"> · {{ block.doi_raw }}</span>
+                </p>
+                <p class="mt-1 max-w-prose text-sm whitespace-pre-line">{{ block.text }}</p>
+              </li>
+            </ol>
+          </app-review-panel>
+        </ng-container>
+      </div>
+
+      <aside class="flex min-w-0 flex-col gap-6 xl:sticky xl:top-4 xl:self-start">
+        <ng-container *ngIf="rc.resolution">
+          <app-review-resolution-view [resolution]="rc.resolution"></app-review-resolution-view>
+          <div class="flex flex-wrap items-center gap-3 text-sm">
+            <button
+              type="button"
+              (click)="nextPending()"
+              [disabled]="nextState === 'loading'"
+              class="rounded-lg bg-primary_tailwind px-4 py-2.5 font-medium text-white transition-colors hover:bg-primary_hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary_tailwind focus-visible:ring-offset-2 disabled:opacity-60"
+            >
+              {{ nextState === 'loading' ? 'Buscando…' : 'Siguiente pendiente' }}
+            </button>
+            <a
+              routerLink="/admin/dashboard/reviews"
+              class="rounded font-medium text-gray-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary_tailwind"
+              >Volver a la bandeja</a
+            >
+            <p *ngIf="nextState === 'none'" class="w-full text-gray-600" role="status">
+              No quedan expedientes pendientes.
+            </p>
+            <p *ngIf="nextState === 'error'" class="w-full text-red-700" role="status">
+              No se pudo consultar la bandeja. Vuelve a ella para continuar.
+            </p>
+          </div>
+        </ng-container>
+
+        <section
+          *ngIf="!rc.resolution && !open"
+          class="rounded-xl bg-red-50 p-6 text-sm text-red-800"
+          role="status"
+        >
+          <h2 class="font-semibold">Plazo de revisión cumplido</h2>
+          <p class="mt-1">La salida queda denegada y no llega al usuario.</p>
+        </section>
+
+        <app-review-resolution-form
+          *ngIf="open"
+          [reviewCase]="rc"
+          [caseType]="caseType"
+          (resolved)="onResolved($event)"
+          (stale)="onStale()"
+          (editing)="editing = $event"
+        ></app-review-resolution-form>
+      </aside>
+    </div>
+  </ng-container>
+</div>

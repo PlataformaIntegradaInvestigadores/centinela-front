@@ -16,6 +16,9 @@ import { AdminSessionService } from 'src/app/search-engine/domain/services/admin
 // Rutas de search-service que exigen credenciales de administrador (IsCentinelaAdmin).
 const ADMIN_ROUTES =
   /\/api\/search\/v1\/(admin\/|generate-corpus\/|generate-model\/|scopus-integration\/|information\/update\/|dashboard\/populate)/;
+// governance-service supervision API (ADR 0005). Requester routes (`governed/`) use their own
+// review token and the health check is public.
+const GOVERNANCE_ADMIN_ROUTES = /\/api\/governance\/(?!governed\/|health)/;
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -37,7 +40,8 @@ export class AuthInterceptor implements HttpInterceptor {
       request = this.addTokenHeader(request, token);
     }
 
-    const isAdminRoute = ADMIN_ROUTES.test(request.url);
+    const isGovernanceAdminRoute = GOVERNANCE_ADMIN_ROUTES.test(request.url);
+    const isAdminRoute = isGovernanceAdminRoute || ADMIN_ROUTES.test(request.url);
     if (isAdminRoute) {
       const adminToken = this.adminSession.token();
       if (adminToken) {
@@ -47,7 +51,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (isAdminRoute && error.status === 403) {
+        if (
+          isAdminRoute &&
+          (error.status === 403 || (isGovernanceAdminRoute && error.status === 401))
+        ) {
           // Token de admin vencido o inexistente: volver al login del panel.
           this.adminSession.clear();
           this.router.navigate(['/admin']);

@@ -1,0 +1,34 @@
+<app-review-panel
+  [heading]="outcomeLabels[resolution.outcome]"
+  description="Resolución definitiva: no puede cambiarse."
+>
+  <dl class="flex flex-col gap-3 text-sm">
+    <div>
+      <dt class="font-normal text-gray-600">Fecha</dt>
+      <dd class="tabular-nums">{{ resolution.resolved_at | reviewDate }}</dd>
+    </div>
+    <div>
+      <dt class="font-normal text-gray-600">Responsable</dt>
+      <dd>
+        {{
+          resolution.supervisor
+            ? resolution.supervisor.display_name + ' (' + resolution.supervisor.identity_id + ')'
+            : 'El servicio, por vencimiento del plazo'
+        }}
+      </dd>
+    </div>
+    <div *ngIf="resolution.proposed_outcome">
+      <dt class="font-normal text-gray-600">Propuesta de la política</dt>
+      <dd>
+        {{ outcomeLabels[resolution.proposed_outcome] }}
+        <span *ngIf="resolution.departed_from_plan" class="font-medium text-amber-900">
+          · el revisor se apartó de la propuesta</span
+        >
+      </dd>
+    </div>
+    <div>
+      <dt class="font-normal text-gray-600">Justificación</dt>
+      <dd class="max-w-prose whitespace-pre-line">{{ resolution.justification ?? '—' }}</dd>
+    </div>
+  </dl>
+</app-review-panel>

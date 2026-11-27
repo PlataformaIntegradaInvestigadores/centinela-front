@@ -1,0 +1,31 @@
+<app-review-panel
+  heading="Fuentes citadas"
+  description="Texto del corpus para cada identificador conservado. Es el registro del buscador, no necesariamente el contexto que recibió el generador."
+>
+  <p
+    *ngIf="!loading && articleIds.length === 0"
+    class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900"
+  >
+    El expediente no conserva ninguna fuente con identificador. Ninguna afirmación puede verificarse
+    contra el corpus.
+  </p>
+  <div *ngIf="loading" class="flex animate-pulse flex-col gap-3" aria-hidden="true">
+    <div class="h-4 w-2/3 rounded bg-gray-200"></div>
+    <div class="h-12 rounded bg-gray-200"></div>
+  </div>
+  <p *ngIf="loading" class="sr-only" role="status">Cargando fuentes…</p>
+  <ol class="flex flex-col gap-6">
+    <li *ngFor="let source of sources">
+      <p class="text-sm font-medium text-gray-900">
+        {{ source.title ?? 'Sin título' }}
+        <span class="font-normal text-gray-600" translate="no">· {{ source.articleId }}</span>
+      </p>
+      <p *ngIf="source.missing" class="mt-1 text-sm text-red-700">
+        No está en el corpus: esta fuente no puede verificarse.
+      </p>
+      <p *ngIf="!source.missing" class="mt-1 max-w-prose text-sm whitespace-pre-line">
+        {{ source.abstract ?? 'El registro no tiene resumen.' }}
+      </p>
+    </li>
+  </ol>
+</app-review-panel>

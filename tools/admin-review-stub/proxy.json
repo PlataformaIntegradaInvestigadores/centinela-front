@@ -1,0 +1,5 @@
+{
+  "/api/governance": { "target": "http://127.0.0.1:8099", "secure": false },
+  "/api/search/v1/auth/login/": { "target": "http://127.0.0.1:8099", "secure": false },
+  "/api/search/v2/articles": { "target": "http://127.0.0.1:8099", "secure": false }
+}
